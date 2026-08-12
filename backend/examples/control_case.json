@@ -1,0 +1,14 @@
+{
+  "_comment": "CONTROL CASE. The opposite of demo_case.json. Careful research: real fetchable sources, primary/peer-reviewed where it matters, claims hedged to what the sources actually support, limitations stated, no invented statistics. If the pipeline works, this should score materially higher than demo_case and NOT come back 'do_not_rely'. If it still says do_not_rely, the system does not discriminate and the whole premise is broken.",
+
+  "original_prompt": "What does the evidence actually say about whether remote work affects software developer productivity? I need to brief our leadership team and I'd rather be accurate than persuasive.",
+
+  "research_output": "The evidence on remote work and developer productivity is mixed and context-dependent, and the honest summary is that no strong general claim is currently supportable. A large-scale study of Microsoft engineers during the 2020 shift found that collaboration networks became more siloed and communication shifted toward asynchronous channels, with the authors cautioning that effects on output were not directly measured. Separate work on the same period reported that self-assessed productivity varied widely between individuals rather than moving uniformly in one direction. A randomised controlled trial in a Chinese travel agency, which remains one of the few genuine RCTs in this area, found a productivity increase for call-centre staff, but that population and task type differ substantially from software engineering and the result should not be transferred without caveat. Evidence specific to software teams is thinner than the volume of commentary suggests, and most of it is observational, short-run, and drawn from the unusual conditions of the pandemic. Where measured effects appear, they are typically small relative to variation between individuals and teams. No source reviewed here supports a claim that remote work uniformly raises or lowers developer productivity.",
+
+  "sources": [
+    "https://arxiv.org/abs/2007.15584",
+    "https://www.nber.org/papers/w28731",
+    "https://en.wikipedia.org/wiki/Remote_work",
+    "https://www.gov.uk/government/collections/labour-market-statistics"
+  ]
+}

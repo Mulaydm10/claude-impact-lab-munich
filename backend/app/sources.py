@@ -29,8 +29,20 @@ _USER_AGENT = (
 
 _FETCH_CONCURRENCY = 8
 _FETCH_TIMEOUT = 10
-_EXCERPT_CHARS = 4000
+# A naive head-of-page excerpt regularly got eaten by nav bars, cookie banners and menus
+# before any substance appeared, so claim-checking saw true claims as "partial" ("excerpt
+# is truncated before the 92% figure appears"). Middle-out selection (see _select_excerpt)
+# spends most of the larger budget below on the most substance-dense part of the page instead.
+_EXCERPT_CHARS = 12000
 _TITLE_MATCH_THRESHOLD = 0.85
+_EXCERPT_WINDOW_CHARS = 1000
+_SUBSTANCE_RE = re.compile(
+    r"\d|%|[$€£]|percent|study|trial|found|results?|average|increase|decrease|"
+    r"participants|respondents|revenue|productivity",
+    re.IGNORECASE,
+)
+_REPEATED_LINE_MIN_COUNT = 2
+_SHORT_LINE_MAX_WORDS = 3
 
 
 # --------------------------------------------------------------------------
@@ -169,7 +181,7 @@ async def _extract_sources(
 class _TextExtractor(HTMLParser):
     """Crude HTML -> text stripper. No bs4: just track tag depth and grab <title>."""
 
-    _SKIP_TAGS = {"script", "style", "noscript"}
+    _SKIP_TAGS = {"script", "style", "noscript", "nav", "header", "footer", "aside", "form", "button", "svg"}
 
     def __init__(self) -> None:
         super().__init__()
@@ -201,7 +213,7 @@ class _TextExtractor(HTMLParser):
                 self._chunks.append(stripped)
 
     def text(self) -> str:
-        return " ".join(self._chunks)
+        return "\n".join(self._chunks)
 
 
 def _html_to_text(raw_html: str) -> tuple[str, str | None]:
@@ -212,6 +224,65 @@ def _html_to_text(raw_html: str) -> tuple[str, str | None]:
         # malformed markup - fall back to whatever was collected before it broke
         pass
     return parser.text(), parser.title
+
+
+_WHITESPACE_RE = re.compile(r"[ \t\r\f\v]+")
+
+
+def _collapse_junk(text: str) -> str:
+    """Collapse whitespace and drop short lines that repeat (classic nav/menu chrome)."""
+    lines = [_WHITESPACE_RE.sub(" ", line).strip() for line in text.splitlines()]
+    lines = [line for line in lines if line]
+    counts: dict[str, int] = {}
+    for line in lines:
+        counts[line] = counts.get(line, 0) + 1
+    kept = [
+        line
+        for line in lines
+        if not (len(line.split()) < _SHORT_LINE_MAX_WORDS and counts[line] > _REPEATED_LINE_MIN_COUNT)
+    ]
+    return "\n".join(kept)
+
+
+def _select_excerpt(text: str, budget: int) -> str:
+    """Fill the excerpt budget head-first, then middle-out on substance-dense windows.
+
+    Nav/chrome tends to sit at the very top of a page, so a small head slice plus the
+    highest-signal windows from the rest of the document is far more likely to carry the
+    actual findings than a straight head truncation.
+    """
+    if len(text) <= budget:
+        return text
+
+    head_budget = int(budget * 0.4)
+    tail_budget = budget - head_budget
+    head = text[:head_budget]
+    rest = text[head_budget:]
+
+    windows = [rest[i : i + _EXCERPT_WINDOW_CHARS] for i in range(0, len(rest), _EXCERPT_WINDOW_CHARS)]
+    if not windows:
+        return head
+
+    scored_order = sorted(
+        range(len(windows)), key=lambda i: len(_SUBSTANCE_RE.findall(windows[i])), reverse=True
+    )
+
+    selected: set[int] = set()
+    used = 0
+    for i in scored_order:
+        w = windows[i]
+        if used + len(w) > tail_budget:
+            continue
+        selected.add(i)
+        used += len(w)
+
+    if not selected:
+        # even the single best window doesn't fit - take a slice of it so we still get signal
+        best = windows[scored_order[0]][:tail_budget]
+        return f"{head}\n[...]\n{best}"
+
+    tail = "".join(windows[i] for i in sorted(selected))
+    return f"{head}\n[...]\n{tail}"
 
 
 async def _fetch_one(client: httpx.AsyncClient, sem: asyncio.Semaphore, source: Source) -> None:
@@ -227,7 +298,7 @@ async def _fetch_one(client: httpx.AsyncClient, sem: asyncio.Semaphore, source: 
             resp.raise_for_status()
             body, title = _html_to_text(resp.text)
             source.fetched_ok = True
-            source.content_excerpt = body[:_EXCERPT_CHARS]
+            source.content_excerpt = _select_excerpt(_collapse_junk(body), _EXCERPT_CHARS)
             if title and not source.title:
                 source.title = title
         except Exception as exc:

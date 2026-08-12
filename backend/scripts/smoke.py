@@ -17,22 +17,35 @@ import sys
 import httpx
 
 BASE = "http://localhost:8000"
-FIXTURE = pathlib.Path(__file__).parent.parent / "examples" / "demo_case.json"
+EXAMPLES = pathlib.Path(__file__).parent.parent / "examples"
 
 # Plausible answers so the auto run produces a realistic Intent.
-CANNED = (
-    "We're deciding this quarter and it affects all 40 staff, so getting it wrong is "
-    "expensive. I need evidence from comparable European knowledge-work firms, not "
-    "press coverage. Anything before 2022 or self-reported by a vendor is useless to me."
+GENERIC = (
+    "I need to defend this result to other people, so accuracy matters more than a clean "
+    "story. Anything unsourced or self-reported by an interested party is useless to me."
 )
+CANNED = {
+    "demo_case": (
+        "We're deciding this quarter and it affects all 40 staff, so getting it wrong is "
+        "expensive. I need evidence from comparable European knowledge-work firms, not "
+        "press coverage. Anything before 2022 or self-reported by a vendor is useless to me."
+    ),
+    "control_case": (
+        "I'm briefing leadership and I would rather say 'we don't know' than overstate. "
+        "Peer-reviewed or primary evidence preferred; I want limitations stated plainly, "
+        "and I do not want call-centre results presented as if they were about engineers."
+    ),
+}
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--interactive", action="store_true")
+    ap.add_argument("--case", default="demo_case", help="fixture name in examples/, without .json")
     args = ap.parse_args()
 
-    case = json.loads(FIXTURE.read_text())
+    case = json.loads((EXAMPLES / f"{args.case}.json").read_text())
+    print(f"=== FIXTURE: {args.case} ===")
     client = httpx.Client(base_url=BASE, timeout=600)
 
     try:
@@ -59,7 +72,7 @@ def main() -> int:
         for q in questions:
             print(f"\nQ: {q['question']}")
             print(f"   why: {q['why_it_matters']}")
-            reply = input("> ").strip() if args.interactive else CANNED
+            reply = input("> ").strip() if args.interactive else CANNED.get(args.case, GENERIC)
             if not args.interactive:
                 print(f"> {reply[:80]}...")
             answers.append({"question_id": q["id"], "answer": reply})
