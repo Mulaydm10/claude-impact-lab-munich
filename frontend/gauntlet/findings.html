@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Glassbox — Findings</title>
+<style>
+  :root{
+    --ink:#0b0d10; --paper:#e8e4dc; --dim:#8d9aa4; --line:#242a31;
+    --gold:#c8a86b; --gold-lt:#e0c58a;
+    --ok:#7f9c6d; --warn:#c8a86b; --bad:#d4695e;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{background:var(--ink)}
+  body{margin:0;min-height:100%;background:var(--ink);color:var(--paper);font-family:var(--sans);
+    -webkit-font-smoothing:antialiased}
+  a{color:var(--gold);text-decoration:none}
+  a:hover{color:var(--gold-lt)}
+  code{font-family:var(--mono);background:rgba(255,255,255,.05);padding:.1em .35em;border:1px solid var(--line)}
+
+  ::selection{background:var(--gold);color:var(--ink)}
+
+  /* ---------- nav ---------- */
+  #nav{position:fixed;top:22px;left:24px;z-index:10;display:flex;gap:18px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+  #nav a{color:var(--dim)}
+  #nav a:hover{color:var(--gold-lt)}
+  #nav .current{color:var(--paper);border-bottom:1px solid var(--gold)}
+
+  /* ---------- header mark, copied from gauntlet #title ---------- */
+  #title{position:fixed;top:22px;right:24px;z-index:10;display:flex;align-items:center;gap:12px;
+    text-align:right;font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--dim)}
+  #title .words{order:-1}
+  #logo{width:34px;height:34px;object-fit:contain;filter:invert(1);opacity:.92;flex:0 0 auto}
+  #title b{display:block;color:var(--paper);font-size:15px;letter-spacing:.34em}
+
+  main{max-width:920px;margin:0 auto;padding:120px 32px 100px}
+
+  /* ---------- reveal / stagger ---------- */
+  .reveal{opacity:0;transform:translateY(26px);
+    transition:opacity .42s cubic-bezier(.16,1,.3,1), transform .42s cubic-bezier(.16,1,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+  .stagger .reveal:nth-child(1){transition-delay:0ms}
+  .stagger .reveal:nth-child(2){transition-delay:90ms}
+  .stagger .reveal:nth-child(3){transition-delay:180ms}
+  .stagger .reveal:nth-child(4){transition-delay:270ms}
+  .stagger .reveal:nth-child(5){transition-delay:360ms}
+  .stagger .reveal:nth-child(6){transition-delay:400ms}
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{transition:none;opacity:1;transform:none}
+  }
+
+  /* ---------- hero ---------- */
+  #hero{margin-bottom:110px}
+  #hero .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;color:var(--gold);text-transform:uppercase}
+  #hero h1{margin:14px 0 0;font-family:var(--sans);font-weight:900;font-size:clamp(40px,6.4vw,88px);
+    letter-spacing:-.01em;line-height:.96;text-transform:uppercase;color:var(--paper)}
+  #hero .rule{height:2px;background:var(--gold);width:120px;margin:26px 0}
+  #hero p{max-width:56ch;font-size:16px;line-height:1.6;color:var(--dim)}
+
+  /* ---------- section scaffolding ---------- */
+  section{margin-bottom:96px}
+  .num{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:#5f6a73;text-transform:uppercase}
+  h2{margin:6px 0 22px;font-family:var(--sans);font-weight:800;font-size:clamp(24px,3vw,34px);
+    letter-spacing:-.01em;text-transform:uppercase;color:var(--paper)}
+  section > p{font-size:16px;line-height:1.7;color:var(--paper);max-width:70ch}
+  section > p + p{margin-top:14px}
+  .lede{font-size:19px;line-height:1.55;color:var(--paper);max-width:62ch}
+  .fine{font-size:13px;line-height:1.6;color:var(--dim);max-width:70ch}
+
+  /* ---------- comparison table ---------- */
+  .tablewrap{overflow-x:auto;border:1px solid var(--line)}
+  table.runs{width:100%;border-collapse:collapse;min-width:640px;font-size:14px}
+  table.runs th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--dim);font-weight:400;padding:14px 16px;border-bottom:1px solid var(--line)}
+  table.runs td{padding:18px 16px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.55}
+  table.runs tr:last-child td{border-bottom:none}
+  table.runs td.case{font-family:var(--mono);font-size:13px;letter-spacing:.06em;color:var(--paper);white-space:nowrap}
+  .score-cell{font-family:var(--mono);white-space:nowrap}
+  .score-cell .counter{font-size:26px;font-weight:700;color:var(--paper)}
+  .score-cell .of{font-size:12px;color:var(--dim);margin-left:2px}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;
+    letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+  .badge.bad{color:var(--bad)}
+  .badge.warn{color:var(--warn)}
+  .badge.ok{color:var(--ok)}
+  .why-cell{color:var(--dim);max-width:34ch}
+  .why-cell b{color:var(--paper);font-weight:600}
+  .foot-note{margin-top:16px;font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--dim);
+    display:flex;flex-wrap:wrap;gap:20px}
+  .foot-note b{color:var(--paper);font-weight:600}
+  .foot-note .counter{color:var(--ok)}
+
+  /* ---------- finding statement ---------- */
+  .statement{border-left:2px solid var(--gold);padding:4px 0 4px 24px;margin:8px 0}
+  .statement p{font-size:22px;line-height:1.5;font-weight:600;color:var(--paper);margin:0;max-width:44ch}
+
+  /* ---------- why box ---------- */
+  .why-box{border:1px solid var(--line);padding:24px 26px;background:rgba(255,255,255,.015)}
+  .why-box .row{display:grid;grid-template-columns:120px 1fr;gap:18px;padding:10px 0;
+    border-top:1px solid var(--line)}
+  .why-box .row:first-child{border-top:none;padding-top:0}
+  .why-box .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;padding-top:2px}
+  .why-box .v{font-size:14.5px;line-height:1.6;color:var(--paper)}
+  .why-box .v code{font-size:12.5px}
+
+  /* ---------- bug cards ---------- */
+  .bugs{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+  .bug{background:var(--ink);padding:26px}
+  .bug .tag{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--bad);margin-bottom:14px}
+  .bug h3{margin:0 0 12px;font-size:17px;font-weight:700;color:var(--paper);line-height:1.4}
+  .bug p{font-size:14px;line-height:1.65;color:var(--dim);margin:0 0 10px}
+  .bug p:last-child{margin-bottom:0}
+  .bug .src{font-family:var(--mono);font-size:11.5px;color:#5f6a73;display:block;margin-top:12px;line-height:1.7}
+  .bug .src b{color:var(--paper)}
+  @media (max-width:1024px){ .bugs{grid-template-columns:1fr} }
+
+  /* ---------- what it got right ---------- */
+  blockquote{margin:22px 0;border-left:2px solid var(--ok);padding:2px 0 2px 24px}
+  blockquote p{margin:0;font-size:20px;line-height:1.55;font-style:italic;color:var(--paper);max-width:52ch}
+  blockquote cite{display:block;margin-top:10px;font-family:var(--mono);font-style:normal;font-size:11px;
+    letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+  .right-stat{display:flex;align-items:baseline;gap:14px;margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
+  .right-stat .counter{font-family:var(--mono);font-size:40px;font-weight:700;color:var(--ok)}
+  .right-stat .lbl{font-size:14.5px;line-height:1.5;color:var(--paper);max-width:44ch}
+
+  /* ---------- next list ---------- */
+  .next-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;
+    border-top:1px solid var(--line)}
+  .next-list li{display:grid;grid-template-columns:32px 1fr;gap:16px;padding:20px 0;border-bottom:1px solid var(--line)}
+  .next-list .g{font-family:var(--mono);color:var(--warn);font-size:14px}
+  .next-list .t{font-size:15px;line-height:1.6;color:var(--paper)}
+  .next-list .t b{display:block;font-weight:700;margin-bottom:3px;text-transform:uppercase;font-size:12.5px;
+    letter-spacing:.08em;color:var(--dim)}
+  .next-list .status{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:#5f6a73;margin-left:8px}
+
+  footer{max-width:920px;margin:0 auto;padding:0 32px 60px;font-family:var(--mono);font-size:11px;
+    letter-spacing:.08em;color:#5f6a73;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+  @media (max-width:1024px){
+    main{padding:150px 20px 80px}
+    #nav{position:absolute;top:20px;left:20px}
+    #title{position:absolute;top:20px;right:20px}
+    .why-box .row{grid-template-columns:1fr}
+    footer{padding:0 20px 50px}
+  }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="./glassbox-gauntlet.html">Gauntlet</a>
+  <a href="./architecture.html">Architecture</a>
+  <span class="current">Findings</span>
+</nav>
+
+<div id="title">
+  <span class="words"><b>GLASSBOX</b>FINDINGS</span>
+  <img id="logo" src="./assets/logo-mark.png" alt="Trustifier team mark">
+</div>
+
+<main>
+
+  <section id="hero">
+    <div class="kicker">Self-test · 12 Aug 2026 · Claude Impact Lab, Munich</div>
+    <h1>What we found<br>testing our own tool</h1>
+    <div class="rule"></div>
+    <p>We ran Glassbox against three research briefs — one rigged, one careful, one a real live
+    agent output — and read the results honestly. Here is where it is wrong.</p>
+  </section>
+
+  <section class="stagger">
+    <div class="reveal num">01 / Three runs, head to head</div>
+    <h2 class="reveal">Same pipeline, three inputs</h2>
+    <div class="reveal tablewrap">
+      <table class="runs">
+        <thead>
+          <tr><th>Case</th><th>Score</th><th>Verdict</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="case">Rigged case</td>
+            <td class="score-cell"><span class="counter" data-target="0">0</span><span class="of">/100</span></td>
+            <td><span class="badge bad">✕ do_not_rely</span></td>
+            <td class="why-cell">Fabricated <code>.example</code> URLs, phantom citations, a
+              <b>“35%”</b> revenue figure that is really <b>~1.4%</b> in the source.</td>
+          </tr>
+          <tr>
+            <td class="case">Control case</td>
+            <td class="score-cell"><span class="counter" data-target="15">0</span><span class="of">/100</span></td>
+            <td><span class="badge bad">✕ do_not_rely</span></td>
+            <td class="why-cell">Careful, hedged research citing real arXiv and NBER sources,
+              stating its own limitations.</td>
+          </tr>
+          <tr>
+            <td class="case">Live agent case</td>
+            <td class="score-cell"><span class="counter" data-target="9">0</span><span class="of">/100</span></td>
+            <td><span class="badge bad">✕ do_not_rely</span></td>
+            <td class="why-cell">Real Claude output with web search, not hand-rigged. 5 claims
+              supported, one source scored 88/100.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="reveal foot-note">
+      <span><b>5</b> <span class="counter" data-target="5">0</span> supported claims in the live-agent run</span>
+      <span><b>Best source</b> <span class="counter" data-target="88">0</span>/100 credibility</span>
+      <span><b>3</b> <span class="counter" data-target="3">0</span> phantom citations caught in the rigged run</span>
+    </div>
+  </section>
+
+  <section class="stagger">
+    <div class="reveal num">02 / The finding</div>
+    <h2 class="reveal">The reasoning discriminates. The verdict band does not.</h2>
+    <div class="reveal statement">
+      <p>All three runs land in the same bottom band — <code>do_not_rely</code> — even though
+      one of them fabricated its sources and the other two did not.</p>
+    </div>
+    <p class="reveal">Read the reasoning inside each run and it clearly tells the cases apart:
+    the rigged case gets torn apart for inventing domains and misquoting a headline; the
+    control case is criticised for citing real, careful, peer-reviewed research that simply
+    doesn't measure the exact population asked about; the live-agent case gets credit for five
+    claims that are faithfully sourced. That distinction is real and it is visible in the text.
+    It just never reaches the score band. A rigged brief and a careful one currently print the
+    same verdict word.</p>
+  </section>
+
+  <section class="stagger">
+    <div class="reveal num">03 / Why</div>
+    <h2 class="reveal">A survey answer becomes an absolute bar</h2>
+    <p class="reveal">The survey stage asks what standard of evidence you want, then compounds
+    that answer into the intent every later stage is judged against. It doesn't stay a
+    preference — it becomes a pass/fail line.</p>
+    <div class="reveal why-box">
+      <div class="row">
+        <div class="k">Told</div>
+        <div class="v">Peer-reviewed preferred. State limitations plainly.</div>
+      </div>
+      <div class="row">
+        <div class="k">Produced</div>
+        <div class="v">An <code>Intent</code> demanding evidence <b>through 2023</b>, with
+          <b>effect sizes for developers specifically</b> — a bar almost no real research
+          clears, including the real arXiv and NBER papers the control case actually cited.</div>
+      </div>
+      <div class="row">
+        <div class="k">Result</div>
+        <div class="v">Glassbox currently reads <b>stricter than an expert human</b>. That's the
+          safer direction to be wrong in — it under-trusts rather than over-trusts. It is still
+          wrong, and the fix is calibration at the intent stage, not the scoring.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stagger">
+    <div class="reveal num">04 / Two bugs we caught by running it</div>
+    <h2 class="reveal">Both found in the live-agent run</h2>
+    <div class="reveal bugs">
+      <div class="bug">
+        <div class="tag">✕ Bug</div>
+        <h3>Hedges get marked UNSUPPORTED</h3>
+        <p>The control case says plainly that its call-centre RCT "should not be transferred
+        without caveat" to software engineers. That sentence <i>is</i> the caution — it needs no
+        citation, it is the researcher being honest. Glassbox scored it unsupported anyway,
+        because no source was found to back a claim that was never a claim.</p>
+        <p>A hedge is an epistemic caution, not an assertion that needs evidence. The pipeline
+        doesn't yet tell the two apart.</p>
+        <span class="src"><b>Source:</b> control_run.txt, claim c3 — "provenance=model,
+        sources=—, reasoning: no sources were available or plausibly relevant to check this
+        claim against."</span>
+      </div>
+      <div class="bug">
+        <div class="tag">✕ Bug</div>
+        <h3>A source it fetched itself got falsely accused</h3>
+        <p>Source s2 in the live-agent run — a METR update dated February 2026 — was fetched
+        successfully, scored <b>72/100</b> credibility with 92 relevance, and categorised
+        <code>primary</code>. Every reviewer pass still flagged it as failing the deal-breaker
+        for unverifiable 2026 publications, treating a source it had itself already retrieved
+        as if it might not exist.</p>
+        <p>The cause is a recency cap the survey stage invented — mid-2025 — that the run itself
+        crossed. The tool contradicted its own fetch.</p>
+        <span class="src"><b>Source:</b> live_agent_run.txt, source s2
+        (metr.org/blog/2026-02-24-uplift-update) and claim c3 review notes.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="stagger">
+    <div class="reveal num">05 / What it got right</div>
+    <h2 class="reveal">The second reviewer does its job</h2>
+    <blockquote class="reveal">
+      <p>"The internal review was far too lenient."</p>
+      <cite>— second reviewer, on the first pass's grading</cite>
+    </blockquote>
+    <p class="reveal">The two-reviewer disagreement design works. The second reviewer, briefed
+    to distrust the first one's leniency, caught exactly that — the first pass had let claims
+    resting on a truncated, advocacy-run source through as "partial" when almost nothing in the
+    excerpt had actually been read yet.</p>
+    <div class="reveal right-stat">
+      <span class="counter" data-target="3">0</span>
+      <span class="lbl">phantom citations the pipeline extracted from the research prose
+      itself — assertions like "several sources report… 40%" that referenced nothing in the
+      six sources it was actually given.</span>
+    </div>
+  </section>
+
+  <section class="stagger">
+    <div class="reveal num">06 / What's next</div>
+    <h2 class="reveal">Three fixes, ranked by how much they'd move the score</h2>
+    <ul class="next-list">
+      <li class="reveal">
+        <span class="g">△</span>
+        <span class="t"><b>Hedge vs. claim</b>Teach the claim-checker to recognise a stated
+        limitation as caution, not an assertion needing its own citation.</span>
+      </li>
+      <li class="reveal">
+        <span class="g">△</span>
+        <span class="t"><b>Calibrate the intent stage</b>Stop compounding a user's stated
+        preference into an absolute bar. "Peer-reviewed preferred" should not become "nothing
+        else counts."</span>
+      </li>
+      <li class="reveal">
+        <span class="g">△</span>
+        <span class="t"><b>Delayed outcome loop</b>Rate the recommendation against reality
+        months later, and feed that back. Designed, not built.
+        <span class="status">Not built</span></span>
+      </li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <span>GLASSBOX</span>
+  <span>Trust, but check · Claude Impact Lab, Munich</span>
+</footer>
+
+<script>
+(function(){
+  var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  var reveals = document.querySelectorAll('.reveal');
+  if(reduceMotion || !('IntersectionObserver' in window)){
+    reveals.forEach(function(el){ el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, {threshold:.15, rootMargin:'0px 0px -8% 0px'});
+    reveals.forEach(function(el){ io.observe(el); });
+  }
+
+  function runCounter(el){
+    var target = parseFloat(el.getAttribute('data-target'));
+    if(isNaN(target)) return;
+    if(reduceMotion){ el.textContent = target; return; }
+    var dur = 1100, start = null;
+    function step(ts){
+      if(start === null) start = ts;
+      var p = Math.min(1, (ts - start) / dur);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(eased * target);
+      if(p < 1) requestAnimationFrame(step);
+      else el.textContent = target;
+    }
+    requestAnimationFrame(step);
+  }
+
+  var counters = document.querySelectorAll('.counter');
+  if(reduceMotion || !('IntersectionObserver' in window)){
+    counters.forEach(function(el){ el.textContent = el.getAttribute('data-target'); });
+  } else {
+    var cio = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          runCounter(entry.target);
+          cio.unobserve(entry.target);
+        }
+      });
+    }, {threshold:.6});
+    counters.forEach(function(el){ cio.observe(el); });
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Glassbox — Gauntlet</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/three.module.js",
+    "three/addons/controls/OrbitControls.js": "./vendor/three/addons/controls/OrbitControls.js",
+    "three/addons/exporters/OBJExporter.js": "./vendor/three/addons/exporters/OBJExporter.js",
+    "three/addons/exporters/GLTFExporter.js": "./vendor/three/addons/exporters/GLTFExporter.js"
+  }
+}
+</script>
+<style>
+  :root{
+    --ink:#0b0d10; --paper:#e8e4dc; --dim:#8d9aa4; --line:#242a31;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--ink);color:var(--paper);font-family:var(--sans);overflow:hidden}
+  a{color:#c8a86b} a:hover{color:#e0c58a}
+  canvas#stage{position:fixed;inset:0;width:100%;height:100%;display:block;transition:filter .1s linear}
+
+  .hud{position:fixed;inset:0;pointer-events:none;z-index:2}
+  .hud > *{pointer-events:auto}
+
+  /* ---------- cross-page nav (matches architecture.html / findings.html) ---------- */
+  #nav{position:fixed;top:0;left:0;z-index:60;display:flex;
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    background:rgba(11,13,16,.86);backdrop-filter:blur(6px);
+    border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+  #nav a{display:block;padding:12px 18px;color:var(--dim);text-decoration:none;
+    border-right:1px solid var(--line);transition:color .2s,background .2s}
+  #nav a:last-child{border-right:none}
+  #nav a:hover{color:var(--paper);background:rgba(255,255,255,.04)}
+  #nav a.current{color:var(--paper);border-bottom:2px solid #c8a86b;background:rgba(200,168,107,.06)}
+  #meta{position:absolute;top:70px;left:24px;display:flex;flex-direction:column;gap:3px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;max-width:300px}
+  #meta b{font-size:13px;letter-spacing:.14em}
+  #meta span{color:var(--dim)}
+  #meta em{color:#5f6a73;font-style:normal;text-transform:none;letter-spacing:0;font-size:10px;line-height:1.45;margin-top:6px}
+  #meta em.bad{color:#d4695e}
+
+  #title{position:absolute;top:22px;right:24px;display:flex;align-items:center;gap:12px;text-align:right;font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--dim)}
+  #title .words{order:-1}
+  /* the team mark is dark ink on transparent — invert so it reads on the dark ground */
+  #logo{width:34px;height:34px;object-fit:contain;filter:invert(1);opacity:.92;flex:0 0 auto}
+  #title b{display:block;color:var(--paper);font-size:15px;letter-spacing:.34em}
+  #clock{color:#5f6a73}
+
+  #banner{position:absolute;top:74px;left:50%;transform:translate(-50%,-14px);opacity:0;transition:opacity .25s,transform .25s;
+    display:flex;gap:14px;align-items:baseline;font-family:var(--mono);background:rgba(11,13,16,.82);border:1px solid var(--line);padding:9px 16px}
+  #banner.in{opacity:1;transform:translate(-50%,0)}
+  #banner .k{font-size:15px;letter-spacing:.22em}
+  #banner .v{font-size:12px;letter-spacing:.1em}
+
+  #callouts{position:absolute;top:0;left:0;width:340px;display:flex;flex-direction:column;gap:8px;will-change:transform}
+  .callout{border-left:3px solid var(--c);background:rgba(13,16,20,.9);padding:9px 12px;display:flex;gap:10px;
+    opacity:0;transform:translateX(-10px);transition:opacity .3s,transform .3s}
+  .callout.in{opacity:1;transform:none}
+  .callout .glyph{color:var(--c);font-family:var(--mono);font-size:13px;line-height:1.35}
+  .callout .body{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .callout b{font-size:12.5px;font-weight:600;line-height:1.35}
+  .callout i{font-style:normal;font-size:11px;line-height:1.4;color:var(--dim)}
+
+  #ticks{position:absolute;left:24px;bottom:76px;display:flex;flex-direction:column;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.12em}
+  .tick{display:flex;gap:9px;align-items:center;color:#4b545c;transition:color .3s}
+  .tick.hit{color:var(--paper)}
+  .tick .g{width:12px;text-align:center;color:inherit}
+  .tick.hit .g{color:var(--c)}
+
+  #controls{position:absolute;left:24px;bottom:24px;display:flex;gap:10px}
+  button{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--paper);
+    background:transparent;border:1px solid var(--line);padding:9px 15px;cursor:pointer;transition:border-color .2s,background .2s}
+  button:hover{border-color:#4c5661;background:rgba(255,255,255,.04)}
+
+  #verdictPanel{position:absolute;right:24px;bottom:24px;width:min(460px,42vw);max-height:calc(100vh - 120px);overflow:auto;
+    background:rgba(10,12,15,.92);
+    border:1px solid var(--line);padding:20px;opacity:0;transform:translateY(12px);transition:opacity .5s,transform .5s;z-index:4}
+  #verdictPanel.in{opacity:1;transform:none}
+  .vhead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:12px}
+  .score b{font-size:40px;font-weight:700;letter-spacing:-.02em}
+  .score span{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;margin-left:8px}
+  .vhead .meta{font-family:var(--mono);font-size:10px;color:#5f6a73;letter-spacing:.08em;text-align:right}
+  .breakdown{display:flex;flex-direction:column;gap:7px}
+  .breakdown .row{display:grid;grid-template-columns:14px 116px 74px 1fr;gap:9px;align-items:baseline;font-size:11px}
+  .breakdown .g{font-family:var(--mono)}
+  .breakdown .n{font-family:var(--mono);font-size:10px;letter-spacing:.1em}
+  .breakdown .c{font-family:var(--mono);font-size:10px;color:var(--dim)}
+  .breakdown .d{color:var(--dim);line-height:1.4;text-wrap:pretty;overflow:hidden}
+  .summary{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line);font-size:12px;line-height:1.55;color:var(--dim);text-wrap:pretty}
+  @media (max-height:720px){ .summary{display:none} .breakdown .row{grid-template-columns:14px 104px 1fr;gap:8px} .breakdown .d{display:none} }
+
+  #slam{position:absolute;inset:0 min(500px,44vw) 16vh 0;display:grid;place-content:center;text-align:center;background:rgba(6,7,9,.55);
+    opacity:0;transition:opacity .18s;z-index:5;pointer-events:none}
+  #slam.in{opacity:1;animation:slamIn .5s cubic-bezier(.16,1,.3,1)}
+  #slam h1{margin:0;font-family:var(--sans);font-weight:900;font-size:clamp(44px,7.5vw,132px);letter-spacing:.02em;
+    color:#c8342c;text-transform:uppercase;line-height:.9;text-shadow:0 0 42px rgba(200,52,44,.35)}
+  #slam .rule{height:6px;background:#c8342c;margin:22px auto 0;width:min(48vw,620px)}
+  #slam p{margin:16px 0 0;font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:#b8837e;text-transform:uppercase}
+  @keyframes slamIn{from{transform:scale(1.22);opacity:0}to{transform:scale(1);opacity:1}}
+
+  #pass{position:absolute;inset:0 min(500px,44vw) 16vh 0;display:grid;place-content:center;text-align:center;opacity:0;
+    transition:opacity .4s;z-index:5;pointer-events:none}
+  #pass.in{opacity:1}
+  #pass h1{margin:0;font-family:var(--sans);font-weight:900;font-size:clamp(38px,6vw,96px);letter-spacing:.02em;
+    color:#efece5;text-transform:uppercase;line-height:.9;animation:passIn .9s cubic-bezier(.16,1,.3,1) both}
+  #pass .rule{height:4px;background:#c8a86b;margin:20px auto 0;width:0;animation:sweep .8s .25s cubic-bezier(.16,1,.3,1) forwards}  #pass p{margin:14px 0 0;font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:#9aa2aa;text-transform:uppercase;
+    animation:passIn .7s .35s cubic-bezier(.16,1,.3,1) both}
+  @keyframes passIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  @keyframes sweep{from{width:0}to{width:min(44vw,520px)}}
+
+  #drop{position:absolute;inset:0;display:grid;place-content:center;background:rgba(8,10,13,.86);opacity:0;pointer-events:none;
+    transition:opacity .2s;font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--paper);text-transform:uppercase;z-index:9}
+  #drop.in{opacity:1}
+</style>
+</head>
+<body>
+<nav id="nav">
+  <a href="./glassbox-gauntlet.html" class="current">GAUNTLET</a>
+  <a href="./architecture.html">ARCHITECTURE</a>
+  <a href="./findings.html">FINDINGS</a>
+</nav>
+
+<canvas id="stage"></canvas>
+
+<div class="hud">
+  <div id="meta"></div>
+  <div id="title"><span class="words"><b>GLASSBOX</b>GAUNTLET · <span id="clock">0.0s</span></span><img id="logo" src="./assets/logo-mark.png" alt="Trustifier team mark"></div>
+  <div id="banner"></div>
+  <div id="callouts"></div>
+  <div id="ticks"></div>
+  <div id="controls">
+    <button id="replay">Replay ⟲</button>
+    <button id="skip">Skip to verdict ⤓</button>
+  </div>
+  <div id="verdictPanel"></div>
+  <div id="slam">
+    <h1>Discredited</h1>
+    <div class="rule"></div>
+    <p>Do not rely</p>
+  </div>
+  <div id="pass">
+    <h1 id="passWord">Check flagged</h1>
+    <div class="rule"></div>
+    <p id="passSub">Crossed the line</p>
+  </div>
+  <div id="drop">Drop a FullReport JSON to run it</div>
+</div>
+
+<div id="live-panel"></div>
+
+<script type="module" src="./scene.js"></script>
+<script type="module" src="./live.js"></script>
+</body>
+</html>

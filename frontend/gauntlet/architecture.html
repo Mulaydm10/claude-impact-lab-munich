@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Glassbox — Architecture</title>
+<style>
+  :root{
+    --ink:#0b0d10; --paper:#e8e4dc; --dim:#8d9aa4; --line:#242a31;
+    --gold:#c8a86b; --gold2:#e0c58a;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;min-height:100%;background:var(--ink);color:var(--paper);font-family:var(--sans);
+    -webkit-font-smoothing:antialiased}
+  a{color:var(--gold)} a:hover{color:var(--gold2)}
+
+  /* ---------- nav ---------- */
+  #nav{position:fixed;top:0;left:0;z-index:20;display:flex;gap:0;
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    background:rgba(11,13,16,.86);backdrop-filter:blur(6px);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+  #nav a{display:block;padding:12px 18px;color:var(--dim);text-decoration:none;border-right:1px solid var(--line);
+    transition:color .2s,background .2s}
+  #nav a:last-child{border-right:none}
+  #nav a:hover{color:var(--paper);background:rgba(255,255,255,.04)}
+  #nav a.current{color:var(--paper);border-bottom:2px solid var(--gold);background:rgba(200,168,107,.06)}
+
+  /* ---------- header ---------- */
+  header{padding:120px 24px 60px;max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;
+    align-items:flex-start;gap:24px;flex-wrap:wrap}
+  #title{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--dim)}
+  #logo{width:40px;height:40px;object-fit:contain;filter:invert(1);opacity:.92;flex:0 0 auto}
+  #title b{display:block;color:var(--paper);font-size:17px;letter-spacing:.34em}
+  #title span{display:block;margin-top:4px}
+  #kicker{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--dim);text-transform:uppercase;text-align:right}
+
+  main{max-width:1180px;margin:0 auto;padding:0 24px 140px}
+
+  section{padding:70px 0;border-top:1px solid var(--line)}
+  section:first-of-type{border-top:none}
+
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .45s cubic-bezier(.16,1,.3,1),transform .45s cubic-bezier(.16,1,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin:0 0 18px}
+  h1{font-family:var(--sans);font-weight:900;font-size:clamp(30px,4.2vw,54px);line-height:1.08;letter-spacing:-.01em;margin:0 0 20px;max-width:20ch}
+  h2{font-family:var(--mono);font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--paper);margin:0 0 28px}
+  p{line-height:1.6;color:var(--dim);max-width:70ch;font-size:15px}
+  p.lede{color:var(--paper);font-size:17px;line-height:1.55;max-width:56ch}
+
+  /* ---------- thesis ---------- */
+  .thesis-line{font-family:var(--sans);font-weight:900;font-size:clamp(26px,3.6vw,46px);line-height:1.18;
+    max-width:18ch;color:var(--paper);margin:0 0 44px;letter-spacing:-.01em}
+  .thesis-line em{font-style:normal;color:var(--gold)}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+  .split > div{background:var(--ink);padding:28px 30px}
+  .split h3{font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;margin:0 0 12px;color:var(--gold)}
+  .split p{margin:0 0 10px;font-size:14px}
+  .split .q{color:var(--paper);font-size:16px;font-style:italic;margin:0 0 14px;line-height:1.5}
+  .split .note{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:#5f6a73;text-transform:uppercase;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+
+  /* ---------- cascade ---------- */
+  .cascade-wrap{border:1px solid var(--line);background:rgba(255,255,255,.015);padding:20px 10px 10px}
+  svg#cascade{width:100%;height:auto;display:block}
+  .node-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;fill:var(--dim)}
+  .node-label.on{fill:var(--paper)}
+  .node-sub{font-family:var(--mono);font-size:7.5px;letter-spacing:.03em;fill:#5f6a73}
+  .node-circle{fill:var(--ink);stroke:var(--line);stroke-width:1.5;transition:stroke .3s,fill .3s}
+  .node-circle.human{stroke:var(--gold);stroke-width:2}
+  .cascade-legend{display:flex;gap:26px;flex-wrap:wrap;padding:14px 8px 4px;font-family:var(--mono);font-size:10px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+  .cascade-legend .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:middle}
+
+  @keyframes flow{ to { stroke-dashoffset: -1000; } }
+  .flowline{fill:none;stroke:var(--line);stroke-width:1.5}
+  .pulse-path{fill:none;stroke:var(--gold);stroke-width:2.5;stroke-linecap:round;
+    stroke-dasharray:14 986; stroke-dashoffset:0; animation:flow 8s linear infinite;
+    filter:drop-shadow(0 0 4px rgba(200,168,107,.7))}
+  .pulse-path.branch{animation-duration:3.4s}
+  @media (prefers-reduced-motion: reduce){
+    .pulse-path{animation:none;stroke-dasharray:none;opacity:.85}
+  }
+
+  /* node light-up, timed roughly to the pulse's 8s loop */
+  @keyframes lightNode{ 0%,4%{fill:var(--ink)} 6%,96%{fill:rgba(200,168,107,.16)} 98%,100%{fill:var(--ink)} }
+
+  /* ---------- formula ---------- */
+  .formula{font-family:var(--mono);font-size:clamp(12px,1.6vw,15px);line-height:2;background:rgba(255,255,255,.02);
+    border:1px solid var(--line);padding:26px 28px;color:var(--paper);white-space:pre;overflow-x:auto;margin:0 0 30px}
+  .formula .k{color:var(--gold)}
+  .formula .c{color:#5f6a73}
+  .proof{display:flex;gap:1px;background:var(--line);border:1px solid var(--line);max-width:560px}
+  .proof > div{flex:1;background:var(--ink);padding:22px 24px;text-align:center}
+  .proof .num{font-family:var(--sans);font-weight:900;font-size:44px;letter-spacing:-.02em}
+  .proof .num.lo{color:#d4695e}
+  .proof .num.hi{color:var(--gold)}
+  .proof .cap{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-top:8px}
+
+  /* ---------- verdicts ---------- */
+  .verdicts{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+  .vcard{background:var(--ink);padding:22px 18px}
+  .vcard .g{font-family:var(--mono);font-size:18px;margin-bottom:10px}
+  .vcard b{display:block;font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;margin-bottom:8px}
+  .vcard p{font-size:12.5px;line-height:1.5;margin:0;color:var(--dim)}
+  .vcard.supported .g{color:#5fa66e}
+  .vcard.partial .g{color:var(--gold)}
+  .vcard.unsupported .g{color:#8d9aa4}
+  .vcard.contradicted .g{color:#d4695e}
+  .model-callout{margin-top:24px;border-left:3px solid #d4695e;background:rgba(212,105,94,.06);padding:16px 20px;max-width:70ch}
+  .model-callout b{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:#d4695e;text-transform:uppercase}
+  .model-callout p{margin:8px 0 0;font-size:13.5px}
+
+  /* ---------- reviewers ---------- */
+  .reviewers{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+  .reviewers > div{background:var(--ink);padding:26px 28px}
+  .reviewers h3{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--paper);margin:0 0 12px}
+  .reviewers h3 span{color:var(--gold)}
+  .quote{margin:20px 0 0;border-left:2px solid var(--gold);padding-left:16px;font-style:italic;color:var(--paper);font-size:15px;line-height:1.5}
+  .quote cite{display:block;margin-top:8px;font-style:normal;font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+    text-transform:uppercase;color:#5f6a73}
+
+  /* ---------- stack ---------- */
+  .stackstrip{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line)}
+  .stackstrip span{font-family:var(--mono);font-size:12px;letter-spacing:.12em;padding:14px 22px;border-right:1px solid var(--line);color:var(--paper)}
+  .stackstrip span:last-child{border-right:none}
+
+  footer{padding:40px 24px 60px;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:#5f6a73}
+
+  @media (max-width:1024px){
+    .split{grid-template-columns:1fr}
+    .verdicts{grid-template-columns:1fr 1fr}
+    .reviewers{grid-template-columns:1fr}
+    .proof{max-width:100%}
+    header{padding-top:100px}
+  }
+  @media (max-width:640px){
+    .verdicts{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="./glassbox-gauntlet.html">GAUNTLET</a>
+  <a href="./architecture.html" class="current">ARCHITECTURE</a>
+  <a href="./findings.html">FINDINGS</a>
+</nav>
+
+<header>
+  <div id="title">
+    <img id="logo" src="./assets/logo-mark.png" alt="Trustifier team mark">
+    <span><b>GLASSBOX</b><span>How it actually works</span></span>
+  </div>
+  <div id="kicker">Track: verify<br>Trust, but check</div>
+</header>
+
+<main>
+
+  <!-- 1. THESIS -->
+  <section class="reveal" id="thesis">
+    <p class="eyebrow">01 · The thesis</p>
+    <p class="thesis-line">A credible source proves nothing if the <em>research misused it.</em></p>
+    <div class="split">
+      <div>
+        <h3>Credibility</h3>
+        <p class="q">"Is this evidence any good?"</p>
+        <p>Score 0–100 per source, with concrete reasons and red flags. This is the question almost every fact-checking
+        tool already answers.</p>
+        <p class="note">scoring.py</p>
+      </div>
+      <div>
+        <h3>Provenance</h3>
+        <p class="q">"Did the research report it honestly?"</p>
+        <p>Per claim: does a source actually say this, or was it generalised, invented, or stretched past what the
+        evidence supports? Most tools are blind to this entirely.</p>
+        <p class="note">claims.py</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. CASCADE -->
+  <section class="reveal" id="cascade-section">
+    <p class="eyebrow">02 · The cascade</p>
+    <h2>Eight stages, one state machine</h2>
+    <p style="margin-bottom:26px">Every research submission moves through a strict pipeline. Each transition is
+    written to a per-session event log — the same log that drives the live SSE stream and the audit trail after
+    the fact.</p>
+
+    <div class="cascade-wrap">
+      <svg id="cascade" viewBox="0 0 1180 260" preserveAspectRatio="xMidYMid meet" role="img"
+           aria-label="Pipeline diagram: INTAKE leads to INTENT_CONFIRM, SOURCE_SCOUTING, SOURCE_RATING (human checkpoint), then VERIFYING which fans out into a credibility loop and a claim provenance check, rejoining at REVIEW, then USER_EVALUATION.">
+
+        <!-- main spine path (for reference / accessibility; visual line drawn as segments below) -->
+        <!-- baseline connectors -->
+        <path class="flowline" d="M60,130 H190" />
+        <path class="flowline" d="M250,130 H380" />
+        <path class="flowline" d="M440,130 H570" />
+        <path class="flowline" d="M630,130 H700" />
+        <!-- fan out -->
+        <path class="flowline" d="M700,130 C 740,130 750,70 790,70 H 900" />
+        <path class="flowline" d="M700,130 C 740,130 750,190 790,190 H 900" />
+        <!-- rejoin -->
+        <path class="flowline" d="M900,70 C 950,70 960,130 1000,130" />
+        <path class="flowline" d="M900,190 C 950,190 960,130 1000,130" />
+        <path class="flowline" d="M1000,130 H1120" />
+
+        <!-- animated pulse: main run, INTAKE -> VERIFYING -->
+        <path class="pulse-path" d="M60,130 H190 H250 H380 H440 H570 H630 H700" pathLength="1000" />
+        <!-- animated pulse: branch A (credibility loop) -->
+        <path class="pulse-path branch" d="M700,130 C 740,130 750,70 790,70 H 900 C 950,70 960,130 1000,130" pathLength="1000" style="animation-delay:0s" />
+        <!-- animated pulse: branch B (claim provenance) -->
+        <path class="pulse-path branch" d="M700,130 C 740,130 750,190 790,190 H 900 C 950,190 960,130 1000,130" pathLength="1000" style="animation-delay:.15s" />
+        <!-- animated pulse: tail, REVIEW -> USER_EVALUATION -->
+        <path class="pulse-path" d="M1000,130 H1120" pathLength="1000" style="animation-delay:0s" />
+
+        <!-- nodes -->
+        <!-- 1 INTAKE -->
+        <circle class="node-circle" cx="30" cy="130" r="22" style="animation:lightNode 8s linear infinite; animation-delay:0s"/>
+        <text class="node-label on" x="30" y="168" text-anchor="middle">INTAKE</text>
+        <text class="node-sub" x="30" y="180" text-anchor="middle">research + sources in</text>
+
+        <!-- 2 INTENT_CONFIRM -->
+        <circle class="node-circle" cx="220" cy="130" r="22" style="animation:lightNode 8s linear infinite; animation-delay:.9s"/>
+        <text class="node-label" x="220" y="168" text-anchor="middle">INTENT_CONFIRM</text>
+        <text class="node-sub" x="220" y="180" text-anchor="middle">what did you actually ask?</text>
+
+        <!-- 3 SOURCE_SCOUTING -->
+        <circle class="node-circle" cx="410" cy="130" r="22" style="animation:lightNode 8s linear infinite; animation-delay:1.9s"/>
+        <text class="node-label" x="410" y="168" text-anchor="middle">SOURCE_SCOUTING</text>
+        <text class="node-sub" x="410" y="180" text-anchor="middle">supplied · extracted · fetched</text>
+
+        <!-- 4 SOURCE_RATING (human checkpoint) -->
+        <circle class="node-circle human" cx="600" cy="130" r="26" style="animation:lightNode 8s linear infinite; animation-delay:2.9s"/>
+        <text class="node-label on" x="600" y="172" text-anchor="middle">SOURCE_RATING</text>
+        <text class="node-sub" x="600" y="184" text-anchor="middle" style="fill:var(--gold)">human checkpoint</text>
+
+        <!-- 5 VERIFYING -->
+        <circle class="node-circle" cx="740" cy="130" r="22" style="animation:lightNode 8s linear infinite; animation-delay:3.7s"/>
+        <text class="node-label" x="740" y="112" text-anchor="middle">VERIFYING</text>
+
+        <!-- branch A: credibility -->
+        <circle class="node-circle" cx="845" cy="70" r="18" style="animation:lightNode 8s linear infinite; animation-delay:4.1s"/>
+        <text class="node-sub" x="845" y="40" text-anchor="middle">CREDIBILITY LOOP</text>
+        <text class="node-sub" x="845" y="52" text-anchor="middle">per-source score</text>
+
+        <!-- branch B: provenance -->
+        <circle class="node-circle" cx="845" cy="190" r="18" style="animation:lightNode 8s linear infinite; animation-delay:4.25s"/>
+        <text class="node-sub" x="845" y="222" text-anchor="middle">CLAIM PROVENANCE</text>
+        <text class="node-sub" x="845" y="234" text-anchor="middle">per-claim support</text>
+
+        <!-- 6 REPORT_READY / REVIEW -->
+        <circle class="node-circle" cx="1020" cy="130" r="22" style="animation:lightNode 8s linear infinite; animation-delay:4.9s"/>
+        <text class="node-label" x="1020" y="112" text-anchor="middle">REVIEW</text>
+        <text class="node-sub" x="1020" y="168" text-anchor="middle">REPORT_READY</text>
+        <text class="node-sub" x="1020" y="180" text-anchor="middle">two reviewers</text>
+
+        <!-- 7 USER_EVALUATION -->
+        <circle class="node-circle" cx="1150" cy="130" r="22" style="animation:lightNode 8s linear infinite; animation-delay:6s"/>
+        <text class="node-label" x="1150" y="168" text-anchor="middle" style="font-size:8.6px">USER_EVALUATION</text>
+        <text class="node-sub" x="1150" y="180" text-anchor="middle">verdict, working shown</text>
+      </svg>
+    </div>
+    <div class="cascade-legend">
+      <span><span class="dot" style="background:var(--gold)"></span>human checkpoint — excluded sources never reach downstream stages</span>
+      <span><span class="dot" style="background:#8d9aa4"></span>VERIFYING fans out into two independent checks, rejoining at REVIEW</span>
+    </div>
+  </section>
+
+  <!-- 3. FORMULA -->
+  <section class="reveal" id="formula-section">
+    <p class="eyebrow">03 · The scoring formula</p>
+    <h2>Computed in Python, not by the model</h2>
+    <div class="formula"><span class="c">weight_i</span>  = max(<span class="k">relevance_to_intent_i</span>, 5)
+<span class="c">base</span>      = sum(score_i * weight_i) / sum(weight_i)
+<span class="c">penalty</span>   = share of sources unreachable or uncategorised
+<span class="k">overall</span>   = clamp(base - penalty * 40, 0, 100)</div>
+    <p class="lede">Relevance-weighting is the point. A weak source that answers your actual question should hurt
+    far more than a weak source that is off-topic — otherwise a pile of irrelevant-but-decent citations can drown
+    out the one bad source that actually matters.</p>
+    <div class="proof">
+      <div>
+        <div class="num lo">27</div>
+        <div class="cap">same weak source · relevant</div>
+      </div>
+      <div>
+        <div class="num hi">83</div>
+        <div class="cap">same weak source · off-topic</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. CLAIM VERDICTS -->
+  <section class="reveal" id="verdicts-section">
+    <p class="eyebrow">04 · The four claim verdicts</p>
+    <h2>Every load-bearing claim, checked against the actual fetched source</h2>
+    <div class="verdicts">
+      <div class="vcard supported">
+        <div class="g">●</div>
+        <b>SUPPORTED</b>
+        <p>A source directly states this.</p>
+      </div>
+      <div class="vcard partial">
+        <div class="g">◐</div>
+        <b>PARTIAL</b>
+        <p>Related but weaker or narrower than the claim actually made.</p>
+      </div>
+      <div class="vcard unsupported">
+        <div class="g">○</div>
+        <b>UNSUPPORTED</b>
+        <p>Nothing in the sources backs it.</p>
+      </div>
+      <div class="vcard contradicted">
+        <div class="g">✕</div>
+        <b>CONTRADICTED</b>
+        <p>A source says the opposite.</p>
+      </div>
+    </div>
+    <div class="model-callout">
+      <b>Provenance: model</b>
+      <p>Claims the model introduced with nothing behind them are marked <strong>MODEL</strong> provenance rather
+      than passed off as fact. That pairing — invented, and unsupported — is the headline finding, and gets the
+      loudest treatment in the UI.</p>
+    </div>
+  </section>
+
+  <!-- 5. REVIEWERS -->
+  <section class="reveal" id="reviewers-section">
+    <p class="eyebrow">05 · The two reviewers</p>
+    <h2>A second opinion, deliberately adversarial</h2>
+    <div class="reviewers">
+      <div>
+        <h3>Internal <span>reviewer</span></h3>
+        <p>Runs the adversarial re-check stance against every claim: refuses "merely discusses the topic" as
+        support, and downgrades SUPPORTED to PARTIAL wherever a claim generalises beyond its source's scope.</p>
+      </div>
+      <div>
+        <h3>Second <span>anchor</span></h3>
+        <p>A genuinely different system prompt — framed as an outside auditor, explicitly told to distrust the
+        first reviewer's leniency. Disagreements between the two are computed deterministically and ranked by
+        severity: supported-vs-contradicted outranks supported-vs-partial.</p>
+      </div>
+    </div>
+    <div class="quote">
+      "The internal review was far too lenient."
+      <cite>Real quote, live run — second anchor on the internal reviewer</cite>
+    </div>
+  </section>
+
+  <!-- 6. STACK -->
+  <section class="reveal" id="stack-section">
+    <p class="eyebrow">06 · Stack</p>
+    <div class="stackstrip">
+      <span>Python 3.14</span>
+      <span>FastAPI</span>
+      <span>Anthropic SDK</span>
+      <span>httpx</span>
+      <span>pydantic v2</span>
+      <span>Three.js frontend</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>Glassbox · verify track · would you sign off without re-reading every line?</footer>
+
+<script>
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sections = document.querySelectorAll('.reveal');
+  if (reduced || !('IntersectionObserver' in window)) {
+    sections.forEach(function(s){ s.classList.add('in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry, i){
+      if (entry.isIntersecting) {
+        var el = entry.target;
+        var delay = Array.prototype.indexOf.call(sections, el) * 60;
+        setTimeout(function(){ el.classList.add('in'); }, delay % 240);
+        io.unobserve(el);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  sections.forEach(function(s){ io.observe(s); });
+})();
+</script>
+
+</body>
+</html>
