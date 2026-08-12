@@ -1,0 +1,16 @@
+{
+  "_comment": "Demo fixture for the 15:15 pitch. Deliberately mixed quality: one dead link, one vendor selling the thing it is cited for, one forum post, one genuine primary source. The research text also makes a confident claim its own sources do not support.",
+
+  "original_prompt": "Research whether switching our team to a 4-day work week would hurt productivity. We're a 40-person software company in Bavaria.",
+
+  "research_output": "Moving to a four-day week is now well established as productivity-neutral or positive. The landmark UK pilot found that 92% of participating companies chose to continue after the trial, and revenue rose 35% on average across participants. Industry analysis confirms that knowledge-work output is unaffected by the reduction in hours, and several sources report that developer productivity in particular increases by roughly 40% once meeting load is cut. German employers have been slower to adopt, though Bavarian mid-size firms report strong employee interest. Overall the evidence base is considered robust and there is broad consensus among researchers that the model works across sectors.",
+
+  "sources": [
+    "https://www.autonomy.work/portfolio/uk4dwpilotresults/",
+    "https://fourdayweek-productivity-institute.example.com/whitepaper-2025",
+    "https://www.reddit.com/r/germany/comments/4daywoche_erfahrungen/",
+    "https://www.destatis.de/EN/Themes/Labour/Labour-Market/_node.html",
+    "According to a 2019 Microsoft Japan press release, productivity rose 40% during their trial.",
+    "https://this-domain-does-not-resolve-4dw.example/report.pdf"
+  ]
+}
