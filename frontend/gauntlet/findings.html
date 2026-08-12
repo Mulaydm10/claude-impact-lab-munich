@@ -318,10 +318,16 @@
         limitation as caution, not an assertion needing its own citation.</span>
       </li>
       <li class="reveal">
-        <span class="g">△</span>
-        <span class="t"><b>Calibrate the intent stage</b>Stop compounding a user's stated
+        <span class="g" style="color:#7f9c6d">✓</span>
+        <span class="t"><b>Calibrate the intent stage <span style="font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:#7f9c6d;border:1px solid #7f9c6d;padding:2px 7px;margin-left:8px;vertical-align:2px">FIXED &middot; 12 AUG</span></b>Stop compounding a user's stated
         preference into an absolute bar. "Peer-reviewed preferred" should not become "nothing
-        else counts."</span>
+        else counts." <em style="color:var(--paper)">Landed during the lab:</em> the intent stage
+        no longer converts a vague or non-responsive answer &mdash; including to its own follow-up
+        question &mdash; into a deal-breaker the user never stated. Scoring now also weights each
+        source by the scorer's own confidence, and stops treating a prose citation with no URL as
+        a broken link. Measured on a fresh fixture: <b>17 &rarr; 55</b>, verdict
+        <code>do_not_rely</code> &rarr; <code>check_flagged</code> &mdash; the first time the
+        headline band moved, not just the reasoning.</span>
       </li>
       <li class="reveal">
         <span class="g">△</span>
