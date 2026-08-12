@@ -30,28 +30,127 @@ So Glassbox runs both checks:
 
 ## The cascade
 
-```
-INTAKE            POST /api/start          interviewer grills you on what you actually asked
-   |
-INTENT_CONFIRM    POST /api/answer         loops until the intent is settled
-   |
-SOURCE_SCOUTING   POST /api/scout          sources found 3 ways, then categorised
-   |
-SOURCE_RATING     POST /api/rate-sources   <- HUMAN CHECKPOINT: approve / exclude
-   |
-VERIFYING         POST /api/verify         per-source credibility loop
-   |                                       + claims extracted and checked
-REPORT_READY                               against the source content
-   |
-REVIEW                                     internal reviewer + independent second anchor
-   |                                       -> disagreements
-USER_EVALUATION   GET  /api/report/{id}    the finished report
+```mermaid
+flowchart TD
+    classDef human fill:#fef3c7,stroke:#b45309,stroke-width:2px,color:#451a03
+    classDef agent fill:#dbeafe,stroke:#1d4ed8,stroke-width:1.5px,color:#172554
+    classDef check fill:#ede9fe,stroke:#6d28d9,stroke-width:1.5px,color:#2e1065
+    classDef out   fill:#dcfce7,stroke:#15803d,stroke-width:2px,color:#052e16
+    classDef glass fill:#f1f5f9,stroke:#64748b,stroke-width:1px,color:#0f172a,stroke-dasharray: 4 3
 
-                  GET  /api/events/{id}    SSE live cascade — replay, then stream
+    IN["📄 Research output<br/><i>+ the sources behind it</i>"]:::human
+
+    IN --> SURVEY
+
+    subgraph S1["1 · WHAT DID YOU ACTUALLY ASK?"]
+        SURVEY["🎙️ Interviewer<br/><i>grills you, 1-3 rounds</i>"]:::agent
+        INTENT["🎯 Intent<br/><i>real question · success criteria<br/>deal-breakers · recency</i>"]:::agent
+        SURVEY --> INTENT
+    end
+
+    INTENT --> SCOUT
+
+    subgraph S2["2 · WHERE DID IT COME FROM?"]
+        SCOUT["🔍 Scout<br/><i>supplied · extracted · fetched live</i>"]:::agent
+        CAT["🏷️ Categorise<br/><i>primary · peer-reviewed · vendor<br/>forum · unreachable</i>"]:::agent
+        RATE["🙋 You approve or exclude<br/><b>human checkpoint</b>"]:::human
+        SCOUT --> CAT --> RATE
+    end
+
+    RATE --> CRED
+    RATE --> PROV
+
+    subgraph S3["3 · TWO QUESTIONS, ASKED SEPARATELY"]
+        CRED["⚖️ Credibility loop<br/><i>per source: score, relevance,<br/>reasons, red flags</i>"]:::check
+        PROV["🔗 Provenance<br/><i>per claim: does the source<br/>actually say this?</i>"]:::check
+    end
+
+    CRED --> REV
+    PROV --> REV
+
+    subgraph S4["4 · SECOND OPINION"]
+        REV["🧑‍⚖️ Internal reviewer"]:::check
+        ANCHOR["🕵️ Second anchor<br/><i>different prompt, told to<br/>distrust the first</i>"]:::check
+        DIS["⚡ Disagreements<br/><i>ranked by severity</i>"]:::check
+        REV --> ANCHOR --> DIS
+    end
+
+    DIS --> OUT
+
+    OUT["✅ Verdict<br/><b>sign off · check flagged · do not rely</b><br/><i>with the working shown</i>"]:::out
+
+    LOG["🪟 Event log → SSE<br/><i>every transition streamed live;<br/>replays for late joiners</i>"]:::glass
+
+    S1 -.-> LOG
+    S2 -.-> LOG
+    S3 -.-> LOG
+    S4 -.-> LOG
 ```
 
 Every transition is written to a per-session event log, which both drives the live UI and
 serves as the audit trail after the fact.
+
+## The state machine
+
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> INTAKE
+    INTAKE --> INTENT_CONFIRM: questions answered
+    INTENT_CONFIRM --> INTAKE: needs more digging
+    INTENT_CONFIRM --> SOURCE_SCOUTING: intent settled
+    SOURCE_SCOUTING --> SOURCE_RATING: sources categorised
+    SOURCE_RATING --> VERIFYING: user approves / excludes
+    VERIFYING --> REPORT_READY: scored + claims checked
+    REPORT_READY --> REVIEW: second opinion
+    REVIEW --> USER_EVALUATION: verdict
+    USER_EVALUATION --> [*]
+
+    note right of SOURCE_RATING
+        Human checkpoint.
+        Excluded sources are
+        not used downstream.
+    end note
+```
+
+## API surface
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant U as Frontend
+    participant A as API
+    participant C as Claude
+
+    U->>A: POST /api/start
+    A->>C: opening questions
+    A-->>U: session_id + questions
+
+    loop until intent settled
+        U->>A: POST /api/answer
+        A->>C: follow-ups? / build intent
+        A-->>U: more questions, or the Intent
+    end
+
+    U->>A: POST /api/scout
+    A->>A: fetch sources concurrently
+    A->>C: categorise
+    A-->>U: sources to rate
+
+    U->>A: POST /api/rate-sources
+    A-->>U: approved set
+
+    U->>A: POST /api/verify
+    par per source
+        A->>C: credibility
+    and per claim
+        A->>C: provenance check ×2 stances
+    end
+    A->>C: two reviewers
+    A-->>U: FullReport
+
+    Note over U,A: GET /api/events/{id} streams the whole cascade live
+```
 
 ## Components
 

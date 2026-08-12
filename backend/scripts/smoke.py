@@ -33,7 +33,7 @@ def main() -> int:
     args = ap.parse_args()
 
     case = json.loads(FIXTURE.read_text())
-    client = httpx.Client(base_url=BASE, timeout=180)
+    client = httpx.Client(base_url=BASE, timeout=600)
 
     try:
         client.get("/health").raise_for_status()
@@ -75,10 +75,11 @@ def main() -> int:
             break
         questions = body["questions"]
 
-    print("\nverifying — acquiring, categorising and scoring sources...")
-    report = client.post("/api/verify", json={"session_id": session_id})
-    report.raise_for_status()
-    data = report.json()
+    print("\nverifying — acquiring, categorising, scoring, checking claims...")
+    res = client.post("/api/verify", json={"session_id": session_id})
+    res.raise_for_status()
+    full = res.json()
+    data = full["report"]
 
     print("\n=== SOURCES ===")
     for s in data["sources"]:
@@ -86,10 +87,44 @@ def main() -> int:
         print(
             f"  [{s['id']}] {cred.get('score', '--'):>3}  "
             f"rel={cred.get('relevance_to_intent', '--'):>3}  "
-            f"{s['category']:<18} {s['origin']:<10} {(s.get('url') or s['raw_reference'])[:60]}"
+            f"{s['category']:<18} {s['origin']:<10} {(s.get('url') or s['raw_reference'])[:58]}"
         )
         for flag in cred.get("red_flags", []):
             print(f"          !! {flag}")
+
+    print("\n=== CLAIMS (provenance) ===")
+    print(f"  {full['provenance_counts']}")
+    mark = {
+        "supported": "OK ",
+        "partial": "~  ",
+        "unsupported": "?? ",
+        "contradicted": "XX ",
+    }
+    for c in full["claims"]:
+        print(
+            f"\n  {mark.get(c['support'], '   ')}[{c['id']}] {c['support']:<13} "
+            f"provenance={c['provenance']:<7} sources={c['source_ids'] or '—'}"
+        )
+        print(f"      {c['text'][:150]}")
+        if c.get("reasoning"):
+            print(f"      -> {c['reasoning'][:170]}")
+
+    if full["disagreements"]:
+        print("\n=== DISAGREEMENTS (reviewer A vs B) ===")
+        for d in full["disagreements"]:
+            print(f"  [{d['claim_id']}] {d['reviewer_a']} vs {d['reviewer_b']}")
+            print(f"      {d['note'][:160]}")
+
+    for v in full["verdicts"]:
+        print(f"\n=== REVIEW: {v['reviewer']} ===")
+        if v["unsupported_claims"]:
+            print(f"  do not rely on: {v['unsupported_claims']}")
+        for f in v["uncertainty_flags"][:4]:
+            print(f"  ! {f[:150]}")
+        for f in v["cannot_verify"][:3]:
+            print(f"  ? could not check: {f[:140]}")
+        if v.get("note"):
+            print(f"  {v['note'][:300]}")
 
     print("\n=== VERDICT ===")
     print(f"  overall: {data['overall_score']}   verdict: {data['verdict']}")
