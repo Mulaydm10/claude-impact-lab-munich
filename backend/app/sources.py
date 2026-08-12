@@ -122,7 +122,28 @@ relies on: footnotes, "according to X" attributions, named reports/studies, and 
 inline URLs. For each one, return the exact text that signals the reference (raw_reference), \
 the URL if one is present, and a short title/name if you can infer one (e.g. the outlet or \
 report name) even without a URL. Skip vague references with nothing to attach (e.g. "some \
-experts say"). Do not invent URLs that are not in the text."""
+experts say"). Do not invent URLs that are not in the text.
+
+You are also given a list of sources already supplied alongside this research output, each \
+with its real fetched title and a content excerpt. If a reference in the text is clearly about \
+the same underlying study or report as one of these — same authors, same finding, same \
+publication — set that reference's `url` field to that EXACT supplied URL rather than leaving \
+it blank or inventing a separate one. This matters most for citations named in prose (e.g. \
+"Chen et al. 2024, iScience") that correspond to a URL you were already given: reuse that URL \
+so the citation is recognised as the same source, not treated as a second, unverifiable one."""
+
+
+def _format_supplied_for_dedup(supplied_sources: list[Source]) -> str:
+    if not supplied_sources:
+        return "(none supplied)"
+    lines = []
+    for s in supplied_sources:
+        excerpt = (s.content_excerpt or "")[:300]
+        lines.append(
+            f"- url: {s.url}\n  title: {s.title or '(unknown — fetch failed or pending)'}\n"
+            f"  excerpt: {excerpt or '(no content)'}"
+        )
+    return "\n".join(lines)
 
 
 async def _extract_sources(
@@ -134,7 +155,12 @@ async def _extract_sources(
         return []
 
     intent_line = f"\nWhat the user actually wants to know: {intent.restated_question}" if intent else ""
-    user = f"Research output to scan:{intent_line}\n\n{research_output}"
+    supplied_block = _format_supplied_for_dedup(supplied_sources)
+    user = (
+        f"Already-supplied sources (reuse their URL if a reference below is really about one of "
+        f"these):\n{supplied_block}\n"
+        f"{intent_line}\n\nResearch output to scan:\n\n{research_output}"
+    )
 
     try:
         result = await structured(
@@ -147,7 +173,10 @@ async def _extract_sources(
         return []  # extraction is best-effort; never block the pipeline on it
 
     supplied_norm_urls = {_normalise_url(s.url) for s in supplied_sources if s.url}
-    supplied_titles = [s.raw_reference.lower() for s in supplied_sources]
+    # raw_reference on a SUPPLIED source is just the URL text itself, so matching
+    # against it can never fuzzy-match a prose citation like "Chen et al. 2024,
+    # iScience" — the real fetched page title is the only field worth comparing.
+    supplied_titles = [s.title.lower() for s in supplied_sources if s.title]
 
     out: list[Source] = []
     seen_norm_urls: set[str] = set()
@@ -330,13 +359,19 @@ async def acquire_sources(
     intent: Intent | None = None,
 ) -> list[Source]:
     supplied_sources = _parse_supplied(supplied)
+    # Fetch supplied sources BEFORE extraction so extraction has real titles/excerpts
+    # to match prose citations against — matching against unfetched sources (or their
+    # bare URL text) can never recognise "Chen et al. 2024, iScience" as the same
+    # study as a supplied PMC link.
+    await _fetch_sources(supplied_sources)
+
     extracted_sources = await _extract_sources(research_output, supplied_sources, intent)
 
     all_sources = supplied_sources + extracted_sources
     for i, source in enumerate(all_sources, start=1):
         source.id = f"s{i}"
 
-    await _fetch_sources(all_sources)
+    await _fetch_sources(extracted_sources)
     return all_sources
 
 

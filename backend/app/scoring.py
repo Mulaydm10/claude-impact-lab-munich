@@ -199,6 +199,12 @@ _MIN_RELEVANCE_WEIGHT = 5.0
 # uncategorised" penalty can subtract from the relevance-weighted average.
 _PROBLEM_SHARE_MAX_PENALTY = 40.0
 
+# A source the scorer itself is unsure about shouldn't swing the average as hard as
+# one it's confident in — otherwise a low-confidence, high-relevance guess (e.g. a
+# citation the model couldn't actually verify) drags the score down harder than a
+# well-verified source pulls it up.
+_CONFIDENCE_WEIGHT_MULTIPLIER = {"high": 1.0, "medium": 0.7, "low": 0.4}
+
 
 def compute_overall_score(sources: list[Source]) -> int:
     """Deterministic 0-100 score for the whole source set.
@@ -231,15 +237,20 @@ def compute_overall_score(sources: list[Source]) -> int:
         c = s.credibility
         assert c is not None  # narrowed above
         weight = max(float(c.relevance_to_intent), _MIN_RELEVANCE_WEIGHT)
+        weight *= _CONFIDENCE_WEIGHT_MULTIPLIER.get(c.confidence, 0.7)
         weighted_sum += c.score * weight
         total_weight += weight
 
     base = weighted_sum / total_weight if total_weight else 0.0
 
+    # fetched_ok only means something for a source that had a URL to fetch — a
+    # prose citation with no URL was never attempted, so it shouldn't be scored as
+    # a broken link. It can still be penalised on its own merits (low score, low
+    # confidence, or a genuine UNKNOWN/UNREACHABLE category).
     problem_count = sum(
         1
         for s in sources
-        if not s.fetched_ok
+        if (s.url is not None and not s.fetched_ok)
         or s.category in (SourceCategory.UNKNOWN, SourceCategory.UNREACHABLE)
     )
     problem_share = problem_count / len(sources)
