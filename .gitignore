@@ -15,10 +15,12 @@ venv/
 # Node
 node_modules/
 dist/
+dist-ssr/
 build/
 .next/
 *.log
 npm-debug.log*
+*.local
 
 # OS / editor
 .DS_Store

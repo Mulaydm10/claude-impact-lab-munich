@@ -54,11 +54,19 @@ Deadline: **before pitches at 15:15**. Requires a 4-digit event code shown on th
   with the trust level (Ampel: green/orange/red) of its source, lets you re-rate a source on the
   spot, and updates the report live. Full spec in [`PRD.md`](./PRD.md).
 - **Domain / line of work:** General research — any knowledge worker who has to defend a report.
-- **What's real vs. stubbed:** Rule-based source scoring and persisted re-ratings are real; report
-  content and clarifying questions are hand-authored/scripted, not a live LLM research call. See
-  `PRD.md` §5 for the full breakdown.
+- **What's real vs. stubbed:** Rule-based source scoring is real and explainable; report content and
+  clarifying questions are hand-authored/scripted, not a live LLM research call; re-ratings update
+  live but are **in-memory only in this first version** (reset on page refresh) — server-side
+  persistence is the next integration step, not yet built. See `PRD.md` §5 for the full breakdown.
 - **What's next:** See `PRD.md` §"What's next".
 
 ## Setup
 
-_TODO_
+```
+npm install
+npm run dev
+```
+
+Opens at `http://localhost:5173`. Frontend-only for now — no backend, static hand-authored demo
+data lives in `src/data/`. Re-ratings persist for the session but reset on refresh (see "What's real
+vs. stubbed" above).

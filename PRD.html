@@ -27,9 +27,9 @@
     font-family:'IBM Plex Sans',sans-serif; line-height:1.65; font-size:16px;
     -webkit-font-smoothing:antialiased;
   }
-  ::selection{background:var(--blue);color:var(--ink);}
-  a{color:var(--blue);}
-  a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--blue);outline-offset:3px;}
+  ::selection{background:var(--highlight);color:var(--ink);}
+  a{color:var(--highlight);}
+  a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--highlight);outline-offset:3px;}
 
   .topbar{
     position:sticky;top:0;z-index:20;
@@ -44,13 +44,13 @@
   nav.toc{display:flex;flex-wrap:wrap;gap:0 1rem;}
   nav.toc a{font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:.06em;
     text-transform:uppercase;text-decoration:none;color:var(--ink-60);}
-  nav.toc a:hover{color:var(--blue);}
+  nav.toc a:hover{color:var(--highlight);}
 
   .page{max-width:900px;margin:0 auto;padding:0 clamp(1.25rem,4vw,3rem) 7rem;}
 
   .hero{padding:clamp(3rem,7vw,5rem) 0 3rem;display:grid;grid-template-columns:1.35fr .65fr;gap:2.5rem;align-items:center;}
   .hero .eyebrow{display:block;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;
-    letter-spacing:.14em;font-size:.72rem;color:var(--blue);margin-bottom:1.1rem;}
+    letter-spacing:.14em;font-size:.72rem;color:var(--highlight);margin-bottom:1.1rem;}
   .hero h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(2.3rem,5.2vw,3.5rem);
     line-height:1.04;margin:0 0 1.1rem;}
   .hero p.tagline{color:var(--ink-60);max-width:48ch;margin:0;font-size:1.05rem;}
@@ -122,7 +122,7 @@
   }
   .chat-bubble{background:#fff;border:1px solid var(--ink-15);border-radius:12px;
     padding:.5rem .75rem;font-size:.76rem;margin-bottom:.5rem;max-width:92%;}
-  .chat-bubble.user{margin-left:auto;background:var(--blue);color:var(--ink);border-color:var(--blue);}
+  .chat-bubble.user{margin-left:auto;background:var(--highlight);color:var(--ink);border-color:var(--highlight);}
   .mockup .verdict{
     display:inline-flex;align-items:center;gap:.4rem;font-family:'IBM Plex Mono',monospace;
     font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--green);
@@ -136,7 +136,7 @@
   .ledger .mark{width:9px;height:9px;border-radius:50%;}
   .mockup-caption{font-size:.85rem;color:var(--ink-60);margin-top:.5rem;}
 
-  pre{background:var(--ink);color:var(--ink);padding:1.1rem 1.3rem;border-radius:8px;
+  pre{background:var(--ink);color:var(--paper);padding:1.1rem 1.3rem;border-radius:8px;
     overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:.78rem;line-height:1.6;margin:0 0 1.25rem;}
   code{font-family:'IBM Plex Mono',monospace;}
   p code,li code{background:var(--paper-2);padding:.1rem .35rem;border-radius:3px;font-size:.85em;}
@@ -337,12 +337,12 @@
       the tape is the useful part, not a confession.</p>
     <div class="split">
       <div class="card is-real">
-        <h4>Real</h4>
+        <h4>Real — shipped in the current build</h4>
         <ul>
           <li>Rule-based heuristic scorer with explainable reasons, over a hand-authored demo
-            dataset (2–3 topics, sources spanning all three bands, one conflict-of-interest example).</li>
+            dataset (1 topic so far, 6 sources spanning all three bands, one conflict-of-interest example).</li>
           <li>Clarifying-question answers genuinely filter/order which claims appear.</li>
-          <li>Re-rating flow, live propagation to stamp/rail/verdict, and server-side persistence.</li>
+          <li>Re-rating flow with live propagation to stamp, rail, and verdict on submit.</li>
         </ul>
       </div>
       <div class="card is-stub">
@@ -351,7 +351,8 @@
           <li>No live web research or live LLM report generation — content is hand-authored per
             topic and branch.</li>
           <li>No real auth — a free-text "acting as" field stands in for multiple experts.</li>
-          <li>Storage is a JSON file, not a database.</li>
+          <li><b>No backend yet</b> — re-ratings are in-memory only and reset on page refresh.
+            Server-side persistence (JSON file, or SQLite if time allows) is the next step.</li>
         </ul>
       </div>
     </div>

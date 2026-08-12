@@ -93,18 +93,20 @@ moment in the whole app.
 
 ## 5. What's real vs. stubbed (for the pitch — say this out loud)
 
-**Real:**
+**Real, and shipped in the current build:**
 - Rule-based heuristic scorer (actual code, explainable reasons), running over a hand-authored demo
-  dataset (2–3 topics, sources spanning all three bands, at least one conflict-of-interest example).
+  dataset (1 topic so far, 6 sources spanning all three bands, one conflict-of-interest example).
 - Clarifying-question answers genuinely filter/order which claims appear.
-- Re-rating flow, live propagation to stamp/rail/verdict, and server-side persistence (survives refresh).
+- Re-rating flow with live propagation to stamp, rail, and verdict the moment you submit a new rating.
 
 **Stubbed (and why that's fine per the brief's "be honest about the tape"):**
 - No live web research / no live LLM call generating the report — content is hand-authored per
   topic and branch. Clarifying questions are scripted per topic, not open-ended LLM dialogue.
 - No real auth — a free-text/dropdown "acting as" field stands in for multiple experts/users.
-- Storage is a JSON file, not a database — satisfies "actually persisted," SQLite is an optional
-  upgrade only if it installs cleanly with time to spare.
+- **No backend yet — re-ratings are in-memory only and reset on page refresh.** Server-side
+  persistence (a JSON file is the planned lightweight store; SQLite only if time allows) is the next
+  integration step, not yet built. Don't demo the refresh-survives-persistence moment against the
+  current build — it isn't true yet.
 
 ## 6. Contract (so two people can build in parallel)
 
