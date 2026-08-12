@@ -91,6 +91,92 @@ def _is_close_match(text: str, candidates: list[str]) -> bool:
 
 
 # --------------------------------------------------------------------------
+# Duplicate detection by identifier / distinctive-token overlap.
+#
+# The URL/title checks above only catch a duplicate when the extraction step
+# reused the supplied URL or produced a near-identical title. In practice it
+# regularly emits a SECOND, url-less entry for a study we already have,
+# described only in prose ("PMC12363089, 8 RCTs/573 participants" for a study
+# already supplied at .../PMC12363089/). That phantom then scores low with
+# high relevance and drags the relevance-weighted average down hard even
+# though it is the same source counted twice. The checks below catch that:
+# first by shared strong identifiers (PMC/PubMed/DOI/arXiv ids, which are
+# unambiguous wherever they appear), then by distinctive-token overlap as a
+# fallback for prose that names a study without any identifier at all.
+# --------------------------------------------------------------------------
+
+_ID_PMC_RE = re.compile(r"PMC\d{6,}", re.IGNORECASE)
+_ID_PUBMED_URL_RE = re.compile(r"pubmed\.ncbi\.nlm\.nih\.gov/(\d{7,8})", re.IGNORECASE)
+_ID_PUBMED_DIGITS_RE = re.compile(r"\b\d{7,8}\b")
+_ID_DOI_RE = re.compile(r"10\.\d{4,9}/[^\s\"'<>)]+", re.IGNORECASE)
+_ID_ARXIV_URL_RE = re.compile(r"arxiv\.org/abs/(\S+)", re.IGNORECASE)
+_ID_ARXIV_TAG_RE = re.compile(r"arxiv:\s*(\S+)", re.IGNORECASE)
+
+_CAP_WORD_RE = re.compile(r"\b[A-Z][a-zA-Z]{3,}\b")
+_YEAR_RE = re.compile(r"\b(?:19|20)\d{2}\b")
+_NUMBER_RE = re.compile(r"\b\d[\d,]*\d\b|\b\d{2,}\b")
+_DISTINCTIVE_TOKEN_STOPWORDS = {
+    "the", "this", "study", "review", "rcts", "trial", "analysis",
+    "with", "from", "these",
+}
+_MIN_TOKEN_OVERLAP = 2
+
+
+def _strip_trailing_punct(s: str) -> str:
+    return s.rstrip(").,;:'\"]")
+
+
+def _extract_identifiers(text: str, *, bare_pubmed_digits: bool = False) -> set[str]:
+    """Pull strong external-reference ids (PMC/PubMed/DOI/arXiv) out of free text.
+
+    PMC ids, DOIs and arXiv ids are distinctive enough to match verbatim wherever
+    they show up. PubMed ids are trickier: a supplied source only yields one from
+    its URL (`pubmed.ncbi.nlm.nih.gov/<id>`), but a prose citation often gives the
+    bare number with no URL at all ("PMID 38471234"). `bare_pubmed_digits` opts a
+    text blob into treating any 7-8 digit run as a candidate PubMed id — only safe
+    to enable on the prose (extracted-reference) side of a comparison, not on a
+    supplied source's own title/excerpt, which may contain unrelated 7-8 digit
+    numbers.
+    """
+    if not text:
+        return set()
+    ids: set[str] = set()
+    ids.update(m.upper() for m in _ID_PMC_RE.findall(text))
+    ids.update(f"PMID:{m}" for m in _ID_PUBMED_URL_RE.findall(text))
+    if bare_pubmed_digits:
+        ids.update(f"PMID:{m}" for m in _ID_PUBMED_DIGITS_RE.findall(text))
+    ids.update(f"DOI:{_strip_trailing_punct(m).lower()}" for m in _ID_DOI_RE.findall(text))
+    ids.update(f"ARXIV:{_strip_trailing_punct(m).lower()}" for m in _ID_ARXIV_URL_RE.findall(text))
+    ids.update(f"ARXIV:{_strip_trailing_punct(m).lower()}" for m in _ID_ARXIV_TAG_RE.findall(text))
+    return ids
+
+
+def _distinctive_tokens(text: str) -> set[str]:
+    """Tokens from prose that are likely unique to one specific study.
+
+    Fallback for when neither side has a matching identifier — e.g. "The 2025
+    German ChronoFast crossover study" describing a source we already fetched,
+    whose title/excerpt mentions "ChronoFast" and "2025" but never repeats the
+    extracted reference's exact wording. Capitalised 4+ char words, 4-digit
+    years, and 2+ digit numbers (thousands separators stripped) are treated as
+    distinctive; a short stopword list keeps generic capitalised words like
+    "Study" or "RCTs" from counting.
+    """
+    if not text:
+        return set()
+    tokens: set[str] = set()
+    for m in _CAP_WORD_RE.findall(text):
+        if m.lower() not in _DISTINCTIVE_TOKEN_STOPWORDS:
+            tokens.add(m.lower())
+    tokens.update(_YEAR_RE.findall(text))
+    for m in _NUMBER_RE.finditer(text):
+        digits = m.group(0).replace(",", "")
+        if len(digits) >= 2:
+            tokens.add(digits)
+    return tokens
+
+
+# --------------------------------------------------------------------------
 # Route 1: SUPPLIED
 # --------------------------------------------------------------------------
 
@@ -130,7 +216,14 @@ the same underlying study or report as one of these — same authors, same findi
 publication — set that reference's `url` field to that EXACT supplied URL rather than leaving \
 it blank or inventing a separate one. This matters most for citations named in prose (e.g. \
 "Chen et al. 2024, iScience") that correspond to a URL you were already given: reuse that URL \
-so the citation is recognised as the same source, not treated as a second, unverifiable one."""
+so the citation is recognised as the same source, not treated as a second, unverifiable one.
+
+Do NOT emit an entry for a study that is already present in the supplied list above, even when \
+the prose describes it differently from how it was supplied — different wording, an author-year \
+form ("Chen et al. 2024"), or a bare accession number/id (a PMC id, PubMed id, DOI, or arXiv id) \
+with no URL attached. A supplied source described a second time in prose is NOT a new source. \
+When you are unsure whether a reference is the same study as one already supplied, prefer \
+omitting it over emitting a likely duplicate."""
 
 
 def _format_supplied_for_dedup(supplied_sources: list[Source]) -> str:
@@ -178,6 +271,16 @@ async def _extract_sources(
     # iScience" — the real fetched page title is the only field worth comparing.
     supplied_titles = [s.title.lower() for s in supplied_sources if s.title]
 
+    # Precompute per-supplied-source id/token sets once, for the identifier and
+    # distinctive-token dedup checks below (see comment above _extract_identifiers).
+    supplied_id_sets: list[set[str]] = []
+    supplied_token_sets: list[set[str]] = []
+    for s in supplied_sources:
+        id_blob = " ".join(filter(None, [s.url, s.title, (s.content_excerpt or "")[:3000]]))
+        supplied_id_sets.append(_extract_identifiers(id_blob))
+        token_blob = " ".join(filter(None, [s.title, (s.content_excerpt or "")[:3000]]))
+        supplied_token_sets.append(_distinctive_tokens(token_blob))
+
     out: list[Source] = []
     seen_norm_urls: set[str] = set()
     for ref in result.references:
@@ -188,6 +291,21 @@ async def _extract_sources(
             continue
         if not norm and ref.title and _is_close_match(ref.title, supplied_titles):
             continue
+
+        ref_blob = " ".join(filter(None, [ref.raw_reference, ref.title]))
+        ref_ids = _extract_identifiers(ref_blob, bare_pubmed_digits=True)
+        ref_tokens = _distinctive_tokens(ref_blob)
+        is_dup = False
+        for supplied_ids, supplied_tokens in zip(supplied_id_sets, supplied_token_sets):
+            if ref_ids and ref_ids & supplied_ids:
+                is_dup = True
+                break
+            if len(ref_tokens & supplied_tokens) >= _MIN_TOKEN_OVERLAP:
+                is_dup = True
+                break
+        if is_dup:
+            continue
+
         if norm:
             seen_norm_urls.add(norm)
         out.append(
