@@ -1,0 +1,195 @@
+# Verbatim run: scripts/smoke.py --case ai_coding_productivity_case
+# Fixture by @dallenator: REAL Claude agent output with web search, not hand-rigged.
+# Result: 9/100 do_not_rely — but 5 SUPPORTED claims and one source at 88/100.
+# Claims are faithful to their sources; the sources are largely unverifiable.
+
+=== FIXTURE: ai_coding_productivity_case ===
+
+--- survey round (4 questions) ---
+
+Q: The 55% speed gain from the GitHub/Microsoft trial is the most impressive number in this brief — but that study was funded by GitHub and measured a single isolated task, not sustained productivity. Did the research check whether that trial's task and setting are representative of what your 200 engineers actually do day-to-day?
+   why: If the headline number driving the 'gains are real' conclusion comes from a synthetic benchmark rather than production work, the entire positive half of the argument rests on weaker evidence than it appears.
+> I need to defend this result to other people, so accuracy matters more than a cl...
+
+Q: The McKinsey '23% higher bug density' claim and the '46% routine-task time drop' both come from what's described as a 2026 survey — can you confirm whether the agentmarketcap.ai blog is an authoritative source for McKinsey's actual data, or is it a third-party repackaging?
+   why: Two of the most decision-relevant numbers (cost of poor rollout and size of the upside) trace to a source whose provenance is unclear, and if those figures are distorted or fabricated the risk/reward framing changes materially.
+> I need to defend this result to other people, so accuracy matters more than a cl...
+
+Q: METR's 2026 follow-up is described as showing a shift 'toward a speedup' but then flagged as unreliable due to selection bias — so why is it included as evidence at all rather than treated as inconclusive and set aside?
+   why: Citing a study the research itself calls unreliable inflates the apparent weight of evidence on the positive side, which is exactly the direction that would push a $200K+ annual licensing decision forward.
+> I need to defend this result to other people, so accuracy matters more than a cl...
+
+Q: The research concludes gains are 'conditional on review discipline, task type, and rollout quality' but gives no data on what a rollout that captures those conditions actually costs or looks like — what's the estimated non-license investment needed to avoid the 23% bug-density penalty?
+   why: Without that estimate the VP is being asked to approve licenses with an unquantified implementation cost attached, making the ROI case incomplete for the actual decision at hand.
+> I need to defend this result to other people, so accuracy matters more than a cl...
+
+--- survey round (1 questions) ---
+
+Q: You said accuracy matters more than a clean story and anything unsourced is useless — so which specific claims in this brief have you independently verified trace back to a primary source document (not a blog or summary), and which ones are you still taking on faith from the researcher?
+   why: The answers to all four opening questions were identical boilerplate about needing defensible data, but none actually addressed whether the specific sourcing, representativeness, or cost gaps flagged have been investigated — without knowing which claims are verified vs. unverified, the brief is unusable for the stated purpose of defending results to others.
+> I need to defend this result to other people, so accuracy matters more than a cl...
+
+=== INTENT ===
+{
+  "restated_question": "Does the controlled, peer-reviewed evidence actually show that AI coding assistants (Copilot, Claude Code, etc.) increase developer productivity enough to justify buying licenses for a 200-person engineering org, and what conditions determine whether the gains materialize?",
+  "success_criteria": [
+    "Cites specific studies with full provenance (author org, year, sample size, methodology) \u2014 not blog summaries or third-party repackaging of someone else's data",
+    "Distinguishes between industry-funded studies (e.g., GitHub-funded trials) and independent studies, and flags potential conflicts of interest explicitly",
+    "Reports effect sizes for different task types separately (routine/boilerplate vs. complex/novel work) rather than a single blended productivity number",
+    "Addresses whether speed gains come at the cost of code quality (bug density, defect rates, technical debt), with data not just assertions",
+    "Covers the METR 2025 finding that experienced developers were slower with AI on real-world tasks and explains why it diverges from lab-task studies",
+    "Provides evidence on what organizational conditions (code review practices, rollout structure, training) are required for gains to materialize, not just that conditions matter",
+    "Gives concrete enough numbers and source traceability that an engineering VP could defend the recommendation to a CFO or CTO who pushes back",
+    "Addresses whether self-reported productivity perceptions diverge from objectively measured productivity, since multiple studies show this gap"
+  ],
+  "deal_breakers": [
+    "Citing a '2026 McKinsey survey' or 'METR 2026 follow-up' that cannot be traced to an actual published report \u2014 fabricated or hallucinated sources destroy credibility in a VP-level presentation",
+    "Relying primarily on vendor-funded studies without independent corroboration or without flagging the funding conflict",
+    "Presenting the GitHub 55%-faster result as representative of sustained real-world productivity without acknowledging it was a single-task lab experiment",
+    "Omitting the METR finding or other negative/null results to present an unqualified 'yes, buy licenses' conclusion",
+    "Including specific statistics (23% bug density, 46% time drop) that trace only to secondary blog posts and not to a verifiable primary source",
+    "Treating developer self-reported satisfaction or perceived speed as equivalent to measured productivity gains"
+  ],
+  "domain": "Engineering leadership / software engineering management",
+  "recency_requirement": "Must reflect studies and data published through at least mid-2025; any claims about 2026 publications must be verifiable as actually existing"
+}
+
+verifying — acquiring, categorising, scoring, checking claims...
+
+=== SOURCES ===
+  [s1]  88  rel= 95  primary            supplied   https://metr.org/blog/2025-07-10-early-2025-ai-experienced
+  [s2]  72  rel= 92  primary            supplied   https://metr.org/blog/2026-02-24-uplift-update/
+          !! Publication date of February 2026 cannot be verified against the intent's recency requirement that '2026 publications must be verifiable as actually existing' — this is exactly the scenario the deal-breakers flag warns about
+          !! The source itself admits its new data provides 'only very weak evidence' due to severe selection effects, meaning the quantitative results reported should not be treated as reliable estimates of AI productivity impact
+  [s3]  22  rel= 55  vendor_marketing   supplied   https://github.blog/news-insights/research/research-quanti
+          !! Vendor's own research on its own product — GitHub measuring GitHub Copilot's impact, with clear financial interest in positive results
+          !! Conflates self-reported satisfaction and perception with productivity measurement, which the intent explicitly identifies as a deal-breaker
+          !! No independent replication or third-party verification of the findings presented
+          !! Selection bias: surveyed existing Copilot users rather than randomized population
+  [s4]  52  rel= 75  primary            supplied   https://dora.dev/dora-report-2025/
+          !! DORA is housed within Google Cloud, a vendor of AI development tools (Gemini Code Assist), creating a structural conflict of interest for a report on AI-assisted development ROI
+          !! Premier and named research partners (GitHub, GitLab, SkillBench, Workhelix) are all vendors or consultancies with direct financial interest in positive AI adoption findings
+          !! The fetched content is a download landing page — no actual research findings, methodology, sample sizes, or effect sizes are visible in the excerpt, making it impossible to verify the quality of the underlying research from this fetch alone
+  [s5]  22  rel= 72  blog_opinion       supplied   https://agentmarketcap.ai/blog/2026/04/05/mckinsey-4500-de
+          !! The core source — a 'McKinsey February 2026 report covering 4,500 developers across 150 enterprises' — cannot be verified as an actually published McKinsey report; the intent explicitly identifies fabricated/hallucinated 2026 sources as a deal breaker
+          !! This is exactly the pattern the intent warns against: a secondary blog post presenting specific statistics (23% bug density, 46% time savings) that may not trace to a verifiable primary source
+          !! No direct link to the purported McKinsey primary report is provided in the excerpt
+          !! AgentMarketCap appears to be an AI industry promotion/tracking site with potential commercial interest in AI tool adoption narratives
+  [s6]  22  rel= 72  unreachable        supplied   https://www.reuters.com/business/ai-slows-down-some-experi
+          !! Link did not resolve: HTTP 401 Forbidden error — content cannot be verified
+          !! No content excerpt available; all assessment is based on the URL slug alone
+  [s7]  15  rel= 55  unreachable        supplied   https://www.mckinsey.com/capabilities/tech-and-ai/our-insi
+          !! Link did not resolve: ReadTimeout error — dead link cannot be verified
+          !! No content excerpt available; zero verifiable information from this source
+          !! McKinsey has a consulting-revenue interest in promoting AI adoption narratives, which is a potential independence concern even when the link works
+          !! No publication date recoverable — cannot confirm recency requirement (mid-2025 data)
+  [s8]  15  rel= 55  unknown            extracted  in a 95-developer randomized trial, Copilot users finished
+          !! Link did not resolve / no URL provided at all — completely unverifiable as cited
+          !! No author, no publication date, no venue, no DOI — fails basic source provenance requirements
+          !! Likely references a vendor-funded study (GitHub/Microsoft funded the Peng et al. RCT) without disclosing the funding conflict
+          !! The 55% figure is presented without the critical caveat that it was a single controlled task, not sustained real-world productivity — this is explicitly flagged as a deal-breaker in the intent
+  [s9]  12  rel= 82  unknown            extracted  METR's 2025 study of experienced open-source developers fo
+          !! Link did not resolve / no URL provided at all — impossible to verify
+          !! No author names, no publication venue, no date beyond '2025', no sample size — fails the intent's requirement for 'full provenance (author org, year, sample size, methodology)'
+          !! Cannot distinguish whether this is the actual METR pre-print or a secondary summary/blog repackaging of it, which is an explicit deal-breaker in the intent
+  [s10]   2  rel= 65  unknown            extracted  METR's own 2026 follow-up showed the picture shifting towa
+          !! Link did not resolve / no URL provided at all
+          !! Likely hallucinated source: a '2026' publication cited in a context where the recency requirement caps at mid-2025, making its existence unverifiable and implausible
+          !! Directly matches an explicit deal breaker in the research intent: 'Citing a METR 2026 follow-up that cannot be traced to an actual published report'
+          !! No content excerpt, no author, no DOI, no publication venue — zero provenance
+  [s11]   2  rel= 70  unknown            extracted  McKinsey's 2026 survey of 4,500 developers across 150 ente
+          !! Source appears to be fabricated/hallucinated: a '2026 McKinsey survey' cannot exist if the recency window is mid-2025
+          !! Link did not resolve — no URL was even provided
+          !! No content excerpt available; source is entirely unverifiable
+          !! Directly triggers the intent's stated deal breaker about citing non-existent 2026 McKinsey reports
+  [s12]  12  rel= 45  unknown            extracted  Google's DORA 2025 report captures the real mechanism: AI 
+          !! Link did not resolve / no URL provided at all — cannot be verified
+          !! No content excerpt available; entire assessment is based on a paraphrased assertion in the raw reference
+          !! Possible fabricated or hallucinated source: a 'DORA 2025 Report' is not verifiable from the information given, and the intent explicitly warns against citing sources that cannot be traced to actual published reports
+          !! No publication date, author, methodology, or sample size provided — fails the intent's requirement for full provenance
+
+=== CLAIMS (provenance) ===
+  {'supported': 5, 'partial': 5, 'unsupported': 0, 'contradicted': 0, 'model_introduced': 0}
+
+  ~  [c1] partial       provenance=source  sources=['s1', 's2']
+      METR's 2025 study of experienced open-source developers found AI tools made them 19% slower on real tasks in their own codebases, even though the deve
+      -> The claim states developers were '19% slower' and believed AI 'sped them up by 20%'. Source s1 (the actual METR study page) confirms the 19% slower finding: 'when develop
+
+  ~  [c2] partial       provenance=source  sources=['s3']
+      In a 95-developer randomized trial, GitHub/Microsoft found that Copilot users finished a coding task 55% faster than the control group.
+      -> Source s3 (the GitHub Blog post) describes GitHub's research on Copilot's impact on developer productivity, including a controlled experiment, and mentions that Copilot u
+
+  OK [c3] supported     provenance=source  sources=['s2']
+      METR's own 2026 follow-up showed the picture shifting toward a speedup, but flagged the data as unreliable due to selection bias.
+      -> Source s2 (METR's February 2026 update) states explicitly that their new experiment's raw results 'show some evidence for speedup' (the picture shifting toward a speedup)
+
+  OK [c4] supported     provenance=source  sources=['s5']
+      McKinsey's 2026 survey covered 4,500 developers across 150 enterprises.
+      -> Source s5's content excerpt explicitly states: 'McKinsey's February 2026 report — covering 4,500 developers across 150 enterprises — found that AI coding tools cut time s
+
+  ~  [c5] partial       provenance=source  sources=['s5']
+      In McKinsey's 2026 survey, routine-task time dropped 46% with AI adoption.
+      -> Source s5 (a blog post summarizing McKinsey's study) states that McKinsey's February 2026 report found AI coding tools 'cut time spent on routine tasks by 46 percent.' Th
+
+  ~  [c6] partial       provenance=source  sources=['s5']
+      In McKinsey's 2026 survey, gains on high-complexity work were under 10%.
+      -> The claim states that McKinsey's 2026 survey showed gains on high-complexity work were under 10%. Source s5 describes McKinsey's February 2026 report covering 4,500 devel
+
+  OK [c7] supported     provenance=source  sources=['s5']
+      In McKinsey's 2026 survey, teams without disciplined code review saw 23% higher bug density despite feeling faster.
+      -> Source s5 (AgentMarketCap blog summarizing McKinsey's February 2026 report covering 4,500 developers across 150 enterprises) explicitly states: 'projects where developers
+
+  OK [c8] supported     provenance=source  sources=['s4']
+      Google's DORA 2025 report captures the finding that AI is an amplifier that magnifies whatever practices (good or bad) already exist.
+      -> s4's content excerpt from the DORA 2025 report page (dora.dev) explicitly states: 'The State of AI-assisted Software Development report reveals AI's primary role is as an
+
+  ~  [c9] partial       provenance=source  sources=['s3']
+      The GitHub/Microsoft trial reported big self-reported gains in flow and job satisfaction among Copilot users.
+      -> Source s3 describes GitHub's survey-based research on Copilot's impact and frames developer productivity partly around satisfaction and having 'a good day,' mentioning th
+
+  OK [c10] supported     provenance=source  sources=['s5']
+      PR throughput rose with AI adoption according to McKinsey's 2026 survey.
+      -> Source s5 describes McKinsey's February 2026 report covering 4,500 developers across 150 enterprises, stating that 'Daily AI tool users merge approximately 60 percent mor
+
+=== DISAGREEMENTS (reviewer A vs B) ===
+  [c7] supported vs partial
+      reviewer A found this supported by s5; reviewer B found this only partially supported by s5
+
+=== REVIEW: internal ===
+  do not rely on: ['c2', 'c4', 'c5', 'c6', 'c7', 'c10', 'c3']
+  ! c1: The specific claim that developers believed AI sped them up by 20% is not confirmed by any fetched source content — the METR study excerpts (s1, s
+  ! c2: Relies on s3 (GitHub Blog, vendor_marketing, credibility score 22) which is GitHub measuring its own product. The first pass marked it PARTIAL bec
+  ! c3: Source s2 has a February 2026 publication date, which the intent explicitly flags as a deal-breaker scenario ('2026 publications must be verifiabl
+  ! c4: Supported ONLY by s5 (AgentMarketCap blog, credibility score 22, blog_opinion category). The purported McKinsey February 2026 report cannot be ver
+  ? could not check: c1: The 20% perceived speedup figure is not present in any fetched source excerpt. Neither s1 nor s2 contains this specific claim about deve
+  ? could not check: c2: Sources s7 (McKinsey/original GitHub trial link, timed out) and s8 (extracted reference with no URL or content) are completely unverifia
+  ? could not check: c6: The 'under 10%' figure for high-complexity work gains does not appear in any fetched source. Cannot determine where this number originat
+  This claim set has serious structural problems that would be dangerous in a VP-level presentation. Five claims (c4, c5, c6, c7, c10) depend entirely on a low-credibility blog post (s5, score 22) summarizing an unverifiable 2026 McKinsey report — this is precisely the deal-breaker scenario the resear
+
+=== REVIEW: second_anchor ===
+  do not rely on: ['c4', 'c5', 'c6', 'c7', 'c10', 'c3']
+  ! c4: Marked SUPPORTED/medium but the only source is a secondary blog post (s5, AgentMarketCap) summarizing a purported 'McKinsey February 2026 report' 
+  ! c7: Marked SUPPORTED/medium based solely on s5, which is a blog repackaging of a McKinsey report whose existence cannot be confirmed. The 23% bug dens
+  ! c10: Same problem as c4/c7 — relies entirely on s5 (a secondary blog) for a statistic ('60% more PRs') attributed to a 2026 McKinsey report that may n
+  ! c3: Marked SUPPORTED/high, but s2 is a February 2026 publication. The intent's deal-breaker section explicitly warns about citing 2026 publications th
+  ? could not check: s6 (Reuters article): HTTP 401 Forbidden — no content available to verify any claims about Reuters coverage of the METR study.
+  ? could not check: s7 (McKinsey primary source): ReadTimeout — the primary McKinsey report that c4, c5, c6, c7, and c10 all ultimately depend on was never succ
+  ? could not check: s8 (GitHub/Microsoft RCT): No URL provided at all — the foundational source for the 55%-faster claim (c2) is completely unverifiable.
+  The internal review was substantially too lenient. Five claims (c4, c5, c7, c10, and partially c6) rest entirely on a secondary blog post (s5) summarizing a purported McKinsey 2026 report whose existence cannot be independently confirmed — this is explicitly identified as a deal-breaker in the inten
+
+=== VERDICT ===
+  overall: 9   verdict: do_not_rely
+
+  This research set out to determine whether controlled evidence justifies purchasing AI coding assistant licenses for a 200-person engineering org, what effect sizes look like across task types, and what conditions are required for gains to materialize. The source set fails catastrophically on nearly every success criterion. Of twelve sources assessed, only one (s1, the METR 2025 RCT) is a verified, independent, primary study with full provenance — and it found AI tools made experienced developers 19% slower on real tasks. The single verified vendor study (s3, GitHub's own blog) relies on self-reported satisfaction metrics rather than measured productivity, which the intent explicitly flags as a deal-breaker conflation. Two sources that could have provided critical corroboration — a Reuters article (s6) and the actual McKinsey insights page (s7) — failed to load at all. Most damaging: the research cites a '2026 McKinsey survey of 4,500 developers' (s11) and a 'METR 2026 follow-up' (s10) with no URLs and no verifiable existence — these are precisely the hallucinated/fabricated references the intent identifies as credibility-destroying deal-breakers for a VP-level presentation. The AgentMarketCap blog post (s5) repackages purported McKinsey statistics (46% time savings, 23% bug density increase) through a secondary blog with no link to the primary report. The DORA 2025 report landing page (s4) was fetched but contained no actual findings, just a download page with vendor-partner logos. Half the sources (s8–s12) have no URL at all and exist only as inline paraphrases with zero traceability. An engineering VP could not defend any recommendation based on this evidence set — there is essentially one real independent study that says AI tools slow experienced developers down, one vendor marketing piece, and a collection of unverifiable or fabricated references filling in the rest.
+
+  weakest links:
+   - s11 (McKinsey 2026 Developer Productivity Survey): No URL, no content, no verifiable existence — directly triggers the intent's explicit deal-breaker about citing a non-existent '2026 McKinsey survey.' Almost certainly hallucinated.
+   - s10 (METR 2026 Follow-Up Study): No URL, no content, no verifiable existence — directly triggers the intent's explicit deal-breaker about citing a 'METR 2026 follow-up' that cannot be traced to an actual published report.
+   - s5 (AgentMarketCap blog): A niche AI-industry blog repackaging claimed McKinsey statistics (46% time savings, 23% bug density) with no link to the purported primary McKinsey report — exactly the pattern the intent warns against where specific statistics trace only to secondary blog posts.
+   - s8 (GitHub/Microsoft Copilot RCT): No URL provided, no author names, no publication venue — the 55%-faster claim is presented as an unsourced inline assertion without disclosing it was a single-task lab experiment funded by GitHub, which is an explicit deal-breaker.
+   - s7 (McKinsey insights page): Timed out and returned no content — cannot verify any claim attributed to it, yet McKinsey statistics appear to be cited elsewhere in the research as if this source supported them.
+   - s6 (Reuters article): Returned HTTP 401 Forbidden — content inaccessible and unverifiable, leaving the source set without any independent media corroboration of the METR findings.
+   - s3 (GitHub Blog on Copilot productivity): Vendor's own research on its own product, relying overwhelmingly on self-reported satisfaction metrics (60-75% 'feel more fulfilled') rather than objectively measured productivity — conflating self-report with measurement is flagged as a deal-breaker in the intent.
+   - s9 (METR 2025 inline reference): No URL despite the actual METR study (s1) being available — this appears to be a redundant, unlinked paraphrase that fails the provenance requirement when the primary source exists and could have been properly cited.
+   - s4 (DORA 2025 landing page): Fetched successfully but contains zero findings — only a download page listing vendor research partners (GitHub, GitLab) that create independence concerns. No methodology, sample size, or effect sizes are available from the fetched content.
+exit=0
