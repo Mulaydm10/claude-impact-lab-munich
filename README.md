@@ -55,6 +55,14 @@ Verbatim from a live run against [`examples/demo_case.json`](backend/examples/de
 — a rigged four-day-week research summary. Full output in
 [`examples/sample_run.txt`](examples/sample_run.txt).
 
+> This run predates the scoring fixes described further down. Re-run today the same
+> fixture scores higher — we have seen **10** and **28** on separate runs — but the
+> verdict stays `do_not_rely`, correctly. The recording is kept as it was.
+>
+> Scores move between runs on identical input, because most of the pipeline is model
+> judgement. The verdict band is stable; the number is not. Treat it as a band, not a
+> measurement.
+
 The fixture supplied 6 sources. Glassbox **extracted 3 more phantom citations from the prose
 itself** — assertions like *"several sources report… 40%"* that reference nothing at all.
 
@@ -87,6 +95,8 @@ stating its own limitations, inventing no statistics.
 
 Both runs, same pipeline:
 
+Both scored before the fixes below (rigged now lands in the 10-28 range):
+
 | | Rigged case | Control case |
 |---|---|---|
 | Score | **0 / 100** | **15 / 100** |
@@ -113,7 +123,7 @@ Both are fixed. Extraction now drops a reference that shares a PMC/PubMed/DOI/ar
 with a supplied source, scoring weights each source by the scorer's own confidence, and a prose
 citation with no URL is no longer penalised as a broken link.
 
-**Measured on the fasting fixture: 20 → 59, verdict `do_not_rely` → `check_flagged`** — the
+**Measured on the fasting fixture: 20 → 63, verdict `do_not_rely` → `check_flagged`** — the
 first time the headline band moved rather than only the reasoning underneath it. Nine real
 sources, zero phantom duplicates, zero unsupported claims.
 
