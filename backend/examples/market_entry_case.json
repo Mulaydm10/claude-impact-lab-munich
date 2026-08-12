@@ -1,0 +1,19 @@
+{
+  "_comment": "Second demo fixture — regulated market entry, not the 4-day-week case. Deliberately mixed quality: two genuine primary regulator sources, one vendor whitepaper selling the outcome it claims, one self-interested competitor press release (survivorship bias), one EU-wide analyst stat that never actually names Germany (credible but off-target — the exact 'right source, wrong question' failure the tool is built to catch), one forum thread, one dead link, one general-purpose encyclopaedia page. The research text also generalises the EU directive's minimum harmonisation into 'essentially the same requirements everywhere' and slips in one fully unattributed claim.",
+
+  "original_prompt": "We're a Series B consumer-lending fintech based in the Netherlands, EU-licensed there. Should we expand into the German market this quarter? Assess the regulatory and timeline risk of entering Germany.",
+
+  "research_output": "Germany's consumer lending market is now straightforward for foreign fintechs to enter. The EU Consumer Credit Directive harmonises core disclosure and creditworthiness rules across every member state, so a firm already licensed elsewhere in the EU faces essentially the same requirements in Germany as anywhere else. Industry benchmarking from a leading market-entry consultancy puts the average BaFin licensing approval time at just six weeks, in line with other EU jurisdictions, and one recent entrant secured its licence and launched nationwide within a single quarter of filing. A 2023 analyst briefing puts average licensing approval rates across the EU at 78%. Several founders who have already gone through the process describe it as now largely a formality, with automated document review cutting timelines further. Some users report bureaucratic friction, but this appears limited to edge cases involving anti-money-laundering documentation. Overall, there is broad consensus among fintech operators that Germany is now as easy to enter as any other EU market, and delay risk for a Q2 launch is low.",
+
+  "sources": [
+    "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0048",
+    "https://www.bafin.de/EN/Aufsicht/BankenFinanzdienstleister/Erlaubnispflicht/erlaubnispflicht_node_en.html",
+    "https://www.bundesbank.de/en/statistics",
+    "A paid market-entry consultancy's 2025 white paper, 'Germany Made Easy: The FinTech Launch Playbook,' advertises average BaFin approval in six weeks for its retained clients.",
+    "A Series-B-funded consumer lending competitor's own press release states it secured its BaFin licence and launched nationwide within a single quarter of filing.",
+    "A trade-press summary of a 2023 industry analyst briefing puts average licensing approval rates across the EU at 78%, without naming Germany specifically.",
+    "https://www.reddit.com/r/germany/comments/bafin_license_frustrations/",
+    "https://efsa-fintech-marketentry-2019.example/germany-outlook.pdf",
+    "https://en.wikipedia.org/wiki/Consumer_credit"
+  ]
+}
