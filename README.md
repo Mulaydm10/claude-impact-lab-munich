@@ -74,6 +74,40 @@ The second reviewer disagreed with the first on two claims, and said so:
 > *"The internal review was **far too lenient**. Of nine sources, only one was actually
 > fetched with any content, and even that excerpt is truncated before the key findings."*
 
+## What we learned by testing it against itself
+
+A verifier that condemns everything is useless, so we built a **control case**
+([`examples/control_case.json`](backend/examples/control_case.json)): carefully hedged
+research on remote work and developer productivity, citing real arXiv and NBER papers,
+stating its own limitations, inventing no statistics.
+
+Both runs, same pipeline:
+
+| | Rigged case | Control case |
+|---|---|---|
+| Score | **0 / 100** | **15 / 100** |
+| Verdict | `do_not_rely` | `do_not_rely` |
+| Why | fabricated `.example` URLs, phantom citations, a 35% figure that is really ~1.4% | real peer-reviewed sources that measure *collaboration*, not *output* |
+
+**The reasoning discriminates. The verdict band does not.** And the critique of the control
+case is, on inspection, correct — the arXiv paper genuinely measures collaboration patterns
+rather than productivity, the NBER figure is projected from self-reported survey data, and
+the one RCT studied call-centre workers in 2010–2012. A careful human reviewer would say the
+same thing.
+
+The root cause is interesting, and it is the thing we would fix next. The survey stage
+**compounds the user's stated standards into absolutes**: told "peer-reviewed preferred,
+limitations stated plainly", it produced an `Intent` demanding evidence through 2023 with
+effect sizes for developers specifically — a bar almost no real research clears. Everything
+downstream then fails that bar.
+
+So Glassbox is currently a **stricter reader than an expert human**, not a laxer one. That is
+the safer direction to be wrong in, but it is still wrong, and the fix is calibration at the
+intent stage rather than anywhere in the scoring.
+
+Full outputs, unedited: [`examples/sample_run.txt`](examples/sample_run.txt) and
+[`examples/control_run.txt`](examples/control_run.txt).
+
 ## Run it
 
 ```bash

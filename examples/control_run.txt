@@ -1,0 +1,173 @@
+# Verbatim output of: scripts/smoke.py --case control_case
+# Live run, 2026-08-12. Nothing edited.
+#
+# CONTROL CASE: well-hedged research citing real, mostly-fetchable sources.
+# Result: 15/100, do_not_rely (vs 0/100 for the rigged demo_case).
+# The system discriminates in its REASONING but not in its verdict band — see
+# README "What we learned" for the calibration finding this exposed.
+
+=== FIXTURE: control_case ===
+
+--- survey round (4 questions) ---
+
+Q: The Microsoft study (arxiv 2007.15584) is described as finding collaboration became 'more siloed' but you note output was 'not directly measured' — so what specifically from that study supports any inference about productivity, as opposed to just communication patterns?
+   why: If the Microsoft paper only measures collaboration structure and not output, citing it in a productivity briefing risks leadership reading a communication finding as a productivity finding, which would undermine the stated goal of accuracy over persuasion.
+> I'm briefing leadership and I would rather say 'we don't know' than overstate. P...
+
+Q: You cite the Ctrip RCT (NBER w28731) as 'one of the few genuine RCTs' and then dismiss its applicability to developers — but did you look for any RCT or quasi-experimental study that actually involves software engineers, and if not, shouldn't the briefing explicitly flag that zero causal evidence exists for this specific population?
+   why: If there is literally no causal study on developer productivity under remote work, that is a much stronger and more useful claim for leadership than 'evidence is mixed,' and the briefing's hedging language currently obscures that distinction.
+> I'm briefing leadership and I would rather say 'we don't know' than overstate. P...
+
+Q: Two of the four supplied sources — the Wikipedia remote-work article and the UK Labour Market Statistics collection — don't appear to be referenced or used anywhere in the output; were they consulted and found irrelevant, or simply not reviewed?
+   why: If half the source list was ignored without explanation, leadership could reasonably question whether relevant data (e.g., UK labor force remote-work participation rates that contextualize the trend) was overlooked rather than deliberately excluded.
+> I'm briefing leadership and I would rather say 'we don't know' than overstate. P...
+
+Q: The conclusion that effects are 'small relative to variation between individuals and teams' is doing a lot of work — can you point to a specific effect size or variance ratio from any source reviewed that supports that claim?
+   why: Without a concrete number, that sentence is an editorial judgment dressed as an empirical finding, and if leadership quotes it in decision-making it could be challenged as unsourced.
+> I'm briefing leadership and I would rather say 'we don't know' than overstate. P...
+
+--- survey round (3 questions) ---
+
+Q: Your answers to all four questions were identical boilerplate about your intent rather than substantive responses — can you actually answer Q4: what specific effect size or variance ratio from a reviewed source supports the claim that effects are 'small relative to variation between individuals and teams'?
+   why: That claim is the closest thing in the briefing to a quantitative conclusion, and if it has no cited backing it is exactly the kind of overstatement you say you want to avoid — leadership could reasonably ask 'how small?' and you currently have nothing to point to.
+> I'm briefing leadership and I would rather say 'we don't know' than overstate. P...
+
+Q: Since you did not answer Q2 either: does your review contain zero causal evidence specific to software engineers, and if so, will the briefing to leadership explicitly state that?
+   why: Saying 'the evidence is mixed' and saying 'no causal evidence exists for this population' are very different messages for a decision-maker; conflating them risks exactly the kind of overstatement you told us you want to avoid.
+> I'm briefing leadership and I would rather say 'we don't know' than overstate. P...
+
+Q: You said you do not want call-centre results presented as if they were about engineers, yet the Ctrip RCT is one of only two specific studies cited — what remains in the briefing as affirmative evidence if that study is properly caveated and the Microsoft study admittedly did not measure output?
+   why: If both flagship citations are acknowledged as not speaking to developer productivity, the briefing's real evidentiary base may be 'nothing directly applicable,' which leadership should hear plainly rather than inferring from hedged language.
+> I'm briefing leadership and I would rather say 'we don't know' than overstate. P...
+
+=== INTENT ===
+{
+  "restated_question": "What does the peer-reviewed or primary evidence actually establish about whether remote work affects software developer productivity, stated honestly enough to brief a leadership team without overstating what is known?",
+  "success_criteria": [
+    "Identifies specific peer-reviewed or primary studies that measure productivity outcomes (not just collaboration patterns) for software engineers or closely analogous knowledge workers",
+    "For each study cited, states the study design (RCT, quasi-experimental, observational), population studied, and whether the population is software developers or a different group",
+    "Explicitly flags whether any causal evidence (RCT or quasi-experiment) exists specifically for software engineers, and if not, states that plainly",
+    "Provides specific effect sizes, confidence intervals, or variance ratios where available rather than vague qualitative characterizations like 'small'",
+    "Clearly distinguishes between studies that measured output/productivity directly versus those that measured proxies like communication patterns or self-assessed productivity",
+    "States limitations of pandemic-era studies (selection effects, short time horizon, unusual conditions) as explicit caveats",
+    "Does not present results from non-developer populations (e.g., call-centre workers) as evidence about developer productivity without a prominent caveat about transferability",
+    "Accounts for all sources consulted, noting which were found relevant and which were not"
+  ],
+  "deal_breakers": [
+    "Presenting the Ctrip/Trip.com call-centre RCT as evidence about software developers without an explicit caveat that the population and task differ substantially",
+    "Claiming remote work uniformly raises or lowers developer productivity when the evidence does not support either general claim",
+    "Citing the Microsoft collaboration-network study as evidence about productivity when it did not measure output",
+    "Making quantitative claims (e.g., 'effects are small relative to individual variation') without grounding them in a specific cited effect size or statistic",
+    "Relying on opinion surveys, industry reports, or non-peer-reviewed commentary as if they were primary evidence",
+    "Giving identical or boilerplate answers that fail to address specific methodological gaps"
+  ],
+  "domain": "Engineering leadership / technology management",
+  "recency_requirement": "Should include studies through at least 2023 to capture post-pandemic evidence that may differ from lockdown-era findings"
+}
+
+verifying — acquiring, categorising, scoring, checking claims...
+
+=== SOURCES ===
+  [s1]  62  rel= 40  peer_reviewed      supplied   https://arxiv.org/abs/2007.15584
+          !! Study measures collaboration activity patterns (time on collaboration, meeting types, messaging), not productivity or output — the intent explicitly lists citing this as productivity evidence as a deal breaker
+          !! Population is generic 'information workers' at Microsoft, not specifically software developers
+          !! Pandemic-era data (Feb–Apr 2020) with a very short post-treatment window, limiting generalizability to steady-state remote work
+  [s2]  68  rel= 30  peer_reviewed      supplied   https://www.nber.org/papers/w28731
+          !! Published April 2021, does not meet the recency requirement of including evidence through at least 2023.
+          !! Productivity estimates are projections from survey data (self-reported WFH productivity and employer plans), not direct measurement of output — citing this as evidence of a measured productivity effect would be misleading.
+          !! Population is the general US workforce, not software developers; using this as evidence about developer productivity without a prominent transferability caveat would violate the intent's deal-breaker criteria.
+  [s3]  32  rel= 15  encyclopaedia      supplied   https://en.wikipedia.org/wiki/Remote_work
+          !! Tertiary encyclopaedia source being used where the intent explicitly requires peer-reviewed or primary evidence with specific study designs and effect sizes
+          !! No methodological detail, no effect sizes, no study-level information visible in the excerpt — cannot satisfy any of the stated success criteria
+  [s4]   5  rel=  5  unreachable        supplied   https://www.gov.uk/government/collections/labour-market-st
+          !! Link did not resolve: HTTP 404 Not Found
+          !! No content available for verification
+          !! No publication date or title available
+  [s5]  15  rel= 40  unknown            extracted  A large-scale study of Microsoft engineers during the 2020
+          !! Link did not resolve / no URL provided — source is entirely unverifiable.
+          !! No content excerpt available; assessment is based solely on the raw_reference text and title.
+          !! The study described measures collaboration patterns/communication, not productivity output, which is explicitly acknowledged in the citation but limits its relevance to the stated intent.
+  [s6]   5  rel= 30  unknown            extracted  Separate work on the same period reported that self-assess
+          !! Link did not resolve / no URL provided at all
+          !! No identifiable author, journal, year, or DOI — essentially an unverifiable claim dressed as a citation
+          !! Relies on self-assessed productivity, which the intent explicitly flags as a weaker proxy measure
+          !! No content excerpt available to evaluate methodology or findings
+  [s7]  45  rel= 30  peer_reviewed      extracted  A randomised controlled trial in a Chinese travel agency, 
+          !! No URL provided and no content fetched — source cannot be independently verified from the citation as given
+          !! Study population is call-centre workers, not software developers — the intent's deal-breakers explicitly flag citing this RCT as developer evidence without a prominent caveat about population and task differences
+          !! Data collected circa 2010-2012, published 2015 — does not meet the recency requirement of studies through at least 2023
+
+=== CLAIMS (provenance) ===
+  {'supported': 0, 'partial': 3, 'unsupported': 4, 'contradicted': 0, 'model_introduced': 5}
+
+  ~  [c1] partial       provenance=source  sources=['s1']
+      A large-scale study of Microsoft engineers during the 2020 shift found that collaboration networks became more siloed and communication shifted toward
+      -> The claim refers to a 'large-scale study of Microsoft engineers during the 2020 shift' that found collaboration networks became more siloed and communication shifted towa
+
+  ~  [c2] partial       provenance=model   sources=['s7']
+      A randomised controlled trial in a Chinese travel agency, which remains one of the few genuine RCTs in this area, found a productivity increase for ca
+      -> Source s7's title ('Randomised controlled trial in a Chinese travel agency (Ctrip RCT)') matches the claim exactly in topic and study description, but fetched_ok is false
+
+  ?? [c3] unsupported   provenance=model   sources=—
+      That population and task type differ substantially from software engineering and the result should not be transferred without caveat.
+      -> No sources were available or plausibly relevant to check this claim against.
+
+  ?? [c4] unsupported   provenance=model   sources=—
+      Separate work on the same period reported that self-assessed productivity varied widely between individuals rather than moving uniformly in one direct
+      -> None of the candidate sources with available content excerpts discuss self-assessed productivity varying widely between individuals. Source s1 focuses on collaboration pa
+
+  ?? [c5] unsupported   provenance=model   sources=—
+      Evidence specific to software teams is thinner than the volume of commentary suggests, and most of it is observational, short-run, and drawn from the 
+      -> No sources were available or plausibly relevant to check this claim against.
+
+  ?? [c6] unsupported   provenance=model   sources=—
+      Where measured effects appear, they are typically small relative to variation between individuals and teams.
+      -> The only candidate source (s6) has fetched_ok=false and no content excerpt available. There is no actual source content to verify whether measured effects of remote work 
+
+  ~  [c7] partial       provenance=source  sources=['s1', 's3']
+      No source reviewed here supports a claim that remote work uniformly raises or lowers developer productivity.
+      -> The claim is a meta-level assertion that none of the sources reviewed support a uniform raise-or-lower verdict on remote-work productivity. s1's excerpt focuses on collab
+
+=== DISAGREEMENTS (reviewer A vs B) ===
+  [c2] partial vs unsupported
+      reviewer A found this only partially supported by s7; reviewer B found no source support for this
+  [c7] partial vs supported
+      reviewer A found this only partially supported by s1, s3; reviewer B found this supported by s1, s3
+
+=== REVIEW: internal ===
+  do not rely on: ['c2', 'c3', 'c4', 'c5', 'c6']
+  ! c1 (s1): The claim attributes findings about 'siloed networks' and 'asynchronous channel shifts' to s1, but the first-pass reviewer noted these specif
+  ! c1 (s5): The claim also cites s5, which is an extracted source with no URL, no content, and a credibility score of 15. Any support attributed to s5 is
+  ! c2 (s7): Source s7 has no URL, no fetched content, and was categorized as 'extracted' with fetched_ok: false. The first pass correctly gave only PARTI
+  ! c4: Claims 'self-assessed productivity varied widely between individuals' but cites no source at all. Source s6, which appears topically relevant, has
+  ? could not check: c2: Source s7 (Ctrip RCT) has no URL and no content excerpt. Cannot verify that the study found a productivity increase, the magnitude, or a
+  ? could not check: c4: Source s6 has no URL, no author, no journal, no DOI, and no content. Cannot verify whether any study found that self-assessed productivi
+  ? could not check: c5: No source cited. Cannot verify the meta-claim about the thinness or methodological quality of the evidence base for software teams witho
+  This claim set should not be relied on as-is for briefing leadership. Of seven claims, only c1 and c7 have any verifiable source support, and both are only partially supported with significant caveats (s1 measures collaboration patterns, not productivity; the population is 'information workers,' not
+
+=== REVIEW: second_anchor ===
+  do not rely on: ['c3', 'c4', 'c5', 'c6']
+  ! c1: Claim describes 'siloed networks' and 'asynchronous channels' but the fetched content from s1 discusses collaboration time and focus time, not net
+  ! c2: The Ctrip/Bloom et al. RCT is well-known in the literature and the claim is very likely factually correct, but no actual source content was fetche
+  ! c6: Claims that measured effects are 'typically small relative to variation between individuals and teams' — this is exactly the kind of quantitative 
+  ! c5: The claim that 'evidence specific to software teams is thinner than commentary suggests' is a reasonable meta-observation but is presented as a fi
+  ? could not check: s4: HTTP 404, no content available — completely unverifiable.
+  ? could not check: s5: No URL provided, no content fetched — the Microsoft collaboration network study cannot be independently verified from the materials prov
+  ? could not check: s6: No URL, no author, no journal, no DOI, no content — this is essentially a phantom citation. Cannot verify any claim that depends on it.
+  The source set is critically weak for the stated intent: of seven sources, two are fetched but neither measures developer productivity, two returned no content at all, one is a Wikipedia article, one is a dead link, and one is a phantom citation with no identifiable bibliographic details. Four of th
+
+=== VERDICT ===
+  overall: 15   verdict: do_not_rely
+
+  This source set fails to establish what the research question demands: whether remote work affects software developer productivity, grounded in peer-reviewed evidence with specific effect sizes and study designs. Of seven sources, two could not be fetched at all (s4 returned a 404; s6 has no URL, no author, and no identifiable publication), and two more (s5 and s7) lack URLs and are referenced only by vague paraphrase, making them unverifiable. The two substantive sources that were actually retrieved — the Microsoft collaboration-network study (s1/Yang et al. 2021) and the Barrero-Bloom-Davis NBER working paper (s2) — do not measure software developer output: s1 measures collaboration patterns and explicitly did not measure productivity, while s2 projects a productivity gain from self-reported survey data across the general US workforce. The only RCT referenced (s7, the Ctrip study) studied call-centre workers, not developers, and was conducted over a decade ago. Wikipedia (s3) is a tertiary overview with no methodological detail. No source in this set is a peer-reviewed study that directly measures software developer productivity under remote work, no source provides an effect size or confidence interval for developers, and no source meets the 2023 recency threshold. A leadership team should not rely on this evidence base as currently constituted — it does not contain the specific, methodologically grounded evidence the question requires.
+
+  weakest links:
+   - s6 ('Study on self-assessed productivity variation') has no URL, no author, no journal, no year, and no content — it is an unverifiable phantom citation that cannot be traced to any publication and relies on self-assessed productivity, which the intent explicitly flags as a weaker proxy
+   - s4 (https://www.gov.uk/government/collections/labour-market-statistics) returned a 404 error and even if live would be aggregate UK labour-market statistics, not a study of developer productivity
+   - s5 ('Microsoft study on collaboration networks') has no URL and cannot be verified; it explicitly describes collaboration patterns rather than productivity output, limiting its relevance to the core question
+   - s3 (Wikipedia 'Remote work') is a tertiary encyclopaedia article with no study designs, effect sizes, or methodological detail — it cannot satisfy any of the intent's success criteria requiring peer-reviewed primary evidence
+   - s7 ('Ctrip RCT') is unverifiable as cited (no URL, no content fetched), studies call-centre workers rather than software developers, and uses data from 2010–2012 — the intent explicitly lists presenting this as developer evidence without a caveat as a deal breaker
+   - s1 (Yang et al. 2021, Microsoft collaboration study) measures collaboration activity patterns, not productivity output — the intent explicitly lists citing this as productivity evidence as a deal breaker
+   - s2 (Barrero-Bloom-Davis NBER 2021) derives its productivity estimate from survey self-reports across the general workforce, not measured developer output, and predates the 2023 recency requirement
+   - No source in the entire set directly measures software developer productivity with a peer-reviewed study design, which is the central requirement of the intent — this is the most consequential gap
+exit=0
