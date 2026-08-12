@@ -1,0 +1,186 @@
+# Verbatim output of scripts/smoke.py against examples/demo_case.json
+# Live run, 2026-08-12, Claude Impact Lab Munich. Nothing edited.
+
+
+--- survey round (4 questions) ---
+
+Q: The '35% revenue rise' is attributed to the UK pilot, but Autonomy's actual report presents revenue growth weighted by company size and compared to a baseline period — does that 35% figure appear in the source, or was it conflated with a different metric?
+   why: If the headline revenue number is misquoted or stripped of its caveats (e.g., compared against a COVID-depressed baseline, or driven by a few outliers), the central 'productivity-neutral or positive' conclusion loses its strongest quantitative support.
+> We're deciding this quarter and it affects all 40 staff, so getting it wrong is ...
+
+Q: The claim that 'developer productivity in particular increases by roughly 40%' appears to trace back solely to the 2019 Microsoft Japan press release about a one-month trial in a very different work culture — what is the second independent source backing that specific 40% figure for developers?
+   why: If the 40% developer-productivity claim rests on a single five-week experiment in Japan with no replication, applying it to a 40-person Bavarian software team is a massive extrapolation, and it's the number most likely to drive the actual decision.
+> We're deciding this quarter and it affects all 40 staff, so getting it wrong is ...
+
+Q: Two of the six supplied sources — the 'fourdayweek-productivity-institute.example.com' whitepaper and the non-resolving 'this-domain-does-not-resolve-4dw.example' PDF — are clearly inaccessible or fictitious; did the research output rely on claims from those sources, and if so, which specific assertions came from them?
+   why: If the 'industry analysis confirms knowledge-work output is unaffected' or the 'broad consensus among researchers' language was synthesised from sources that don't actually exist, the stated evidence base is thinner than it appears.
+> We're deciding this quarter and it affects all 40 staff, so getting it wrong is ...
+
+Q: The research says 'German employers have been slower to adopt' and 'Bavarian mid-size firms report strong employee interest,' yet the only Germany-specific sources supplied are a Reddit thread and a general Destatis labour-market page — what is the actual empirical basis for the Bavaria-specific claim?
+   why: The team making this decision is a 40-person Bavarian software company, so the local-relevance claim is doing heavy lifting; if it rests on an anecdotal Reddit thread rather than survey data, the research is weakest exactly where it needs to be strongest.
+> We're deciding this quarter and it affects all 40 staff, so getting it wrong is ...
+
+--- survey round (3 questions) ---
+
+Q: You stated that anything before 2022 or self-reported by a vendor is useless, yet the research you're relying on includes the 2019 Microsoft Japan press release as the apparent sole basis for the '40% developer productivity' claim — has that claim now been discarded from your evidence base, or is it still informing the decision?
+   why: If the 40% figure is still in play despite failing your own stated evidence filter, the decision framework is internally contradictory, and the team may be anchoring on a number that should have been thrown out.
+> We're deciding this quarter and it affects all 40 staff, so getting it wrong is ...
+
+Q: Your answers restated your filtering criteria but did not address whether the 35% revenue figure actually appears in the Autonomy pilot report or was conflated with a different metric — do you know which specific metric in the report that number corresponds to?
+   why: A 35% revenue rise is doing enormous rhetorical work in this brief; if it's a misread of a weighted or baseline-adjusted figure, the entire 'productivity-neutral or positive' conclusion rests on softer ground than presented, which matters for a binding decision affecting 40 people this quarter.
+> We're deciding this quarter and it affects all 40 staff, so getting it wrong is ...
+
+Q: Given your requirement for evidence from comparable European knowledge-work firms post-2022, can you name even one firm in the research output that matches all three filters (European, knowledge-work, post-2022) and whose results are independently verified rather than self-reported?
+   why: If no single data point in the current research actually survives the filters you yourself set, the evidence base is effectively empty and the decision is being made on priors, not evidence — which the team should know before committing.
+> We're deciding this quarter and it affects all 40 staff, so getting it wrong is ...
+
+=== INTENT ===
+{
+  "restated_question": "For a 40-person software company in Bavaria deciding this quarter, what does rigorous post-2022 evidence from comparable European knowledge-work firms actually show about whether a 4-day work week hurts productivity?",
+  "success_criteria": [
+    "Cites specific studies or trials conducted post-2022 involving European knowledge-work or software firms, not just the UK 4 Day Week Campaign pilot in aggregate",
+    "Correctly identifies what metric the UK pilot's often-cited '35% revenue rise' actually refers to in the Autonomy/4 Day Week Global report (weighted vs unweighted, revenue vs productivity, baseline period) rather than repeating a rounded press headline",
+    "Provides at least one independently verified productivity metric from a company or trial comparable in size and sector to a 40-person software firm, not just self-reported vendor case studies",
+    "Addresses Germany- or Bavaria-specific legal, cultural, or labour-market considerations (e.g. Arbeitszeitgesetz constraints, Kurzarbeit precedent, works council dynamics) with a citable source",
+    "Distinguishes between compressed hours (same hours in fewer days) and reduced hours (32 vs 40) and states which model the evidence applies to",
+    "Identifies concrete risks or failure cases documented in the literature, not just success stories",
+    "States the methodological limitations of the evidence base (e.g. self-selection bias in voluntary pilot participants, short trial durations, Hawthorne effects)"
+  ],
+  "deal_breakers": [
+    "Relying on the 2019 Microsoft Japan one-month trial as evidence for developer-specific productivity gains",
+    "Using fabricated, non-resolving, or inaccessible sources as the basis for key claims",
+    "Presenting the evidence as settled consensus ('works across sectors') without acknowledging self-selection bias and limited controlled studies",
+    "Including pre-2022 studies or vendor-produced marketing material as primary evidence without explicit caveat",
+    "Making Bavaria-specific claims without any Germany-specific empirical source beyond Reddit threads or generic Destatis pages",
+    "Conflating revenue growth with productivity in reporting pilot outcomes"
+  ],
+  "domain": "Software engineering management / HR decision-making at a small-to-mid-size German tech company",
+  "recency_requirement": "Evidence must be from 2022 or later; pre-2022 studies may be cited only as context with an explicit caveat about age and applicability"
+}
+
+verifying — acquiring, categorising, scoring, checking claims...
+
+=== SOURCES ===
+  [s1]  52  rel= 62  primary            supplied   https://www.autonomy.work/portfolio/uk4dwpilotresults/
+          !! Autonomy Institute is an advocacy organization for shorter working weeks — it designed, ran, and reported on the very trial it is being cited for, creating a significant conflict of interest
+          !! The report uses promotional language ('resounding success') rather than neutral scientific framing
+          !! Self-selection bias: participating companies voluntarily joined a shorter-work-week pilot, meaning results cannot be generalized to non-self-selected firms
+  [s2]   3  rel=  0  unreachable        supplied   https://fourdayweek-productivity-institute.example.com/whi
+          !! Link did not resolve: ConnectError: [Errno -5] No address associated with hostname
+          !! Domain is .example.com — an IANA-reserved domain that cannot host real content; almost certainly a fabricated/hallucinated URL
+          !! No content, no title, no author, no date — entirely unverifiable
+          !! Directly triggers the stated deal-breaker against fabricated or non-resolving sources
+  [s3]   8  rel= 12  forum_ugc          supplied   https://www.reddit.com/r/germany/comments/4daywoche_erfahr
+          !! Content excerpt is effectively empty — only the word 'Reddit' was retrieved, so the source content cannot be verified or evaluated.
+          !! The intent's deal-breakers explicitly disqualify Reddit threads as a basis for Bavaria-specific claims.
+          !! No publication date, no author identity, no methodology — impossible to assess recency, expertise, or reliability.
+          !! Anonymous user-generated content with no accountability or editorial oversight.
+  [s4]  52  rel= 10  primary            supplied   https://www.destatis.de/EN/Themes/Labour/Labour-Market/_no
+          !! Content is a generic navigation/landing page with no substantive data — functions more as a homepage than a citable source
+          !! No specific dataset, report, or analysis is referenced; citing this URL provides no verifiable evidence for any claim
+  [s5]   3  rel=  5  unknown            supplied   According to a 2019 Microsoft Japan press release, product
+          !! Link did not resolve / no URL provided at all — source is completely unverifiable
+          !! Explicitly a deal-breaker per user intent: 'Relying on the 2019 Microsoft Japan one-month trial as evidence for developer-specific productivity gains'
+          !! Pre-2022 evidence (2019) cited without any caveat, violating recency requirement
+          !! Vendor's own press release about its own internal trial — not independent evidence
+          !! No content excerpt available; nothing to audit
+  [s6]   0  rel=  0  unreachable        supplied   https://this-domain-does-not-resolve-4dw.example/report.pd
+          !! Link did not resolve: ConnectError: [Errno -2] Name or service not known
+          !! Domain appears deliberately fabricated (.example is an IANA-reserved TLD that cannot host real content)
+          !! Meets the intent's deal breaker: 'Using fabricated, non-resolving, or inaccessible sources as the basis for key claims'
+          !! No content, no title, no metadata — completely unverifiable
+  [s7]  12  rel= 55  primary            extracted  The landmark UK pilot found that 92% of participating comp
+          !! No URL provided — source is completely unretrievable
+          !! fetched_ok is false with no content available
+          !! Raw reference uncritically repeats the '35% revenue rise' press headline without specifying metric definition, weighting, or baseline — directly violating the intent's requirement to correctly identify what that figure actually measures
+          !! Autonomy / 4 Day Week Global are advocacy organizations for the 4-day week, not independent researchers; citing their self-run pilot without caveat raises independence concerns
+  [s8]   2  rel= 20  unknown            extracted  several sources report that developer productivity in part
+          !! No URL, title, author, or any identifiable source — this is an unverifiable assertion, not a citation
+          !! fetched_ok is false with no link provided; cannot be verified at all
+          !! Specific quantitative claim (40% productivity increase) presented without any traceable evidence
+          !! Meets the intent's deal-breaker: 'Using fabricated, non-resolving, or inaccessible sources as the basis for key claims'
+  [s9]   2  rel= 15  unknown            extracted  Bavarian mid-size firms report strong employee interest
+          !! No URL provided — source cannot be located or verified at all.
+          !! No title, author, publisher, or date — fails every basic citation requirement.
+          !! Reads like an unsupported assertion rather than a reference to an actual source.
+          !! Link did not resolve (fetched_ok: false) — effectively a fabricated or phantom citation.
+          !! Intent deal-breaker: 'Using fabricated, non-resolving, or inaccessible sources as the basis for key claims' is directly triggered.
+
+=== CLAIMS (provenance) ===
+  {'supported': 0, 'partial': 3, 'unsupported': 5, 'contradicted': 0, 'model_introduced': 5}
+
+  ~  [c1] partial       provenance=source  sources=['s1']
+      The landmark UK pilot found that 92% of participating companies chose to continue after the trial.
+      -> Source s1 describes the UK four-day week pilot (61 companies, ~2,900 workers, June–December 2022) and is clearly the relevant primary source, but the content excerpt is t
+
+  ~  [c2] partial       provenance=source  sources=['s1']
+      Revenue rose 35% on average across participants in the UK pilot.
+      -> Source s1 describes the UK four-day week pilot involving 61 companies and ~2,900 workers and mentions 'key findings,' but the content excerpt is truncated before any spec
+
+  ~  [c3] partial       provenance=source  sources=['s1']
+      Industry analysis confirms that knowledge-work output is unaffected by the reduction in hours.
+      -> The source (s1) describes the UK's largest four-day working week trial and mentions key findings, but the excerpt is truncated before presenting the actual results. The t
+
+  ?? [c4] unsupported   provenance=model   sources=—
+      Several sources report that developer productivity in particular increases by roughly 40% once meeting load is cut.
+      -> Neither candidate source (s2, s6) has any available content — both are unreachable with no excerpt. There is therefore no source text to verify the specific claim that de
+
+  ?? [c5] unsupported   provenance=model   sources=—
+      There is broad consensus among researchers that the model works across sectors.
+      -> No sources were available or plausibly relevant to check this claim against.
+
+  ?? [c6] unsupported   provenance=model   sources=—
+      The evidence base is considered robust.
+      -> No sources were available or plausibly relevant to check this claim against.
+
+  ?? [c7] unsupported   provenance=model   sources=—
+      Bavarian mid-size firms report strong employee interest.
+      -> The only candidate source (s6) was unreachable and has no content excerpt available. There is no source content to verify whether Bavarian mid-size firms report strong em
+
+  ?? [c8] unsupported   provenance=model   sources=—
+      German employers have been slower to adopt.
+      -> The only candidate source (s4) is a navigational/index page from the German Federal Statistical Office with no substantive content about employer adoption of any specific
+
+=== DISAGREEMENTS (reviewer A vs B) ===
+  [c2] partial vs unsupported
+      reviewer A found this only partially supported by s1; reviewer B found no source support for this
+  [c3] partial vs unsupported
+      reviewer A found this only partially supported by s1; reviewer B found no source support for this
+
+=== REVIEW: internal ===
+  do not rely on: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8']
+  ! c1: Marked PARTIAL but relies solely on s1 (Autonomy Institute), which is an advocacy organization that designed and ran the very trial it reports on 
+  ! c2: The '35% revenue rise' claim is rated PARTIAL but the intent explicitly requires correctly identifying what this metric actually measures (weighte
+  ! c3: 'Industry analysis confirms that knowledge-work output is unaffected' is a sweeping causal claim attributed only to s1, whose excerpt is truncated
+  ! c4: The 40% developer productivity claim cites no working sources — s2 is a fabricated .example.com URL and s6 is likewise a non-resolving .example do
+  ? could not check: c1: s1's content excerpt is truncated before the 92% figure appears. I cannot confirm whether the full report states exactly 92% or a differ
+  ? could not check: c2: s1's excerpt is truncated before any revenue statistics. s7 has no URL or content. I cannot verify the 35% figure, its methodology (weig
+  ? could not check: c3: s1's excerpt is truncated before findings. I cannot verify what the report actually says about knowledge-work output specifically.
+  This claim set should not be signed off on. Every single claim is either unsupported, relies on an advocacy organization's truncated report, or cites fabricated .example.com URLs — multiple deal-breakers from the intent are triggered (fabricated sources, consensus language without caveats, no Bavari
+
+=== REVIEW: second_anchor ===
+  do not rely on: ['c4', 'c5', 'c6', 'c7', 'c8', 'c3', 'c2']
+  ! c1: Rated 'partial' with 'medium' confidence by the internal reviewer, but the only fetched source (s1) has a truncated excerpt that does not actually
+  ! c2: The '35% revenue rise' is the exact headline figure the intent explicitly requires the answer to interrogate (weighted vs unweighted, revenue vs p
+  ! c3: 'Industry analysis confirms that knowledge-work output is unaffected' is a strong causal/universal claim. The only cited source (s1) is an advocac
+  ! c4: Marked unsupported by the internal reviewer — correct, but worth noting this claim triggers the deal-breaker on fabricated sources (s2 and s6 are 
+  ? could not check: s2: Fabricated URL (.example.com domain), never resolved, no content. Cannot verify any claim that might rest on it.
+  ? could not check: s5: No URL provided at all; described as the Microsoft Japan 2019 trial. Cannot verify and triggers deal-breakers on both fabricated sources
+  ? could not check: s6: Fabricated URL (.example TLD), never resolved, no content.
+  The internal review was far too lenient. Of nine sources, only one (s1) was actually fetched with any content, and even that excerpt is truncated before the key findings. Three sources use fabricated .example domains, two have no URL at all, one is an empty Reddit page, and one is a Destatis navigat
+
+=== VERDICT ===
+  overall: 0   verdict: do_not_rely
+
+  This research set out to answer whether a 4-day work week would hurt productivity at a 40-person Bavarian software company, drawing on post-2022 evidence from comparable European knowledge-work firms. The source base fails catastrophically. Of nine sources cited, two (s2, s6) use fabricated .example domains that cannot resolve and never could have hosted real content — a clear sign of LLM hallucination. Two more (s5, s8) are bare in-text assertions with no URL, no title, and no verifiable provenance; s5 explicitly cites the 2019 Microsoft Japan trial, which the intent flags as a deal-breaker. The sole substantive source (s1, the Autonomy Institute UK pilot report) is an advocacy organization reporting on its own trial, uses promotional language ('resounding success'), and the companion extracted reference (s7) uncritically repeats the '35% revenue rise' headline without clarifying whether it refers to weighted or unweighted figures, revenue or productivity, or the baseline period — another deal-breaker. The Destatis landing page (s4) contains no data, only site navigation. The Reddit link (s3) returned no usable content. The Bavaria-specific claim (s9) has no source behind it at all. There is no independently verified productivity metric from a comparable firm, no Germany-specific legal analysis with a citable source, no distinction between compressed and reduced hours with matched evidence, and no discussion of failure cases or methodological limitations. This research should not be relied upon for any decision; the evidence base is essentially non-existent.
+
+  weakest links:
+   - s2 (fourdayweek-productivity-institute.example.com) and s6 (this-domain-does-not-resolve-4dw.example) both use IANA-reserved .example domains that cannot host real content — these are fabricated/hallucinated URLs, directly triggering the deal-breaker against non-resolving sources.
+   - s5 (inline reference to '2019 Microsoft Japan press release') cites the exact source the intent explicitly prohibits as a deal-breaker, is pre-2022 with no caveat, and has no URL or retrievable content.
+   - s7 (extracted reference to UK 4-Day Week Pilot) uncritically repeats the '35% revenue rise' press headline without specifying whether it is weighted or unweighted, revenue or productivity, or the baseline period — directly violating the intent's requirement to correctly identify what that metric measures. No URL is provided.
+   - s8 (inline claim that 'developer productivity increases by roughly 40% once meeting load is cut') is an unverifiable assertion attributed to unnamed 'several sources' with no URL, no title, no author, and no methodology — a phantom citation carrying a specific quantitative claim.
+   - s9 (inline claim that 'Bavarian mid-size firms report strong employee interest') is presented as Bavaria-specific evidence but has no URL, no source, and no provenance whatsoever, directly triggering the deal-breaker against unsupported Bavaria-specific claims.
+   - s3 (Reddit thread r/germany) returned no usable content (only the word 'Reddit') and the intent explicitly disqualifies Reddit threads as a basis for Bavaria-specific claims.
+   - s4 (Destatis Labour Market landing page) is a navigation page with no substantive data — it provides zero evidence about working-time models, productivity, or the 4-day work week.
+   - s1 (Autonomy Institute UK pilot report) is the only real source but is produced by an advocacy organization that designed and ran the trial it reports on, uses promotional framing, and the trial participants self-selected, limiting generalizability. No independent verification or peer review is evident.
+   - Critical gap: no source in the set provides an independently verified productivity metric from a firm comparable in size and sector to a 40-person software company, no source addresses Arbeitszeitgesetz constraints or works council dynamics with a citable reference, and no source distinguishes compressed-hours from reduced-hours outcomes.
