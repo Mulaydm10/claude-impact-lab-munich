@@ -1,0 +1,17 @@
+{
+  "_comment": "Genuine live-agent output, captured verbatim — not hand-rigged like demo_case.json or market_entry_case.json. A general-purpose Claude agent with real web search was asked this question cold and told to answer naturally, the way an AI assistant normally would. Its research text and source list below are exactly what it produced, including whatever mix of vendor, independent, and secondary sources it happened to find and rely on. This is meant to test Glassbox against authentic AI research output rather than a fixture engineered to fail in known ways.",
+
+  "original_prompt": "We're an engineering leadership team deciding whether to buy AI coding assistant licenses (like GitHub Copilot or Claude Code) for our whole 200-person engineering org. Does the evidence actually show these tools increase developer productivity? Give me a clear answer I can bring to my VP.",
+
+  "research_output": "The evidence is real but mixed, and the mix itself is the answer. Controlled studies from GitHub/Microsoft found meaningful speed gains — in a 95-developer randomized trial, Copilot users finished a coding task 55% faster than the control group, with big self-reported gains in flow and job satisfaction. But METR's 2025 study of experienced open-source developers found the opposite: AI tools made them 19% slower on real tasks in their own codebases, even though the developers believed AI had sped them up by 20%. METR's own 2026 follow-up showed the picture shifting toward a speedup, but flagged the data as unreliable due to selection bias (developers increasingly refusing to work without AI). The most useful large-scale data is McKinsey's 2026 survey of 4,500 developers across 150 enterprises: routine-task time dropped 46% and PR throughput rose with adoption, but gains on high-complexity work were under 10%, and teams without disciplined code review saw 23% higher bug density despite feeling faster. Google's DORA 2025 report captures the real mechanism: AI is an amplifier, not a fix — it magnifies whatever practices (good or bad) already exist. So the honest answer for a VP: yes, gains are real and repeatable at scale, but they're conditional on review discipline, task type, and rollout quality — not a guaranteed multiplier just from buying licenses.",
+
+  "sources": [
+    "https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/",
+    "https://metr.org/blog/2026-02-24-uplift-update/",
+    "https://github.blog/news-insights/research/research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/",
+    "https://dora.dev/dora-report-2025/",
+    "https://agentmarketcap.ai/blog/2026/04/05/mckinsey-4500-developer-study-ai-coding-agent-productivity",
+    "https://www.reuters.com/business/ai-slows-down-some-experienced-software-developers-study-finds-2025-07-10/",
+    "https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/unleashing-developer-productivity-with-generative-ai"
+  ]
+}
