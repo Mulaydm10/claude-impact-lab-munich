@@ -271,9 +271,26 @@ export function mountPanel(hostEl, handlers) {
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') submit();
     });
 
-    foot.appendChild(el('span', { className: 'gb-panel-foot-note', text: 'Ctrl/Cmd + Enter to submit' }));
+    // A live run takes minutes. Let people dismiss this and just watch the demo.
+    const skipBtn = el('button', { className: 'gb-panel-ghost', text: 'Skip \u2014 watch the demo' });
+    skipBtn.addEventListener('click', () => {
+      hide();
+      if (typeof handlers.onCancel === 'function') handlers.onCancel();
+    });
+
+    foot.appendChild(el('span', { className: 'gb-panel-foot-note', text: 'Ctrl/Cmd + Enter to submit \u00b7 Esc to skip' }));
+    foot.appendChild(skipBtn);
     foot.appendChild(loadExampleBtn);
     foot.appendChild(submitBtn);
+
+    const onEsc = (e) => {
+      if (e.key === 'Escape') {
+        document.removeEventListener('keydown', onEsc);
+        hide();
+        if (typeof handlers.onCancel === 'function') handlers.onCancel();
+      }
+    };
+    document.addEventListener('keydown', onEsc);
 
     researchTa.focus();
     show();

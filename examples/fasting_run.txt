@@ -1,160 +1,170 @@
-# scripts/smoke.py --case intermittent_fasting_case — AFTER the dedup fix
-# 59/100 check_flagged. Genuine agent output on real RCTs; 9 sources, 0 phantom
-# duplicates, 0 unsupported claims. Before the fix the same case scored 20.
+# scripts/smoke.py --case intermittent_fasting_case — with dedup fix + hand-off
+# 63/100 check_flagged. 9 real sources, 0 phantom duplicates.
+# Ends with a generated research prompt (see the handoff block in the saved report).
 
 === FIXTURE: intermittent_fasting_case ===
 
 --- survey round (4 questions) ---
 
-Q: The Lin et al. 2024 RCT you lean on heavily had only 41 participants over 12 weeks — do any of your sources address what statistical power that trial actually had to detect a clinically meaningful difference in HOMA-IR or HbA1c?
-   why: If the flagship isocaloric trial was underpowered, its null result could be a false negative, and the entire 'no unique benefit' conclusion handed to the VP collapses.
+Q: The Lin et al. 2024 RCT you lean on heavily had only 41 participants over 12 weeks — did any of the supplied sources flag statistical power concerns, and at that sample size, what effect size could the trial actually have detected?
+   why: If the study was underpowered to detect a clinically meaningful difference, citing its null result as strong evidence that TRE has no unique benefit is misleading and could lead the VP to dismiss a real effect.
 > I need to decide whether to fund this as a wellness benefit, and I'd rather be t...
 
-Q: You cite the Trepanowski ADF subgroup showing a 53% HOMA-IR drop vs. 17% with matched CR but dismiss it partly because 'adherence to the ADF protocol was poor' — does the source specify how poor, and in which direction (over-eating or under-eating on fast days)?
-   why: If poor adherence meant ADF subjects actually ate less than prescribed, the 53% HOMA-IR advantage might just be a hidden calorie deficit, reinforcing your conclusion; if they ate more and still saw the drop, it's actually stronger evidence for a fasting-specific effect, which would reverse the recommendation.
+Q: You describe the PMC12363089 meta-analysis (8 RCTs, 573 participants) as 'suggestive, not confirmatory' because it pools non-calorie-matched controls — but did you verify this characterization against the actual paper, or are you inferring it from the heterogeneity of included studies?
+   why: If that meta-analysis actually did include several isocaloric comparisons and still found inflammation or lipid benefits, the 'no effect beyond calorie deficit' bottom line weakens significantly.
 > I need to decide whether to fund this as a wellness benefit, and I'd rather be t...
 
-Q: The ChronoFast crossover study compared early vs. late eating windows — not a fasting window vs. unrestricted eating — so how does it speak to whether IF per se has metabolic benefits beyond calorie matching?
-   why: If ChronoFast only tested meal timing within restricted windows rather than testing fasting vs. normal eating, citing it as evidence against IF's unique benefits is a category error that weakens the brief's second strongest evidence point.
+Q: The ChronoFast crossover study tested early vs. late eating windows — not fasting vs. normal eating — so how does it support the claim that IF offers no unique metabolic benefit over equivalent calorie restriction, given it wasn't designed to test that question?
+   why: Mischaracterizing a circadian-timing study as an IF-vs-CR comparison would undercut the credibility of the brief if the VP or a medical reviewer catches it.
 > I need to decide whether to fund this as a wellness benefit, and I'd rather be t...
 
-Q: The meta-analysis from PMC12363089 (8 RCTs/573 participants) is dismissed because it pools 'mixed, often non-calorie-matched control groups' — did you verify which of those 8 trials were calorie-matched and whether the effect persists in that subset, or is the dismissal assumed rather than checked?
-   why: If even a few of those pooled trials were genuinely isocaloric and still showed inflammation or lipid benefits, the blanket label of 'marketing, not evidence' is too strong and the VP could be steered away from a real benefit.
+Q: The Trepanowski ADF subgroup analysis showing a 53% HOMA-IR drop (n=11 vs n=17) is dismissed as 'contested,' but is there any newer replication or refutation of that finding in the supplied sources, or is it just being down-weighted on sample size alone?
+   why: If no study in the evidence base actually contradicts the ADF insulin-sensitivity finding, dismissing it without replication data means the brief may be burying the one result most relevant to the prediabetes/insulin-resistance population a wellness program would target.
+> I need to decide whether to fund this as a wellness benefit, and I'd rather be t...
+
+--- survey round (3 questions) ---
+
+Q: All four of your follow-up answers are identical boilerplate about your decision context — none actually addresses the specific methodological concern raised (e.g., Lin's detectable effect size, ChronoFast's design mismatch, Trepanowski replication status, PMC12363089 verification). Were these questions actually investigated and the answers lost, or were they never checked?
+   why: The brief's recommendation rests on these specific studies, and the identical non-answers suggest the cited limitations and design mismatches were never examined — meaning the confidence level assigned to the bottom-line conclusion ('no unique benefit') may be unjustified.
+> I need to decide whether to fund this as a wellness benefit, and I'd rather be t...
+
+Q: Given that the ChronoFast study compared early vs. late eating windows (both time-restricted) rather than TRE vs. unrestricted eating, on what basis is it listed as evidence that IF has no benefit over normal eating — and if that citation is removed, does the 'strongest evidence tier' still hold with only one small RCT (Lin, n=41) and one meta-analysis?
+   why: If ChronoFast doesn't actually test the claim it's marshaled to support, the 'strongest evidence tier' thins considerably, and the funding recommendation may be resting on less evidence than it appears.
+> I need to decide whether to fund this as a wellness benefit, and I'd rather be t...
+
+Q: The Trepanowski ADF subgroup showed a 53% vs. 17% HOMA-IR improvement with matched weight loss — you dismiss it on small sample size and poor adherence, but is there any calorie-matched trial in your sources that actually refutes an insulin-sensitivity advantage for fasting protocols, or is the evidence simply silent?
+   why: 'No evidence of benefit' and 'evidence of no benefit' are different things; if the latter doesn't exist in the reviewed sources, the brief's definitive tone ('does not support IF as superior') overstates what can be concluded for the funder.
 > I need to decide whether to fund this as a wellness benefit, and I'd rather be t...
 
 === INTENT ===
 {
-  "restated_question": "Does intermittent fasting produce measurable metabolic health benefits (insulin sensitivity, HbA1c, lipids, inflammation) beyond what an equivalent calorie deficit from conventional eating would deliver, and is the evidence strong enough to justify including IF-specific guidance in a corporate wellness program?",
+  "restated_question": "Does intermittent fasting produce measurable metabolic health benefits (insulin sensitivity, HbA1c, lipids, inflammation) beyond what an equivalent calorie deficit from conventional eating would deliver, and is the evidence strong enough to justify adding IF-specific guidance to a corporate wellness program?",
   "success_criteria": [
-    "Cites at least one calorie-matched (isocaloric) RCT comparing an IF protocol to continuous calorie restriction and reports the specific outcome on HOMA-IR, HbA1c, lipids, or inflammatory markers",
-    "Distinguishes clearly between ad libitum IF trials (where participants freely ate less) and isocaloric IF trials (where calories were held equal between groups)",
-    "Reports actual effect sizes or specific numbers for metabolic outcomes, not just directional claims like 'improved insulin sensitivity'",
-    "Addresses whether any observed IF-specific benefit on insulin/HOMA-IR is clinically meaningful, not just statistically significant",
-    "Covers the main IF variants relevant to a workplace setting (time-restricted eating and alternate-day fasting at minimum)",
-    "Sources are peer-reviewed RCTs or systematic reviews/meta-analyses, not popular press summaries treated as primary evidence",
-    "Provides a clear, actionable recommendation suitable for presenting to a VP deciding on a wellness program benefit"
+    "Cites at least two calorie-matched (isocaloric) RCTs that directly compare IF/TRE to continuous calorie restriction on metabolic outcomes, with sample sizes and durations stated",
+    "Clearly distinguishes results from calorie-matched trials vs. ad libitum trials where IF groups may have simply eaten less",
+    "Reports specific outcome measures (HOMA-IR, fasting insulin, HbA1c, LDL/HDL/triglycerides, CRP/TNF-\u03b1) rather than vague claims of 'metabolic improvement'",
+    "Addresses whether any calorie-matched trial found a statistically significant fasting-specific advantage for insulin sensitivity, and if so, whether it has been replicated",
+    "Correctly characterizes the design of each cited study \u2014 e.g., does not cite an early-vs-late eating window study as evidence for IF vs. unrestricted eating",
+    "Includes at least one systematic review or meta-analysis that separates isocaloric from non-isocaloric subgroups",
+    "States clearly whether the evidence base is sufficient or insufficient to claim IF has unique metabolic benefits, with an explicit confidence qualifier",
+    "Provides a practical recommendation suitable for a non-clinical corporate decision-maker"
   ],
   "deal_breakers": [
-    "Relying on non-calorie-matched trials as if they demonstrate a fasting-specific effect beyond calorie restriction",
-    "Presenting marketing claims about inflammation or lipid benefits from IF without calorie-matched evidence",
-    "Using a study that compares two eating windows (e.g., early vs. late TRE) as evidence for IF vs. unrestricted eating without acknowledging the design mismatch"
+    "Relying on studies that did not match calories between groups to conclude IF has no unique benefit (user explicitly requires calorie-matching as the relevant test)",
+    "Citing media summaries or secondary reports as though they are primary evidence without flagging the distinction",
+    "Mischaracterizing a study's design in a way that inflates the evidence tier (e.g., presenting an early-vs-late TRE comparison as a TRE-vs-normal-eating comparison)",
+    "Claiming IF reduces inflammation or improves lipids independent of calorie deficit without calorie-matched trial support"
   ],
-  "domain": "Corporate HR / employee wellness program design",
-  "recency_requirement": "Should reflect evidence available through 2024-2025, given that key isocaloric trials (Lin et al. 2024, ChronoFast 2025) and meta-analyses (Chen et al. 2024) are very recent"
+  "domain": "Corporate wellness / employee benefits decision-making",
+  "recency_requirement": "Should include evidence from 2023\u20132025 given rapidly evolving trial landscape (Lin 2024, ChronoFast 2025, Chen meta-analysis 2024)"
 }
 
 verifying — acquiring, categorising, scoring, checking claims...
 
-[saved] /home/mulaydm10/glassbox/backend/examples/intermittent_fasting_case_report.json  (session 8e5142eeb4b4)
+[saved] /home/mulaydm10/glassbox/backend/examples/intermittent_fasting_case_report.json  (session 4d2e9a9bf533)
 
 === SOURCES ===
-  [s1]  78  rel= 72  peer_reviewed      supplied   https://pubmed.ncbi.nlm.nih.gov/38639542/
-  [s2]  20  rel= 10  unreachable        supplied   https://www.science.org/doi/10.1126/scitranslmed.adv6787
-          !! Link did not resolve: HTTP 403 Forbidden — content is inaccessible and unverifiable
-          !! No title, no authors, no date, no content excerpt available
-          !! Category is 'unreachable' — cannot confirm the source even exists or is relevant
+  [s1]  78  rel= 90  peer_reviewed      supplied   https://pubmed.ncbi.nlm.nih.gov/38639542/
+  [s2]  72  rel= 72  peer_reviewed      supplied   https://www.science.org/doi/10.1126/scitranslmed.adv6787
+          !! Full text is paywalled — only abstract and editor summary are available in the excerpt, limiting ability to verify methodology, specific outcome values, and potential limitations.
+          !! Study design is eTRE vs. lTRE (within-TRE comparison), not TRE vs. unrestricted eating — citing this as evidence that TRE has no benefit vs. normal eating patterns would be a design mischaracterization.
   [s3]  62  rel= 72  reputable_media    supplied   https://www.sciencedaily.com/releases/2025/12/251228020018
-          !! This is a press summary, not the peer-reviewed source itself; citing it as primary evidence violates the intent's requirement for peer-reviewed RCTs or systematic reviews as primary evidence
-          !! The ChronoFast design compared two restricted eating windows (eTRE vs. lTRE), not TRE vs. unrestricted eating — the article could be misread as evidence that TRE has no benefit vs. ad libitum eating, which is a design mismatch the intent flags as a deal-breaker
-  [s4]  72  rel= 78  peer_reviewed      supplied   https://pmc.ncbi.nlm.nih.gov/articles/PMC10865403/
-          !! Content excerpt is heavily truncated — cannot verify heterogeneity assessments, risk-of-bias evaluation, forest plots, or specific numerical effect sizes from the text provided
-          !! Focuses only on TRE and does not appear to cover alternate-day fasting (ADF), which the intent requires as a second IF variant
-  [s5]  72  rel= 78  peer_reviewed      supplied   https://pmc.ncbi.nlm.nih.gov/articles/PMC7138754/
-          !! Published 2019 — does not meet the stated recency requirement of 2024-2025 evidence
-          !! Secondary/subgroup analysis (n=43 insulin-resistant subjects) rather than a pre-specified primary RCT analysis, increasing risk of post-hoc findings
-          !! Weight loss was not perfectly matched (ADF −8% vs. CR −6%), so the greater HOMA-IR improvement in ADF could partly reflect the larger weight loss rather than a fasting-specific mechanism — the study does not fully control for this confound
-  [s6]  72  rel= 85  peer_reviewed      supplied   https://pubmed.ncbi.nlm.nih.gov/39458528/
-          !! The content excerpt is truncated and limited to abstract-level information from PubMed, so detailed methodology, forest plot data, and quality-of-evidence assessments (e.g., GRADE) cannot be verified from what was fetched
-          !! It is unclear from the excerpt whether the included trials were truly isocaloric or merely both calorie-restricted — this distinction is critical to the intent's deal-breaker criteria
-  [s7]  72  rel= 78  peer_reviewed      supplied   https://pubmed.ncbi.nlm.nih.gov/36126910/
-          !! Literature search ended April 2022, making this outdated relative to the intent's recency requirement of 2024-2025 evidence including specific named recent trials
+          !! This is a secondary media summary, not the primary peer-reviewed source — citing it as primary evidence would be a deal-breaker per the stated intent criteria.
+          !! The study design compares early-TRE vs. late-TRE (both are TRE), not TRE vs. unrestricted eating. The headline framing could lead to mischaracterization of the study as evidence that TRE has no unique benefit vs. conventional eating, when it actually shows no difference between two TRE windows under isocaloric conditions.
+          !! Content excerpt truncated — full findings and limitations not visible.
+  [s4]  68  rel= 88  peer_reviewed      supplied   https://pmc.ncbi.nlm.nih.gov/articles/PMC10865403/
+  [s5]  68  rel= 72  peer_reviewed      supplied   https://pmc.ncbi.nlm.nih.gov/articles/PMC7138754/
+          !! Secondary analysis of a subgroup (n=43) from a larger RCT, not a pre-registered primary outcome analysis — risk of selective reporting and underpowered comparisons.
+          !! Published in 2019, does not meet the 2023–2025 recency requirement specified in the intent.
+  [s6]  62  rel= 82  peer_reviewed      supplied   https://pubmed.ncbi.nlm.nih.gov/39458528/
+          !! Unclear from the available excerpt whether all included RCTs were calorie-matched — the abstract uses 'continuous caloric restriction' as comparator but does not specify whether fasting arms were also calorie-controlled to the same level, which is the central methodological question the intent requires.
+          !! Content excerpt is largely PubMed boilerplate with a truncated abstract; full methodology, forest plot details, and subgroup analyses are not available for verification.
+  [s7]  72  rel= 85  peer_reviewed      supplied   https://pubmed.ncbi.nlm.nih.gov/36126910/
+          !! Does not appear to be a formal meta-analysis with pooled statistics; intent asks for 'at least one systematic review or meta-analysis that separates isocaloric from non-isocaloric subgroups' — this review only includes isocaloric trials rather than separating subgroups within a broader pool.
+          !! Literature search ended April 2022, so it cannot capture the 2023-2025 trial results the intent specifically names (Lin 2024, ChronoFast 2025, Chen 2024).
   [s8]  18  rel= 25  unreachable        supplied   https://academic.oup.com/jcem/article/107/12/3428/6747530
-          !! Link did not resolve: HTTP 403 Forbidden — content cannot be verified
-          !! No content excerpt available whatsoever
-          !! Likely published in 2022 based on volume number, predating the 2024-2025 recency requirement
-  [s9]  62  rel= 58  peer_reviewed      supplied   https://pmc.ncbi.nlm.nih.gov/articles/PMC12363089/
-          !! Cannot confirm from available excerpt whether the review distinguishes isocaloric from ad libitum IF trials — if it does not, citing it as evidence of fasting-specific benefits beyond calorie restriction would violate the intent's primary deal-breaker.
-          !! Content excerpt is heavily truncated, preventing verification of key methodological details such as comparator types and specific numerical outcomes.
+          !! Link did not resolve: HTTP 403 Forbidden — content cannot be verified.
+          !! No title or content excerpt available; impossible to audit claims made using this source.
+          !! Apparent publication year (~2022) falls outside the stated 2023–2025 recency requirement.
+  [s9]  62  rel= 55  peer_reviewed      supplied   https://pmc.ncbi.nlm.nih.gov/articles/PMC12363089/
+          !! Content excerpt is heavily truncated — only the abstract background and partial methods are visible, with no results, conclusions, or forest plots available for verification.
+          !! Cannot confirm whether the meta-analysis separates isocaloric from non-isocaloric subgroups, which is a critical success criterion for the stated intent.
 
 === CLAIMS (provenance) ===
-  {'supported': 2, 'partial': 7, 'unsupported': 0, 'contradicted': 0, 'model_introduced': 0}
+  {'supported': 4, 'partial': 6, 'unsupported': 0, 'contradicted': 0, 'model_introduced': 0}
 
   OK [c1] supported     provenance=source  sources=['s1']
       A 2024 RCT in Annals of Internal Medicine (Lin et al., n=41, 12 weeks, obesity + prediabetes, calories and nutrients matched between a 10-hour eating 
-      -> Source s1 is the PubMed entry for the actual study described in the claim. Its excerpt confirms: randomized isocaloric feeding study, adults with obesity and prediabetes 
+      -> Source s1 (PubMed entry for Lin et al.) directly describes the study: a randomized isocaloric feeding study of adults with obesity and prediabetes or diet-controlled diab
 
-  ~  [c2] partial       provenance=source  sources=['s3']
+  OK [c2] supported     provenance=source  sources=['s2', 's3']
       The 2025 German ChronoFast crossover study (Science Translational Medicine, n=31 women, calories/nutrients held identical between early vs. late eatin
-      -> Source s3 (ScienceDaily) describes the ChronoFast study led by Prof. Olga Ramich, published in Science Translational Medicine, conducted at the German Institute of Human 
+      -> Source s2 is the actual Science Translational Medicine paper (Peters et al., ChronoFast study). Its abstract states it was a randomized crossover trial in 31 women with o
 
   ~  [c3] partial       provenance=source  sources=['s4']
       The largest meta-analysis isolating this question (Chen et al. 2024, iScience, 19 RCTs/1,201 participants) found TRE's benefits were 'primarily due to
-      -> Source s4 is the Chen et al. 2024 iScience meta-analysis referenced in the claim. Its excerpt confirms TRE was studied in people with overweight/obesity, found modest wei
+      -> Source s4 is the Chen et al. meta-analysis published in iScience (2024), and its summary confirms TRE improved metabolic health markers and that energy deficit played a r
 
   ~  [c4] partial       provenance=source  sources=['s5']
-      A secondary analysis of the Trepanowski alternate-day-fasting (ADF) trial, in insulin-resistant subjects (small subgroup, ADF n=11, CR n=17), found HO
-      -> Source s5 is the actual secondary analysis of the Trepanowski ADF trial (Kroeger et al. 2019, Obesity) examining differential effects of ADF vs CR on insulin resistance. 
+      A secondary analysis of the Trepanowski alternate-day-fasting trial, in insulin-resistant subjects (small subgroup, ADF n=11, CR n=17), found HOMA-IR 
+      -> Source s5 is the actual secondary analysis paper by Kroeger et al. of the Trepanowski ADF trial, which directly addresses differential effects of ADF vs CR on insulin res
 
   OK [c5] supported     provenance=source  sources=['s6']
       A systematic review of 10 RCTs (623 participants) comparing fasting strategies to continuous restriction found a modest short-term insulin/HOMA-IR adv
-      -> Source s6 is a systematic review and meta-analysis of exactly 10 RCTs with 623 participants comparing fasting-based strategies (FBS) to continuous caloric restriction (CC
+      -> Source s6's excerpt directly describes a systematic review and meta-analysis of 10 RCTs with 623 participants comparing fasting-based strategies (FBS) to continuous calor
 
   ~  [c6] partial       provenance=source  sources=['s7']
       A review of 13 isocaloric IF-vs-daily-restriction trials concluded effects were 'generally comparable,' with only scattered, non-quantified signals fa
-      -> Source s7 is the systematic review of 13 isocaloric IF-vs-DCR trials and its excerpt states: 'Thirteen randomized controlled/comparison trials with matched energy intakes
+      -> Source s7 is a systematic review of 13 isocaloric IF-vs-DCR randomized controlled/comparison trials, matching the claim's description of '13 isocaloric IF-vs-daily-restri
 
-  ~  [c7] partial       provenance=source  sources=['s6', 's7']
-      Matched-calorie trials consistently show null effects on inflammatory markers (CRP, TNF-α) and lipid profiles when comparing IF to continuous calorie 
-      -> Source s6's excerpt states that both FBS and CCR had 'similar effects on…lipid profiles,' which partially supports the lipid-profile part of the claim. Source s7's excerp
-
-  ~  [c8] partial       provenance=source  sources=['s9', 's4', 's6', 's7']
+  ~  [c7] partial       provenance=source  sources=['s9', 's4', 's6', 's7']
       Meta-analyses that do report inflammation or lipid benefits (e.g., PMC12363089, 8 RCTs/573 participants) pool trials with mixed, often non-calorie-mat
-      -> The claim references PMC12363089, which is s9. The s9 excerpt confirms this is a meta-analysis on intermittent fasting's effects on insulin resistance, lipid profile, and
+      -> The claim references PMC12363089 (s9), and the excerpt confirms it is a meta-analysis of intermittent fasting on insulin resistance, lipid profile, and inflammation in me
 
-  ~  [c9] partial       provenance=source  sources=['s3']
-      The ChronoFast 2025 study compared early vs. late eating windows, not IF vs. unrestricted eating, making it a circadian-timing study rather than a dir
-      -> The s3 excerpt describes the ChronoFast study as comparing an eight-hour eating window to unrestricted eating (no time restriction) while keeping calories the same — i.e.
+  ~  [c8] partial       provenance=source  sources=['s6', 's7']
+      Matched-calorie trials consistently show null effects on CRP, TNF-α, and lipid profiles when comparing IF to continuous calorie restriction.
+      -> Source s6 states that both FBS and CCR had 'similar effects on … lipid profiles' but does not mention CRP or TNF-α specifically. Source s7 examines isocaloric IF vs DCR o
 
-=== DISAGREEMENTS (reviewer A vs B) ===
-  [c9] partial vs contradicted
-      reviewer A found this only partially supported by s3; reviewer B found this contradicted by s3
-  [c1] supported vs partial
-      reviewer A found this supported by s1; reviewer B found this only partially supported by s1
+  OK [c9] supported     provenance=source  sources=['s2', 's3']
+      The ChronoFast 2025 study compared early vs. late eating windows, not TRE vs. unrestricted eating.
+      -> Source s2's excerpt describes the ChronoFast study as a randomized crossover trial directly comparing early TRE (eTRE; eating from 8:00 to 16:00) versus late TRE (lTRE; e
+
+  ~  [c10] partial       provenance=source  sources=['s1']
+      The Lin et al. 2024 trial concluded that prior TRE benefits likely came from unintentional calorie cutting, not timing.
+      -> The s1 excerpt describes the Lin et al. trial as an isocaloric feeding study testing whether TRE induces weight loss independent of calorie reduction. The background stat
 
 === REVIEW: internal ===
-  do not rely on: ['c2', 'c8', 'c9']
-  ! c1: The specific weight-loss figures (2.3 vs 2.6 kg) and the null result on glucose/insulin markers cannot be verified from the truncated s1 excerpt; 
-  ! c2 (s2, s3): The primary source s2 is completely unreachable (403 Forbidden), so the claim relies entirely on s3, a ScienceDaily press summary — a sou
-  ! c3 (s4): The specific subgroup finding that insulin/HOMA-IR improvements 'disappeared' under isocaloric conditions is not visible in the truncated s4 
-  ! c4 (s5): s5's excerpt is too truncated to verify the specific numbers claimed (53% vs 17% HOMA-IR, n=11/17 subgroup sizes, poor adherence, absent HbA1
-  ? could not check: c2: The primary peer-reviewed source s2 (Science Translational Medicine) returned HTTP 403 and has no title, no authors, no content excerpt.
-  ? could not check: s8: Unreachable (HTTP 403), no content, no title. Any claim that might have relied on this source would be unverifiable. It appears not to b
-  ? could not check: c1: The specific numerical outcomes (2.3 vs 2.6 kg weight loss, null glucose/insulin results) cannot be confirmed from the truncated s1 exce
-  This claim set has serious verifiability problems: most source excerpts are truncated before the specific numbers and conclusions the claims cite, and two sources (s2, s8) are completely unreachable. Claim c9 appears to contain a factual error about the ChronoFast study design (asserting early-vs-la
+  do not rely on: ['c3', 'c4', 'c6', 'c7', 'c8', 'c10']
+  ! c3: The claim attributes specific subgroup findings to Chen et al. 2024 (insulin/HOMA-IR improvements 'disappeared' in calorie-controlled subgroup, ap
+  ! c4: The claim cites very specific numbers (HOMA-IR fell 53% vs. 17%, ADF n=11, CR n=17, poor adherence, no HbA1c, lipids/inflammation null) from sourc
+  ! c6: The claim attributes specific language ('generally comparable,' 'scattered, non-quantified signals,' 'no firm conclusion can be drawn') to s7's au
+  ! c7: The claim states PMC12363089 (s9) covered '8 RCTs/573 participants' with 'non-calorie-matched control groups,' but the s9 excerpt is heavily trunc
+  ? could not check: c1 (s1): The specific weight-loss figures (2.3 vs 2.6 kg) and null finding on glucose/insulin markers are in the truncated portion of the Pu
+  ? could not check: c2 (s2): Source s2 is paywalled — only abstract and editor summary are available. Full methodology, specific outcome values for lipids and i
+  ? could not check: c3 (s4): The specific subgroup analysis (insulin/HOMA-IR by isocaloric vs. ad libitum), the number of included studies (19 RCTs), and the pa
+  The claim set has a serious verification gap: most key quantitative details and author conclusions fall in truncated portions of source excerpts, meaning the first-pass verdicts rest heavily on design-level plausibility rather than confirmed content. Claims c3, c7, and c8 are the highest-risk items 
 
 === REVIEW: second_anchor ===
-  do not rely on: ['c1', 'c2', 'c9']
-  ! c1: The specific weight-loss figures (2.3 vs 2.6 kg) and the null result on glucose/insulin markers are not visible in the truncated s1 excerpt. The i
-  ! c2: The internal review correctly flagged that n=31, crossover design, and early-vs-late framing are unverifiable, yet the claim presents all of these
-  ! c3: The claim attributes a specific subgroup finding (insulin/HOMA-IR improvements disappearing under isocaloric conditions, appearing only in ad libi
-  ! c5: Rated SUPPORTED/high by internal review and this appears well-matched to the s6 excerpt. However, it is unclear from the truncated abstract whethe
-  ? could not check: s2: The actual ChronoFast primary source (Science Translational Medicine) returned HTTP 403 and has no title, no authors, no content. Claims
-  ? could not check: s8: Unreachable (HTTP 403), no content, no title. Cannot verify what this source contributes.
-  ? could not check: s4 (Chen et al. 2024): The excerpt is so heavily truncated that the specific subgroup analyses, forest plots, and numerical effect sizes att
-  The internal review was too lenient on c1 (SUPPORTED despite unverifiable numbers), c9 (PARTIAL despite the available source contradicting the claim's design characterization), and c2 (relying on a press summary for a claim the intent explicitly requires peer-reviewed primary evidence for). Multiple
+  do not rely on: ['c3', 'c4', 'c7', 'c8', 'c10']
+  ! c1: Marked SUPPORTED/high but the specific weight-loss figures (2.3 vs 2.6 kg) and the null finding on glucose/insulin are in the truncated portion of
+  ! c3: Marked PARTIAL/medium but even that may be generous. The claim attributes very specific subgroup findings (insulin/HOMA-IR improvements 'disappear
+  ! c4: Marked PARTIAL/medium. The specific HOMA-IR numbers (53% vs 17%), subgroup sizes (n=11 vs n=17), absence of HbA1c, null lipid/inflammation finding
+  ! c5: Marked SUPPORTED/high, and s6 does support the general structure, but the excerpt is itself largely PubMed boilerplate with a truncated abstract. 
+  ? could not check: s8: Returned HTTP 403 — no content available. Any claims resting on this source (none currently do) would be unverifiable.
+  ? could not check: s9 (PMC12363089): Excerpt is so truncated (abstract background and partial methods only) that the specific claims in c7 about 8 RCTs/573 par
+  ? could not check: s4 (Chen et al. 2024 meta-analysis): The excerpt does not contain the subgroup-level findings attributed to it in c3 (isocaloric vs ad libit
+  The internal review was too lenient on several claims. Claims c3, c4, c7, and c8 assert specific numerical details, subgroup findings, or strong generalizations ('consistently') that are simply not present in the available source excerpts — they may be accurate descriptions of the full papers, but t
 
 === VERDICT ===
-  overall: 59   verdict: check_flagged
+  overall: 63   verdict: check_flagged
 
-  The research set out to determine whether intermittent fasting delivers measurable metabolic benefits (insulin sensitivity, HbA1c, lipids, inflammation) beyond what an equivalent calorie deficit from conventional dieting would produce, and whether the evidence is strong enough to justify IF-specific guidance in a corporate wellness program. The source set includes several peer-reviewed RCTs and systematic reviews that are individually credible, but collectively they fall short of providing a confident answer. The strongest isocaloric RCT (s1, Lin et al. 2024 in Annals of Internal Medicine) found no TRE-specific benefit when calories were held equal, while a secondary analysis of an ADF trial (s5, Varady et al. 2019) showed a large HOMA-IR improvement favoring ADF — but that study is older, is a post-hoc subgroup analysis with imperfect weight-loss matching, and the effect may partly reflect greater weight loss in the ADF arm rather than a true fasting mechanism. Two meta-analyses (s6, s9) report modest short-term insulin improvements with fasting strategies, but neither clearly separates isocaloric from ad libitum designs, meaning calorie-deficit confounding cannot be ruled out. Two sources (s2, s8) were completely inaccessible (403 errors), and the ScienceDaily summary of ChronoFast (s3) describes a trial comparing early vs. late TRE — not TRE vs. unrestricted eating — so using it as evidence against IF broadly is a design mismatch. No source in the set provides the actual peer-reviewed ChronoFast paper or the Chen et al. 2024 meta-analysis named in the intent. Overall, the evidence assembled here is insufficient to make a confident, actionable recommendation to a VP: the isocaloric evidence is thin and conflicting, key recent studies are missing or unreachable, and the distinction between calorie-driven and fasting-specific benefits remains unresolved. This research should not be relied upon in its current form without filling the gaps noted below.
+  The research asks whether intermittent fasting (IF) or time-restricted eating (TRE) delivers metabolic benefits beyond what an equivalent calorie deficit from conventional eating would provide, aiming to inform a corporate wellness program decision. The source set includes two calorie-matched RCTs (s1: Lin et al. 2024 in Annals of Internal Medicine, n=41, 12 weeks; s2/s3: ChronoFast 2025 in Science Translational Medicine, n=31, 2×2 weeks crossover), two systematic reviews that attempt to separate isocaloric from ad libitum designs (s4, s7), two additional meta-analyses (s6, s9), and one older secondary analysis (s5). The two calorie-matched RCTs both found no fasting-specific improvement in insulin sensitivity, glucose, or cardiometabolic markers, but both are small and one (ChronoFast) actually compares early-TRE vs. late-TRE rather than TRE vs. unrestricted eating—a design nuance that matters greatly. The meta-analysis in s6 reports a modest short-term HOMA-IR advantage for fasting strategies, but the excerpt does not clarify whether all included trials were truly calorie-matched, so that finding may partly reflect inadvertent calorie deficits. The systematic review in s7 specifically pools isocaloric trials and concludes evidence of a unique IF benefit for insulin sensitivity is 'very limited' and insufficient for firm conclusions, but its literature search predates the 2023–2025 studies the intent specifically requires. One key source (s8, a JCEM article) returned a 403 error and contributes nothing. Overall, the evidence tilts toward IF benefits being largely attributable to calorie reduction, but the source set does not conclusively settle the question: the calorie-matched RCTs are underpowered, the most relevant meta-analyses either lack isocaloric subgroup separation or predate recent trials, and one pivotal study's design is easily mischaracterized. A corporate decision-maker should treat this evidence base as suggestive but insufficient to justify IF-specific program guidance over general calorie-management strategies, and should flag the need for the larger, longer calorie-matched trials that all reviews call for.
 
   weakest links:
-   - s2 (Science Translational Medicine DOI 10.1126/scitranslmed.adv6787) returned HTTP 403 and provided zero content — this appears to be the actual ChronoFast peer-reviewed paper, which is one of the most critical sources named in the intent, and its absence is a major gap
-   - s8 (JCEM article at academic.oup.com) also returned HTTP 403 with no content — another unreachable peer-reviewed source that cannot contribute to the analysis
-   - s3 (ScienceDaily summary of ChronoFast) is a press summary, not the primary peer-reviewed source, and the underlying trial compared early TRE vs. late TRE rather than TRE vs. unrestricted eating — using it as evidence that IF has no benefit over normal eating is a design mismatch that the intent explicitly flags as a deal-breaker
-   - s5 (Varady/Kroeger et al. 2019 ADF vs. CR) is a secondary/subgroup analysis (n=43) with unequal weight loss between arms (ADF −8% vs. CR −6%), so the large HOMA-IR improvement could partly reflect greater caloric deficit rather than a fasting-specific mechanism; it also predates the 2024-2025 recency requirement
-   - s9 (2025 GRADE meta-analysis on IF and metabolic syndrome) does not clearly indicate whether it distinguishes isocaloric from ad libitum IF trials — if it pools both, citing it as evidence of fasting-specific benefits violates the intent's primary deal-breaker
-   - s6 (2024 meta-analysis of FBS vs. CCR) reports a HOMA-IR difference of only −0.14, which is likely not clinically meaningful, and the excerpt does not confirm whether included trials were truly isocaloric or merely both calorie-restricted
-   - The Chen et al. 2024 meta-analysis specifically named in the intent as a key recent source is entirely absent from the source set — this is a significant gap in coverage
-   - s7 (2022 systematic review of isocaloric IF vs. DCR) has a literature search ending April 2022 and misses all key 2024-2025 trials named in the intent, limiting its value for a current evidence summary
+   - s8 (JCEM article, academic.oup.com) returned HTTP 403 and is completely unverifiable — no title, no content, no methodology can be assessed; it contributes nothing to the evidence base.
+   - s2/s3 (ChronoFast, Science Translational Medicine) compares early-TRE vs. late-TRE, not TRE vs. unrestricted eating. Citing it as evidence that TRE has no benefit over conventional eating would mischaracterize the study design — a deal-breaker per the stated intent. s3 (ScienceDaily) is a secondary media summary that amplifies this mischaracterization with its headline.
+   - s6 (meta-analysis, PMID 39458528) reports a statistically significant HOMA-IR advantage for fasting, but the abstract does not clarify whether all 10 included RCTs were truly calorie-matched or whether some were ad libitum designs where fasting groups simply ate less — the exact confound the intent requires be resolved.
+   - s5 (Varady lab, PMID 31328895) is from 2019, outside the required 2023–2025 recency window, and is a secondary subgroup analysis (n=43) of a larger trial rather than a pre-specified primary analysis, significantly reducing its evidentiary weight.
+   - s7 (systematic review, PMID 36126910) has the most directly relevant design (isocaloric-only inclusion), but its literature search ended April 2022 and therefore misses the recent trials (Lin 2024, ChronoFast 2025, Chen 2024) that the intent explicitly requires be covered.
+   - s9 (GRADE-assessed meta-analysis, PMC12363089) is recent (2025) but the truncated excerpt does not reveal whether it separates isocaloric from non-isocaloric subgroups — without that distinction it cannot fulfill the intent's core requirement for calorie-matched evidence.
 exit=0

@@ -288,7 +288,15 @@ export async function initLive() {
     }
   };
 
-  panel = mountPanel(host, { onSubmit: run });
+  panel = mountPanel(host, {
+    onSubmit: run,
+    // Dismissing intake drops you straight onto the scene behind it.
+    onCancel: () => {
+      const h = document.getElementById(HOST_ID);
+      if (h) h.style.display = 'none';
+      document.querySelector('.gb-panel-scrim')?.remove();
+    },
+  });
 
   // Presentation button — always available, backend or not.
   const demoBtn = document.createElement('button');
