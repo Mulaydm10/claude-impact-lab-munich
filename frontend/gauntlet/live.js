@@ -12,6 +12,7 @@ import { createStageTracker, createElapsed, describe } from './livestage.js';
 import { mountLedger } from './ledger.js';
 import { FIXTURE } from './data.js';
 import { availableCases } from './cases.js';
+import { mountHandoff, hasHandoff } from './handoff.js';
 
 const HOST_ID = 'live-panel';
 const READY_TIMEOUT_MS = 4000;
@@ -96,7 +97,30 @@ async function initLedger() {
     if (!typing && (e.key === 'v' || e.key === 'V') && current) ledger.toggle(current);
   });
 
-  return { ledger, setReport: (r) => { current = r; } };
+  // Hand-off: the last step — a sharpened prompt to redo the research properly.
+  const handoff = mountHandoff(document.body);
+  const hbtn = document.createElement('button');
+  hbtn.id = 'handoff-btn';
+  hbtn.type = 'button';
+  hbtn.textContent = 'Hand-off ↗';
+  hbtn.title = 'A prompt to re-run this research properly (H)';
+  hbtn.addEventListener('click', () => { if (current) handoff.toggle(current); });
+  document.getElementById('controls')?.appendChild(hbtn);
+  addEventListener('keydown', (e) => {
+    const typing = /^(INPUT|TEXTAREA)$/.test(document.activeElement?.tagName ?? '');
+    if (!typing && (e.key === 'h' || e.key === 'H') && current) handoff.toggle(current);
+  });
+
+  const syncHandoffBtn = (doc) => {
+    hbtn.style.opacity = hasHandoff(doc) ? '' : '.45';
+  };
+  syncHandoffBtn(current);
+
+  return {
+    ledger,
+    handoff,
+    setReport: (r) => { current = r; syncHandoffBtn(r); },
+  };
 }
 
 // Presentation mode. A live run takes 4-9 minutes, which is longer than a whole

@@ -281,6 +281,7 @@ class FullReport(BaseModel):
     provenance_counts: dict[str, int] = Field(default_factory=dict)
     verdicts: list[ReviewVerdict] = Field(default_factory=list)
     disagreements: list[Disagreement] = Field(default_factory=list)
+    handoff: dict[str, Any] | None = None
 
 
 class ScoutResponse(BaseModel):

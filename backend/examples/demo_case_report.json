@@ -1,0 +1,366 @@
+{
+  "session_id": "feeaf0440c57",
+  "state": "USER_EVALUATION",
+  "report": {
+    "intent": {
+      "restated_question": "Would switching a 40-person Bavarian software company to a 4-day work week hurt productivity, based on credible evidence from comparable European knowledge-work firms?",
+      "success_criteria": [
+        "Cites specific, named studies or trials (not press releases or advocacy sites) conducted post-2022 on 4-day work weeks in European knowledge-work or software companies",
+        "Provides traceable, verifiable numbers for any productivity or revenue claims \u2014 including the methodology (e.g., median vs. mean, sample size, sector breakdown)",
+        "Addresses whether results from large-scale UK or other European pilots are transferable to a ~40-person German/Bavarian software team specifically",
+        "Distinguishes between self-reported/subjective productivity gains and independently measured output metrics",
+        "Covers potential downsides, risks, or failure cases \u2014 not just positive outcomes",
+        "Identifies any German or Bavarian legal, labor-law, or works-council considerations relevant to implementation",
+        "Each factual claim must be attributable to a specific, resolvable source \u2014 no phantom domains or unattributed 'industry analysis'"
+      ],
+      "deal_breakers": [
+        "Sources published before 2022",
+        "Evidence sourced primarily from vendor marketing, advocacy organizations, or non-resolving/fictitious URLs",
+        "Presenting contested or unverified headline numbers (e.g., '35% revenue rise', '40% developer productivity increase') as established fact without tracing them to methodology",
+        "Relying on the 2019 Microsoft Japan one-month trial as evidence for European software developer productivity",
+        "One-sided analysis that omits risks, negative findings, or implementation failures"
+      ],
+      "domain": "Software company operations / workforce planning (Bavaria, Germany)",
+      "recency_requirement": "Must use evidence from 2022 or later; anything older is considered outdated by the decision-makers"
+    },
+    "sources": [
+      {
+        "id": "s1",
+        "url": "https://www.autonomy.work/portfolio/uk4dwpilotresults/",
+        "title": "The results are in: the UK's four-day week pilot - The Autonomy Institute",
+        "origin": "supplied",
+        "raw_reference": "https://www.autonomy.work/portfolio/uk4dwpilotresults/",
+        "fetched_ok": true,
+        "content_excerpt": "The results are in: the UK's four-day week pilot - The Autonomy Institute\nForum 2029\nOur work\nReports\nBlog\nTools\nADI (Annual Deprivation Index)\nASPECTT (Multidimensional Occupations Database)\nRisks to British Business\nCare Visa Sponsor Database\nUBI Database\nProject 2025 Index\nUK Arts Funding Tracker\nClimate Disinformation Proximity Tracker\nInsecurity Index\nCovid Unemployment Tracker\nCovid Jobs at Risk Index\nPolls\nBriefings\nWriters in Residence\nBooks\nPress\nData Unit\nAutonomy Data Unit\nAI-powered Augmentation\nADU blog\nOur Labs\nWork Futures\nNew Economy\nShorter Working Weeks\nFeminist Futures\nEDI\nPublic Futures\nClimate\nDemocracy and Transparency\nWelfare\nUBS Hub\nDigital\nUrban\nMigration\nInsights and Solutions\nCADA\nCollaboration\nWorkplace Transformations\nNight Futures\nAI-powered Augmentation\nAbout\nOur Team\nEvents\nSupport Us\nJoin the mailing list\nWorking Time Newsletter\nPlacements\nFunding\nPrivacy Policy\nFeb 2023\nDownload the report\nTake a look at the raw data.\nRead the Guardian coverage\nRead the FT coverage\nRead the Sky News coverage\nRead the Wall Street Journal coverage\nRead the BBC coverage\nAt a glance:\nThis report details the full findings of the world\u2019s largest\nfour-day working week trial to date, comprising 61\ncompanies and around 2,900 workers, that took place in the\nUK from June to December 2022\nKey findings\nThe design of the trial involved two months of\npreparation for participants, with workshops, coaching,\nmentoring and peer support, drawing on the experience\nof companies who had already moved to a shorter\nworking week, as well as leading research and\nconsultancy organisations.\nCompanies, which included a range of organisations\nfrom diverse sectors and sizes, were not required to\nrigidly deploy one particular type of working time\nreduction or four-day week, so long as pay was\nmaintained at 100% and employees had a \u2018meaningful\u2019\nreduction in work time.\nResisting the idea that the four-day week must be \u2018one-\nsize-fits-all\u2019, each company designed a policy tailored\nto its particular industry, organisational challenges,\ndepartmental structures and work culture. A range of\nfour-day weeks were therefore developed, from classic\n\u2018Friday off\u2019 models, to \u2018staggered\u2019, \u2018decentralised\u2019,\n\u2018annualised\u2019, and \u2018conditional\u2019 structures.\nThe report results draw on administrative data from\ncompanies, survey data from employees, alongside a\nrange of interviews conducted over the pilot period,\nproviding measurement points at the beginning, middle\nand end of the trial.\nThe trial was a resounding success. Of the 61 companies\nthat participated, 56 are continuing with the four-\nday week (92%), with 18 confirming the policy is a\npermanent change.\nSome of the most extensive benefits of shorter working\nhours were found in employees\u2019 well-being. \u2018Before and\nafter\u2019 data shows that 39% of employees were less\nstressed, and 71% had reduced levels of burnout at\nthe end of the trial. Likewise, levels of anxiety, fatigue\nand sleep issues decreased, while mental and physical\nhealth both improved.\nMeasures of work-life balance also improved across the\ntrial period. Employees also found it easier to balance\ntheir work with both family and social commitments \u2013\nfor 54%, it was easier to balance work with household\njobs \u2013 and employees were also more satisfied with\ntheir household finances, relationships and how their\ntime was being managed.\n60% of employees found an increased ability to\ncombine paid work with care responsibilities, and 62%\nreported it easier to combine work with social life.\nHowever, other key business metrics also showed\nsigns of positive effects from shorter working hours.\nCompanies\u2019 revenue, for instance, stayed broadly\nthe same over the trial period, rising by 1.4% on\naverage, weighted by company size, across respondent\norganisations. When compared to a similar period\nfrom previous years, organisations reported revenue\nincreases of 35% on average \u2013 which indicates healthy\ngrowth during this period of working time reduction.\nThe number of staff leaving participating companies\ndecreased significantly, dropping by 57% over the trial\nperiod.\nFor many, the positive effects of a four-day week\nwere worth more than their weight in money. 15% of\nemployees said that no amount of money would induce\nthem to accept a five-day schedule over the four-day\nweek to which they were now accustomed.\nIf you are interested in trying a shorter working week in your organisation, click here to find out how\nThis project was partially supported by the Barry Amiel & Norman Melburn\nFoundation. The qualitative strand of this project was partly supported by\nfunding from the University of Cambridge, as well as the UK Economic\nand Social Research Council [grant number ES/S012532/1], as part of the\nDigital Futures at Work Research Centre (Digit). This support is gratefully\nacknowledged.\nAuthors\nAutonomy team\nKyle Lewis\nWill Stronge\nJack Kellam\nLukas Kikuchi\nQuantitative research team\nProf. Juliet Schor, Boston College\nProf. Wen Fan, Boston College\nProf. Orla Kelly, University College Dublin\nGuolin Gu, Boston College\nQualitative research team\nDr. David Frayne \u2013 University of Cambridge\nProf. Brendan Burchell \u2013 University of Cambridge\nNiamh Bridson Hubbard \u2013 University of Cambridge\nJon White \u2013 University of Cambridge\nDr. Daiga Kamar\u0101de \u2013 University of Salford\nFrancisca Mullens \u2013 Vrije Universiteit Brussel\nIf you are interested in trying a shorter working week in your organisation, click here to find out how\nIf you are interested in trying a shorter working week in your organisation, click here to find out how\nJoe Ryle, Director of the 4 Day Week Campaign,\n\u201cThis is a major breakthrough moment for the movement towards a four-day working week.\n\u201cAcross a wide variety of different sectors of the economy, these incredible results show that the four-day week with no loss of pay really works.\n\u201cSurely the time has now come to begin rolling it out across the country.\u201d\nCharlotte Lockhart, 4 Day Week Global Co-Founder and Managing Director,\n\u201cWe\u2019re delighted to add these overwhelmingly positive results to our ever-growing evidence base in favour of reduced-hour, output-focused working. Not only do these findings demonstrate that the UK pilot programme was a resounding success, but it is encouraging to note that they largely mirror the outcomes from our earlier trials in Ireland and the US, further strengthening the arguments for a four-day week.\n\u201cWhile the impacts on business performance and worker wellbeing are expected and welcome, it\u2019s particularly interesting to observe the diversity in findings across various industries. These results, combined with our previous research demonstrate that non-profit and professional service employees had a larger increase in time spent exercising, while the small group of construction/manufacturing workers had the biggest reduction in burnout and sleep problems. Certainly something to explore further in future pilots.\u201d\nDr David Frayne, Research Associate at University of Cambridge,\n\u201cThe method of this pilot allowed our researchers to go beyond surveys and look in detail at how the companies were making things work on the ground.\n\u201cWe feel really encouraged by the results, which showed the many ways companies were turning the four-day week from a dream into a realistic policy, with multiple benefits. We think there is a lot here that ought to motivate other companies and industries to give it a try\u201d.\nThe National Roll Out Programme for four-day weeks across the UK is live!\nFor women\u2019s fair share of leisure time: Johanna Dohnal and the push for a shorter working week in 1980s Austria\nWe use cookies on our website to give you the most relevant experience by remembering your preferences and repeat visits. By clicking \u201cAccept\u201d, you consent to the use of ALL the cookies.\nDo not sell my personal information\n.\nCookie Settings\nAccept\nManage consent\nPrivacy Overview\nThis website uses cookies to improve your experience while you navigate through the website. Out of these, the cookies that are categorized as necessary are stored on your browser as they are essential for the working of basic functionalities of the website. We also use third-party cookies that help us analyze and understand how you use this website. These cookies will be stored in your browser only with your consent. You also have the option to opt-out of these cookies. But opting out of some of these cookies may affect your browsing experience.\nNecessary\nNecessary\nAlways Enabled\nNecessary cookies are absolutely essential for the website to function properly. These cookies ensure basic functionalities and security features of the website, anonymously.\nCookie\nDuration\nDescription\ncookielawinfo-checkbox-analytics\nThis cookie is set by GDPR Cookie Consent plugin. The cookie is used to store the user consent for the cookies in the category \"Analytics\".\ncookielawinfo-checkbox-functional\nThe cookie is set by GDPR cookie consent to record the user consent for the cookies in the category \"Functional\".\ncookielawinfo-checkbox-necessary\nThis cookie is set by GDPR Cookie Consent plugin. The cookies is used to store the user consent for the cookies in the category \"Necessary\".\ncookielawinfo-checkbox-others\nThis cookie is set by GDPR Cookie Consent plugin. The cookie is used to store the user consent for the cookies in the category \"Other.\ncookielawinfo-checkbox-performance\nThis cookie is set by GDPR Cookie Consent plugin. The cookie is used to store the user consent for the cookies in the category \"Performance\".\nviewed_cookie_policy\nThe cookie is set by the GDPR Cookie Consent plugin and is used to store whether or not user has consented to the use of cookies. It does not store any personal data.\nFunctional\nFunctional\nFunctional cookies help to perform certain functionalities like sharing the content of the website on social media platforms, collect feedbacks, and other third-party features.\nPerformance\nPerformance\nPerformance cookies are used to understand and analyze the key performance indexes of the website which helps in delivering a better user experience for the visitors.\nAnalytics\nAnalytics\nAnalytical cookies are used to understand how visitors interact with the website. These cookies help provide information on metrics the number of visitors, bounce rate, traffic source, etc.\nAdvertisement\nAdvertisement\nAdvertisement cookies are used to provide visitors with relevant ads and marketing campaigns. These cookies track visitors across websites and collect information to provide customized ads.\nOthers\nOthers\nOther uncategorized cookies are those that are being analyzed and have not been classified into a category as yet.\nSAVE & ACCEPT",
+        "fetch_error": null,
+        "category": "industry_analyst",
+        "category_reasoning": "The Autonomy Institute is a think tank that conducts research and publishes reports on work and labor policy, making it an industry analyst/research organization rather than peer-reviewed or media.",
+        "credibility": {
+          "score": 42,
+          "confidence": "medium",
+          "reasons": [
+            "Autonomy Institute is a think tank that advocates for shorter working weeks \u2014 it is not an independent, disinterested party. Its 'Shorter Working Weeks' lab is one of its core research areas, meaning it has a reputational stake in positive findings.",
+            "The UK pilot it describes (June\u2013December 2022) is a real, well-known trial, and the report was published Feb 2023, meeting the recency requirement. However, the trial was co-run by Autonomy alongside 4 Day Week Global, an advocacy organization, which introduces potential advocacy bias in design and framing.",
+            "The report covers 61 companies and ~2,900 workers, giving a reasonable sample, but the excerpt does not break down how many were software/knowledge-work firms vs. other sectors, limiting transferability to a 40-person Bavarian software team.",
+            "The headline '35% revenue increase compared to prior years' figure is presented without adequate methodological context in the excerpt \u2014 it is a weighted average across diverse sectors, and the comparison to 'a similar period from previous years' conflates general economic trends with the trial's effect. This is exactly the kind of contested number the intent flags as a deal breaker if presented uncritically.",
+            "The excerpt heavily emphasizes positive outcomes (well-being, retention, revenue) and the 'resounding success' framing. While there may be nuance deeper in the full report, the visible content does not surface downsides, failure cases, or companies that dropped out or struggled, suggesting one-sided presentation.",
+            "Self-reported employee survey data (stress, burnout, work-life balance) is prominent, but independently measured productivity output metrics are not visible in the excerpt. The intent specifically requires distinguishing subjective from objective measures."
+          ],
+          "red_flags": [
+            "Autonomy Institute is an advocacy-adjacent think tank with a dedicated 'Shorter Working Weeks' lab \u2014 it is financially and reputationally invested in positive 4-day-week findings",
+            "The 35% revenue increase figure is presented without controlling for macroeconomic factors or providing sector-level breakdowns, yet is a headline claim",
+            "No visible discussion of negative outcomes, failures, or companies that reverted in the excerpt \u2014 one-sided framing"
+          ],
+          "relevance_to_intent": 55
+        }
+      },
+      {
+        "id": "s2",
+        "url": "https://fourdayweek-productivity-institute.example.com/whitepaper-2025",
+        "title": null,
+        "origin": "supplied",
+        "raw_reference": "https://fourdayweek-productivity-institute.example.com/whitepaper-2025",
+        "fetched_ok": false,
+        "content_excerpt": null,
+        "fetch_error": "ConnectError: [Errno -5] No address associated with hostname",
+        "category": "unreachable",
+        "category_reasoning": "URL did not resolve when fetched.",
+        "credibility": {
+          "score": 3,
+          "confidence": "high",
+          "reasons": [
+            "URL uses a .example.com domain, which is an IANA-reserved domain for documentation purposes and can never resolve to a real website \u2014 this is effectively a fictitious/phantom URL.",
+            "fetched_ok is false with a DNS resolution error (ConnectError: No address associated with hostname), confirming the link is completely unreachable.",
+            "No title, no content excerpt, no author, no date, no methodology \u2014 there is literally zero verifiable information from this source.",
+            "Category is 'unreachable', and the scoring rubric caps dead-link sources at 25; the additional fact that this is a fabricated .example.com domain warrants scoring far below that cap.",
+            "The intent's deal-breakers explicitly disqualify 'non-resolving/fictitious URLs,' and this source is both non-resolving and fictitious."
+          ],
+          "red_flags": [
+            "Link did not resolve: ConnectError: [Errno -5] No address associated with hostname",
+            "Domain is .example.com \u2014 an IANA-reserved namespace, making this a phantom/fictitious URL by definition",
+            "No content available whatsoever \u2014 impossible to verify any claim attributed to this source",
+            "Directly matches the intent's deal-breaker: 'non-resolving/fictitious URLs'"
+          ],
+          "relevance_to_intent": 0
+        }
+      },
+      {
+        "id": "s3",
+        "url": "https://www.reddit.com/r/germany/comments/4daywoche_erfahrungen/",
+        "title": "Reddit",
+        "origin": "supplied",
+        "raw_reference": "https://www.reddit.com/r/germany/comments/4daywoche_erfahrungen/",
+        "fetched_ok": true,
+        "content_excerpt": "Reddit",
+        "fetch_error": null,
+        "category": "forum_ugc",
+        "category_reasoning": "Domain match: www.reddit.com.",
+        "credibility": {
+          "score": 8,
+          "confidence": "medium",
+          "reasons": [
+            "Category is forum_ugc (Reddit), which carries no institutional accountability, no editorial oversight, and no peer review \u2014 inherently among the lowest credibility tiers.",
+            "The content_excerpt is effectively empty: the only text retrieved is the word 'Reddit'. There is no substantive content to evaluate \u2014 no anecdotal data, no links to studies, no discussion thread visible.",
+            "No author credentials, no publication date, no methodology, no verifiable claims \u2014 none of the success criteria can be satisfied by this source.",
+            "Even in the best case, a Reddit thread titled '4daywoche_erfahrungen' would consist of anonymous self-reported anecdotes, not independently measured productivity data from comparable European knowledge-work firms.",
+            "The URL pattern (comments/4daywoche_erfahrungen/) looks like it may be a fabricated or malformed Reddit URL \u2014 standard Reddit comment URLs include a post ID and slug separated by a slash, but this lacks the expected alphanumeric ID prefix."
+          ],
+          "red_flags": [
+            "Content excerpt is effectively empty \u2014 only the word 'Reddit' was retrieved, making verification of any claim impossible.",
+            "Possible fabricated or malformed Reddit URL \u2014 URL structure does not match standard Reddit permalink format.",
+            "Anonymous user-generated content with zero traceability to methodology, sample size, or named studies."
+          ],
+          "relevance_to_intent": 15
+        }
+      },
+      {
+        "id": "s4",
+        "url": "https://www.destatis.de/EN/Themes/Labour/Labour-Market/_node.html",
+        "title": "Labour market  -  German Federal Statistical Office",
+        "origin": "supplied",
+        "raw_reference": "https://www.destatis.de/EN/Themes/Labour/Labour-Market/_node.html",
+        "fetched_ok": true,
+        "content_excerpt": "Labour market - German Federal Statistical Office\nLabour\nLabour market\nEmployment\nUnemployment",
+        "fetch_error": null,
+        "category": "primary",
+        "category_reasoning": "Domain match: www.destatis.de.",
+        "credibility": {
+          "score": 52,
+          "confidence": "medium",
+          "reasons": [
+            "This is the official German Federal Statistical Office (Destatis), a highly authoritative primary government data source \u2014 the domain and institution are gold-standard for German labor statistics.",
+            "However, the content_excerpt is essentially just the top-level navigation/landing page for the 'Labour Market' section, showing only category headings ('Employment', 'Unemployment') with no substantive data, no specific dataset, no figures, and no mention of 4-day work weeks or knowledge-work productivity.",
+            "As a landing page rather than a specific dataset or publication, it does not provide any traceable, verifiable numbers, methodology, or findings relevant to the research question.",
+            "The source is undated in the excerpt \u2014 it is a portal page that presumably updates regularly, but no specific publication date or dataset vintage is visible, making it impossible to confirm recency compliance (post-2022).",
+            "While Destatis could in principle host relevant labor market data, this particular URL points to nothing specific enough to serve as a citation \u2014 it is the equivalent of citing 'the library' rather than a specific book."
+          ],
+          "red_flags": [
+            "Landing/navigation page with no substantive content \u2014 not a citable dataset or publication",
+            "No specific data, study, or analysis about 4-day work weeks or knowledge-work productivity anywhere in the excerpt"
+          ],
+          "relevance_to_intent": 12
+        }
+      },
+      {
+        "id": "s5",
+        "url": null,
+        "title": null,
+        "origin": "supplied",
+        "raw_reference": "According to a 2019 Microsoft Japan press release, productivity rose 40% during their trial.",
+        "fetched_ok": false,
+        "content_excerpt": null,
+        "fetch_error": null,
+        "category": "unknown",
+        "category_reasoning": "No URL, title, or excerpt provided, so classification is impossible.",
+        "credibility": {
+          "score": 2,
+          "confidence": "high",
+          "reasons": [
+            "No URL, no title, no retrievable content \u2014 this is an unverifiable inline assertion with zero traceability.",
+            "The claim explicitly references the 2019 Microsoft Japan trial, which is (a) from 2019, far older than the 2022 recency requirement, (b) a one-month experiment in a Japanese office, not a European knowledge-work firm, and (c) a company press release, not independent research.",
+            "The '40% productivity' figure is a self-reported metric from Microsoft's own press release with no disclosed methodology \u2014 precisely the kind of unverified headline number the intent's deal-breakers forbid.",
+            "Source category is 'unknown' because nothing about it can be verified; there is no document to inspect.",
+            "fetched_ok is false and there is no content excerpt, meaning the claim cannot be independently checked against any underlying material."
+          ],
+          "red_flags": [
+            "Link did not resolve / no URL provided \u2014 source is entirely unverifiable",
+            "Explicitly references a 2019 press release, violating the post-2022 recency requirement",
+            "Cites a vendor's own press release (Microsoft Japan) as evidence \u2014 self-interested source",
+            "Relies on the 2019 Microsoft Japan one-month trial, which is an explicit deal-breaker in the research intent",
+            "Presents the contested '40% productivity rise' figure without methodology, another explicit deal-breaker"
+          ],
+          "relevance_to_intent": 3
+        }
+      },
+      {
+        "id": "s6",
+        "url": "https://this-domain-does-not-resolve-4dw.example/report.pdf",
+        "title": null,
+        "origin": "supplied",
+        "raw_reference": "https://this-domain-does-not-resolve-4dw.example/report.pdf",
+        "fetched_ok": false,
+        "content_excerpt": null,
+        "fetch_error": "ConnectError: [Errno -2] Name or service not known",
+        "category": "unreachable",
+        "category_reasoning": "URL did not resolve when fetched.",
+        "credibility": {
+          "score": 2,
+          "confidence": "high",
+          "reasons": [
+            "URL is on a non-existent domain (example TLD pattern 'this-domain-does-not-resolve-4dw.example') \u2014 this is not a real website and never was; it appears to be a fabricated or placeholder reference.",
+            "fetched_ok is false with a DNS resolution failure (ConnectError: Name or service not known), meaning the content cannot be verified in any way.",
+            "No title, no content excerpt, no author, no date, no methodology \u2014 there is literally zero informational substance to evaluate.",
+            "Category is 'unreachable', which provides no basis for trust; combined with the fake-looking domain, this falls well below the cap of 25 for dead links.",
+            "The intent's deal-breakers explicitly disqualify 'non-resolving/fictitious URLs,' which this source squarely is."
+          ],
+          "red_flags": [
+            "Link did not resolve: ConnectError: [Errno -2] Name or service not known",
+            "Domain pattern strongly suggests a fictitious/placeholder URL, not a real source",
+            "No content, no title, no metadata of any kind \u2014 completely unverifiable",
+            "Directly violates the intent's deal-breaker: 'non-resolving/fictitious URLs'"
+          ],
+          "relevance_to_intent": 0
+        }
+      }
+    ],
+    "overall_score": 10,
+    "verdict": "do_not_rely",
+    "summary": "This research set out to determine whether a 40-person Bavarian software company could switch to a 4-day work week without hurting productivity, drawing on credible post-2022 evidence from comparable European knowledge-work firms. The source set fails catastrophically on almost every success criterion and triggers multiple explicit deal-breakers. Two of the six sources (s2, s6) are phantom URLs on fictitious or reserved domains that never resolved \u2014 a direct deal-breaker. One source (s5) is an unverifiable inline reference to the 2019 Microsoft Japan press release, which violates both the recency requirement and the explicit prohibition against citing that trial. The Reddit link (s3) returned no usable content and may itself be a fabricated URL. The Destatis landing page (s4) is an authoritative domain but links only to a navigation page with no specific data about 4-day work weeks or software-sector productivity. The sole substantive source (s1, Autonomy Institute's UK pilot report) is a real, post-2022 study, but it comes from an advocacy-adjacent think tank with a reputational stake in positive results, it does not break out software-sector data, it presents the contested '35% revenue rise' figure without adequate controls, and it does not distinguish self-reported well-being gains from independently measured productivity metrics. No source addresses German or Bavarian labor-law considerations, and no source provides independently measured output data from a comparable European software team. This evidence base should not be relied upon for any operational decision.",
+    "weakest_links": [
+      "s2 (fourdayweek-productivity-institute.example.com) is a phantom URL on an IANA-reserved .example.com domain \u2014 it never existed and provides zero evidence, directly triggering the 'fictitious URLs' deal-breaker",
+      "s6 (this-domain-does-not-resolve-4dw.example/report.pdf) is another fabricated, non-resolving domain with no content whatsoever, also triggering the fictitious-URL deal-breaker",
+      "s5 (inline reference to '2019 Microsoft Japan press release') violates two explicit deal-breakers: it cites a pre-2022 vendor press release and relies on the specifically prohibited Microsoft Japan one-month trial",
+      "s3 (reddit.com/r/germany/comments/4daywoche_erfahrungen/) returned only the word 'Reddit' as content and uses a URL structure inconsistent with real Reddit permalinks \u2014 likely fabricated, and even if real would only be anonymous anecdote",
+      "s4 (destatis.de Labour Market landing page) is an authoritative institution but the linked page is a top-level navigation portal with no specific dataset, study, or mention of 4-day work weeks \u2014 equivalent to citing 'the library' rather than a book",
+      "s1 (Autonomy Institute UK pilot report) is the only substantive source but comes from an organization with a dedicated 'Shorter Working Weeks' lab, presents the contested 35% revenue figure without controlling for macro trends, does not break out software-sector results, and foregrounds self-reported well-being data rather than independently measured productivity metrics",
+      "No source in the set addresses German/Bavarian labor law, works-council requirements, or transferability to a ~40-person software team \u2014 a critical gap given the stated intent"
+    ]
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The landmark UK pilot found that 92% of participating companies chose to continue after the trial.",
+      "source_ids": [
+        "s1"
+      ],
+      "provenance": "source",
+      "support": "partial",
+      "reasoning": "Source s1 describes the UK four-day week pilot (61 companies, ~2,900 workers, June\u2013December 2022), which matches the 'landmark UK pilot' referenced in the claim. However, the excerpt is truncated and does not include the specific statistic that 92% of companies chose to continue after the trial. While the source is clearly about the same pilot and would plausibly contain that figure in its full report, the excerpt as provided does not state or entail the 92% continuation rate. No other source provides usable content to verify this claim.",
+      "confidence": "low"
+    },
+    {
+      "id": "c2",
+      "text": "Revenue rose 35% on average across participants in the UK pilot.",
+      "source_ids": [
+        "s1"
+      ],
+      "provenance": "source",
+      "support": "partial",
+      "reasoning": "Source s1 describes the UK four-day week pilot (61 companies, June\u2013December 2022) and is the primary report on the trial's results, but the content excerpt is truncated and does not contain the specific statistic that revenue rose 35% on average. The claim is widely attributed to this report in media coverage, and the excerpt confirms the trial's existence and scope, but the actual revenue figure is not stated in the available text. No other source provides usable content to verify the 35% figure. Therefore, the claim is only partially supported: the source is directly relevant and the right report, but the excerpt does not confirm the specific number.",
+      "confidence": "low"
+    },
+    {
+      "id": "c3",
+      "text": "Developer productivity in particular increases by roughly 40% once meeting load is cut.",
+      "source_ids": [],
+      "provenance": "model",
+      "support": "unsupported",
+      "reasoning": "None of the candidate sources contain any content that mentions developer productivity or a roughly 40% increase in productivity when meeting load is cut. Source s1 discusses the UK four-day working week trial but its excerpt does not mention developers, meetings, or a 40% productivity figure. Sources s2, s5, and s6 were unreachable with no content. Sources s3 and s4 have effectively empty or irrelevant excerpts. There is no basis in any provided source content for this specific claim.",
+      "confidence": "high"
+    },
+    {
+      "id": "c4",
+      "text": "Industry analysis confirms that knowledge-work output is unaffected by the reduction in hours.",
+      "source_ids": [],
+      "provenance": "model",
+      "support": "unsupported",
+      "reasoning": "The claim states that 'industry analysis confirms that knowledge-work output is unaffected by the reduction in hours.' Source s1 describes the UK four-day week pilot and its key findings, but the available excerpt is truncated before any specific results about knowledge-work output are stated \u2014 it only covers the trial design and structure. Sources s2, s5, and s6 have no content (fetched_ok=false or empty). Sources s3 and s4 have effectively empty or irrelevant content. No candidate source's content excerpt actually states or entails that knowledge-work output was unaffected by reduced hours.",
+      "confidence": "high"
+    },
+    {
+      "id": "c5",
+      "text": "There is broad consensus among researchers that the four-day work week model works across sectors.",
+      "source_ids": [],
+      "provenance": "model",
+      "support": "unsupported",
+      "reasoning": "No candidate source provides content that states or implies a 'broad consensus among researchers' that the four-day work week works across sectors. Source s1 describes a single UK pilot involving 61 companies from diverse sectors, but its excerpt does not characterize any broad researcher consensus \u2014 it reports on one trial's findings. Sources s2, s5, and s6 were unreachable with no content. Sources s3 and s4 have no relevant content. The claim about broad researcher consensus is not substantiated by any available excerpt.",
+      "confidence": "high"
+    },
+    {
+      "id": "c6",
+      "text": "Bavarian mid-size firms report strong employee interest in the four-day work week.",
+      "source_ids": [],
+      "provenance": "model",
+      "support": "unsupported",
+      "reasoning": "No candidate source provides content that mentions Bavarian mid-size firms or their employees' interest in a four-day work week. s1 discusses a UK-based four-day week trial, not Bavarian firms. s3 and s4 have essentially no usable content excerpts. s2, s5, and s6 were not fetched successfully. There is no source content available that bears on this specific claim about Bavarian mid-size firms.",
+      "confidence": "high"
+    },
+    {
+      "id": "c7",
+      "text": "German employers have been slower to adopt the four-day work week.",
+      "source_ids": [],
+      "provenance": "model",
+      "support": "unsupported",
+      "reasoning": "No candidate source provides usable content that addresses German employers' adoption (or lack thereof) of the four-day work week. s1 discusses the UK's four-day week pilot and says nothing about Germany. s3 and s4 returned effectively empty content excerpts. s2, s5, and s6 were unreachable with no content available. There is no source content to verify or refute the claim.",
+      "confidence": "high"
+    }
+  ],
+  "provenance_counts": {
+    "supported": 0,
+    "partial": 2,
+    "unsupported": 5,
+    "contradicted": 0,
+    "model_introduced": 5
+  },
+  "verdicts": [
+    {
+      "reviewer": "internal",
+      "unsupported_claims": [
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5",
+        "c6",
+        "c7"
+      ],
+      "uncertainty_flags": [
+        "c1 (s1): Source s1 is an advocacy-adjacent think tank (Autonomy Institute) with a dedicated 'Shorter Working Weeks' lab \u2014 it is financially and reputationally invested in positive outcomes. Even if the 92% figure appeared in the full report, reliance on this source alone without independent corroboration is problematic given the intent's requirements for credible, non-advocacy evidence.",
+        "c2 (s1): The 35% average revenue rise is a headline figure from the same advocacy-adjacent source (s1). The first pass already noted the excerpt does not contain the number, and the source's own red flags note that the figure was presented without controlling for macroeconomic factors, sector breakdowns, or methodology (mean vs. median, baseline period). This is exactly the kind of 'contested headline number presented as established fact' the intent flags as a deal-breaker.",
+        "c3: The '~40% developer productivity increase' with no cited source echoes the 2019 Microsoft Japan one-month trial figure, which is an explicit deal-breaker in the intent. Even if not directly attributed to that trial, presenting this number without any source is irresponsible.",
+        "c4: 'Industry analysis confirms' is an appeal to unnamed authority \u2014 no specific study, author, or institution is cited. This directly violates the intent's requirement that every factual claim be attributable to a specific, resolvable source.",
+        "c5: The claim of 'broad consensus among researchers' is an overreach even beyond what the single partially-relevant source (s1) could support; one UK pilot of 61 companies does not constitute a cross-sector researcher consensus.",
+        "c6: No source even mentions Bavaria or German mid-size firms. The claim appears to be fabricated or inferred without any evidentiary basis.",
+        "c7: No source addresses German employer adoption rates. The claim is unsourced and unverifiable."
+      ],
+      "cannot_verify": [
+        "c1 (s1): The source excerpt is truncated and does not contain the 92% continuation figure. Without the full report text, I cannot confirm whether the source actually states this number or what caveats accompany it.",
+        "c2 (s1): The source excerpt is truncated and does not contain the 35% revenue figure. I cannot verify the number, its methodology, or whether it controls for confounders.",
+        "s2: Phantom URL (.example.com domain). Any claim attributed to this source is completely unverifiable.",
+        "s5: No URL provided, no content available, and references a 2019 Microsoft Japan press release \u2014 entirely unverifiable and violates recency requirements.",
+        "s6: Another fictitious/non-resolving URL (.example domain). Any claim attributed to this source is completely unverifiable.",
+        "s3: Reddit URL returned only the word 'Reddit' as content; the URL structure appears malformed. No claim can be verified against this source.",
+        "s4: Destatis landing page with no substantive content about 4-day work weeks. Cannot serve as evidence for any claim in this set."
+      ],
+      "note": "Every claim in this set should be considered unreliable as-is. The only source with any real content (s1/Autonomy Institute) is advocacy-adjacent with a vested interest in positive findings, and even its excerpt does not contain the specific numbers claimed. Three sources are phantom/non-resolving URLs, one is an empty Reddit scrape, and one is a Destatis navigation page. The most urgent issue for a human reviewer: claims c3 and c2 present precise, impressive-sounding numbers (40% productivity, 35% revenue) with no verifiable sourcing \u2014 these are exactly the kind of contested headline figures the decision-makers flagged as deal-breakers."
+    },
+    {
+      "reviewer": "second_anchor",
+      "unsupported_claims": [
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5",
+        "c6",
+        "c7"
+      ],
+      "uncertainty_flags": [
+        "c1: Marked 'partial' by internal reviewer, but the 92% continuation figure is not present in the fetched excerpt from s1. The only basis for calling it 'partial' is that the source is about the same pilot \u2014 that is provenance proximity, not evidentiary support. This should be 'unsupported' given the available evidence.",
+        "c2: Same situation as c1 \u2014 the 35% revenue figure is not actually contained in the fetched excerpt. Internal reviewer acknowledged this but still rated 'partial'. Moreover, the credibility assessment for s1 already flags that the 35% figure lacks sector-level breakdowns or macroeconomic controls, which is an explicit deal-breaker in the intent. Even if the number were found in the excerpt, presenting it as fact without methodology would be disqualifying.",
+        "c3: Correctly marked unsupported, but the '40% developer productivity' claim maps directly onto the Microsoft Japan 2019 figure that the intent explicitly lists as a deal-breaker. This isn't just unsupported \u2014 it appears to derive from a source (s5) that references the 2019 Microsoft Japan press release, violating two deal-breakers simultaneously (pre-2022 and vendor marketing).",
+        "c4: Uses the vague attribution 'industry analysis confirms' \u2014 this is precisely the kind of unattributed, phantom-source phrasing the intent lists as a deal-breaker. No source supports it.",
+        "c5: Claims 'broad consensus among researchers' \u2014 an extraordinary claim that would require multiple independent meta-analyses or systematic reviews. No source even hints at this. The internal reviewer correctly flagged it but I want to emphasize this is not a borderline case; it is fabricated confidence.",
+        "c6: Claims about 'Bavarian mid-size firms' appear to be entirely invented \u2014 no source even mentions Bavaria in a 4-day-week context. The internal reviewer was correct here but I flag that this claim's very existence in the output suggests the pipeline generated content to fill a gap in the intent rather than reporting what the sources actually say.",
+        "c7: Similarly unsourced. The claim may be directionally plausible but there is zero evidence in any fetched source to support it."
+      ],
+      "cannot_verify": [
+        "s2: Fictitious .example.com domain \u2014 no content exists and never could. Any claim attributed to this source is by definition unverifiable.",
+        "s5: No URL provided at all. References the 2019 Microsoft Japan trial which is both pre-2022 and a deal-breaker per intent. Completely unverifiable.",
+        "s6: Another fictitious domain that did not resolve. No content, no metadata. Unverifiable.",
+        "s3: Reddit URL returned only the word 'Reddit' \u2014 URL structure appears malformed or fabricated. No usable content.",
+        "s4: Destatis landing page with no substantive data about 4-day work weeks. While the domain is legitimate and authoritative, the specific page contains nothing relevant to any claim made.",
+        "s1: Only a truncated excerpt was retrieved. The full report content \u2014 including the specific statistics cited in c1 and c2 \u2014 is not available in the fetched material. I cannot independently verify any specific number attributed to this source."
+      ],
+      "note": "The internal review was significantly too lenient on c1 and c2, which should both be 'unsupported' rather than 'partial' \u2014 the fetched excerpt from s1 does not contain the cited statistics, and 'it's probably in the full report' is not evidence. More fundamentally, this source set is catastrophically weak: three of six sources are fictitious or missing URLs, one is an empty Reddit page, one is an irrelevant landing page, and the one real source (s1) was only partially fetched. Five of seven claims (c3\u2013c7) have zero source attribution and appear to be model-generated fabrications designed to fill gaps in the research question. The pipeline appears to have generated a persuasive-sounding answer and then failed to find sources for most of it \u2014 exactly the failure mode the intent's deal-breakers were designed to catch."
+    }
+  ],
+  "disagreements": [
+    {
+      "claim_id": "c5",
+      "reviewer_a": "unsupported",
+      "reviewer_b": "partial",
+      "note": "reviewer A found no source support for this; reviewer B found this only partially supported by s1"
+    }
+  ]
+}

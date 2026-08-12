@@ -25,6 +25,7 @@ from fastapi.responses import StreamingResponse
 
 from app import claims as claims_mod
 from app import events, review, scoring, sources, survey
+from app import handoff as handoff_mod
 from app.schemas import (
     AnswerRequest,
     AnswerResponse,
@@ -276,6 +277,15 @@ async def verify(req: VerifyRequest) -> FullReport:
     except Exception as exc:  # review is a bonus; never let it sink the report
         log.emit(actor="system", message=f"Review failed, continuing: {exc}")
 
+    log.emit(actor="system", message="Writing a sharpened research prompt")
+    handoff = None
+    try:
+        h = await handoff_mod.build_handoff(report, checked, session.intent, verdicts)
+        handoff = h.model_dump()
+        log.emit(actor="system", message="Hand-off prompt ready")
+    except Exception as exc:
+        log.emit(actor="system", message=f"Hand-off skipped: {exc}")
+
     full = FullReport(
         session_id=req.session_id,
         state=JobState.USER_EVALUATION,
@@ -284,6 +294,7 @@ async def verify(req: VerifyRequest) -> FullReport:
         provenance_counts=counts,
         verdicts=verdicts,
         disagreements=disagreements,
+        handoff=handoff,
     )
     session.full = full
     log.emit(
