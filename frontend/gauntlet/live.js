@@ -98,6 +98,57 @@ async function initLedger() {
   return { ledger, setReport: (r) => { current = r; } };
 }
 
+// Presentation mode. A live run takes 4-9 minutes, which is longer than a whole
+// pitch slot — so this replays the same cascade against the fixture in ~9s.
+// Scripted deliberately: nothing here can fail on venue wifi.
+const DEMO_SCRIPT = [
+  [0, 'user', 'Research submitted — 6 sources', 'INTAKE'],
+  [700, 'interviewer', 'Working out what you actually asked for', null],
+  [1500, 'interviewer', '3 questions — what would make this wrong?', null],
+  [2300, 'user', 'Answered · "unsourced claims are useless to me"', null],
+  [3000, 'interviewer', 'Intent settled — deal-breaker: fabricated statistics', 'INTENT_CONFIRM'],
+  [3800, 'scout', 'Looking for sources: supplied, cited in prose, live web', 'SOURCE_SCOUTING'],
+  [4700, 'scout', '9 sources found, 4 reachable — 3 cited in prose only', null],
+  [5400, 'scout', 'Categorised — your turn to approve or exclude', 'SOURCE_RATING'],
+  [6100, 'user', 'All sources carried forward', null],
+  [6700, 'scorer', 'Scoring 9 sources against your intent', 'VERIFYING'],
+  [7500, 'scorer', 'Per-source credibility done', null],
+  [8100, 'scorer', 'Checking every claim against what its source says', 'REPORT_READY'],
+  [8800, 'reviewer', 'Second opinion — 2 verdicts, 2 disagreements', 'REVIEW'],
+  [9500, 'system', 'Verdict: do_not_rely (0/100)', 'USER_EVALUATION'],
+];
+
+function playDemo({ tracker, status, panel, gauntlet, ledger }) {
+  // panel.hide() leaves its scrim in place, which would sit over the whole demo.
+  panel?.hide();
+  const host = document.getElementById(HOST_ID);
+  if (host) host.style.display = 'none';
+  tracker.reset();
+  const timers = DEMO_SCRIPT.map(([at, actor, message, state_to]) =>
+    setTimeout(() => {
+      tracker.handleEvent({
+        seq: at,
+        actor,
+        message,
+        state_to,
+        payload: {},
+        timestamp: new Date().toISOString(),
+      });
+      status.textContent = `${actor} — ${message}`;
+    }, at)
+  );
+  timers.push(
+    setTimeout(() => {
+      status.textContent = '';
+      gauntlet.load(FIXTURE, 'DEMO — replay of a recorded run');
+      gauntlet.start();
+    }, 10200)
+  );
+  // Let the gauntlet finish its own animation before the ledger slides in.
+  timers.push(setTimeout(() => ledger?.show(FIXTURE), 22000));
+  return () => timers.forEach(clearTimeout);
+}
+
 export async function initLive() {
   const host = hostElement();
   const status = statusLine();
@@ -166,6 +217,32 @@ export async function initLive() {
   };
 
   panel = mountPanel(host, { onSubmit: run });
+
+  // Presentation button — always available, backend or not.
+  const demoBtn = document.createElement('button');
+  demoBtn.id = 'demo-btn';
+  demoBtn.type = 'button';
+  demoBtn.textContent = '▶ Demo';
+  demoBtn.title = 'Replay the full cascade in ~10s (D)';
+  let stopDemo = null;
+  const startDemo = async () => {
+    stopDemo?.();
+    const gauntlet = await waitForGauntlet();
+    if (!gauntlet) return;
+    stopDemo = playDemo({
+      tracker,
+      status,
+      panel,
+      gauntlet,
+      ledger: ledgerCtl?.ledger,
+    });
+  };
+  demoBtn.addEventListener('click', startDemo);
+  document.getElementById('controls')?.appendChild(demoBtn);
+  addEventListener('keydown', (e) => {
+    const typing = /^(INPUT|TEXTAREA)$/.test(document.activeElement?.tagName ?? '');
+    if (!typing && (e.key === 'd' || e.key === 'D')) startDemo();
+  });
 
   // Only offer live mode if the backend is actually there; otherwise the fixture
   // still works and the page is useful without a server.
