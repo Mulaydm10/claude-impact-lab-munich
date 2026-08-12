@@ -35,6 +35,13 @@ CANNED = {
         "Peer-reviewed or primary evidence preferred; I want limitations stated plainly, "
         "and I do not want call-centre results presented as if they were about engineers."
     ),
+    "intermittent_fasting_case": (
+        "I need to decide whether to fund this as a wellness benefit, and I'd rather be told "
+        "'no real advantage' than get a story that sounds good. What matters to me is whether a "
+        "study actually matched calories between groups — if it didn't, the result doesn't "
+        "answer my question. Peer-reviewed trials and meta-analyses preferred; a media summary "
+        "of a study is fine as a pointer but shouldn't carry the weight of the underlying paper."
+    ),
 }
 
 
