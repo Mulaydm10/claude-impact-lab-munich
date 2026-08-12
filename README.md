@@ -41,6 +41,10 @@ Glassbox asks both questions separately.
 6. **Gets a second opinion** from a reviewer told to distrust the first one's leniency, and
    surfaces exactly where they disagree.
 7. **Streams the whole thing live** over SSE, so nothing happens in a black box.
+8. **Hands you a way out.** A verdict of *do not rely* is not much use on its own, so the run
+   ends with a paste-ready prompt to redo the research properly: the real question restated,
+   your success criteria as requirements, your deal-breakers as prohibitions, the sources not
+   to lean on again, and the claims that still need primary evidence.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for diagrams, and [CONCEPT.md](CONCEPT.md) for the
 original design thinking.
@@ -89,21 +93,32 @@ Both runs, same pipeline:
 | Verdict | `do_not_rely` | `do_not_rely` |
 | Why | fabricated `.example` URLs, phantom citations, a 35% figure that is really ~1.4% | real peer-reviewed sources that measure *collaboration*, not *output* |
 
-**The reasoning discriminates. The verdict band does not.** And the critique of the control
+**The reasoning discriminated. The verdict band did not.** And the critique of the control
 case is, on inspection, correct — the arXiv paper genuinely measures collaboration patterns
 rather than productivity, the NBER figure is projected from self-reported survey data, and
 the one RCT studied call-centre workers in 2010–2012. A careful human reviewer would say the
 same thing.
 
-The root cause is interesting, and it is the thing we would fix next. The survey stage
-**compounds the user's stated standards into absolutes**: told "peer-reviewed preferred,
-limitations stated plainly", it produced an `Intent` demanding evidence through 2023 with
-effect sizes for developers specifically — a bar almost no real research clears. Everything
-downstream then fails that bar.
+The root cause was two bugs upstream of the scoring, both found by reading our own runs:
 
-So Glassbox is currently a **stricter reader than an expert human**, not a laxer one. That is
-the safer direction to be wrong in, but it is still wrong, and the fix is calibration at the
-intent stage rather than anywhere in the scoring.
+- **The survey compounded stated standards into absolutes.** Told "peer-reviewed preferred,
+  limitations stated plainly", it produced an `Intent` demanding evidence through 2023 with
+  effect sizes for developers specifically — a bar almost no real research clears. Everything
+  downstream then failed that bar.
+- **Phantom duplicate sources.** A study cited in the prose *and* supplied as a URL was counted
+  twice — once as the fetched source, once as an unverifiable ghost scoring 8–22 with high
+  relevance, dragging the weighted average down hard.
+
+Both are fixed. Extraction now drops a reference that shares a PMC/PubMed/DOI/arXiv identifier
+with a supplied source, scoring weights each source by the scorer's own confidence, and a prose
+citation with no URL is no longer penalised as a broken link.
+
+**Measured on the fasting fixture: 20 → 59, verdict `do_not_rely` → `check_flagged`** — the
+first time the headline band moved rather than only the reasoning underneath it. Nine real
+sources, zero phantom duplicates, zero unsupported claims.
+
+Glassbox still reads **stricter than an expert human**. That is the safer direction to be wrong
+in, and it is no longer wrong by so much that everything lands in the same band.
 
 Full outputs, unedited: [`examples/sample_run.txt`](examples/sample_run.txt) and
 [`examples/control_run.txt`](examples/control_run.txt).
@@ -158,3 +173,13 @@ excerpt rather than parsed metadata; sessions are in memory and do not survive a
 recommendation against reality months later — plus the trust ledger and cross-job learning.
 That is the part that would answer *"should I have been allowed to sign off?"* against ground
 truth rather than plausibility.
+
+## Team
+
+Built in one day at the Claude Impact Lab, Munich.
+
+| | |
+|---|---|
+| **Druuf** | Backend and the verification pipeline — survey, source acquisition, scoring, claim checking, review |
+| **Jenny** | Frontend — the gauntlet, the Ampel source ledger, the architecture and findings pages |
+| **Marco** and **Roman** | The logic and the intent model — what the system asks you, and what it does with the answer |
