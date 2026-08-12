@@ -11,6 +11,7 @@ import { mountPanel } from './panel.js';
 import { createStageTracker, createElapsed, describe } from './livestage.js';
 import { mountLedger } from './ledger.js';
 import { FIXTURE } from './data.js';
+import { availableCases } from './cases.js';
 
 const HOST_ID = 'live-panel';
 const READY_TIMEOUT_MS = 4000;
@@ -117,6 +118,53 @@ const DEMO_SCRIPT = [
   [8800, 'reviewer', 'Second opinion — 2 verdicts, 2 disagreements', 'REVIEW'],
   [9500, 'system', 'Verdict: do_not_rely (0/100)', 'USER_EVALUATION'],
 ];
+
+// Recorded runs, offered as buttons. Only cases with a real saved report appear —
+// a case that has never been run is simply absent rather than shown with a
+// placeholder number.
+async function mountCasePicker({ gauntlet, ledger, panel, setReport }) {
+  const cases = await availableCases();
+  if (!cases.length) return null;
+
+  const bar = document.createElement('div');
+  bar.id = 'case-bar';
+  const title = document.createElement('span');
+  title.className = 'case-title';
+  title.textContent = 'RECORDED RUNS';
+  bar.appendChild(title);
+
+  for (const c of cases) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'case-btn';
+    b.dataset.verdict = c.verdict;
+    b.title = c.blurb;
+
+    const name = document.createElement('span');
+    name.className = 'case-name';
+    name.textContent = c.label;
+    const score = document.createElement('span');
+    score.className = 'case-score';
+    score.textContent = `${c.score}`;
+    b.append(name, score);
+
+    b.addEventListener('click', () => {
+      panel?.hide();
+      const host = document.getElementById(HOST_ID);
+      if (host) host.style.display = 'none';
+      ledger?.hide();
+      setReport?.(c.doc);
+      gauntlet.load(c.doc, `RECORDED — ${c.label} · ${c.score}/100 · ${c.verdict}`);
+      gauntlet.start();
+      [...bar.querySelectorAll('.case-btn')].forEach((x) =>
+        x.classList.toggle('on', x === b)
+      );
+    });
+    bar.appendChild(b);
+  }
+  document.querySelector('.hud')?.appendChild(bar);
+  return bar;
+}
 
 function playDemo({ tracker, status, panel, gauntlet, ledger }) {
   // panel.hide() leaves its scrim in place, which would sit over the whole demo.
@@ -239,6 +287,17 @@ export async function initLive() {
   };
   demoBtn.addEventListener('click', startDemo);
   document.getElementById('controls')?.appendChild(demoBtn);
+
+  waitForGauntlet().then((g) => {
+    if (g) {
+      mountCasePicker({
+        gauntlet: g,
+        ledger: ledgerCtl?.ledger,
+        panel,
+        setReport: ledgerCtl?.setReport,
+      });
+    }
+  });
   addEventListener('keydown', (e) => {
     const typing = /^(INPUT|TEXTAREA)$/.test(document.activeElement?.tagName ?? '');
     if (!typing && (e.key === 'd' || e.key === 'D')) startDemo();

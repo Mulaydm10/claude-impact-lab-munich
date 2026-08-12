@@ -28,6 +28,20 @@
   .hud{position:fixed;inset:0;pointer-events:none;z-index:2}
   .hud > *{pointer-events:auto}
 
+  /* ---------- recorded-run picker ---------- */
+  #case-bar{position:absolute;right:24px;bottom:24px;display:flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;z-index:30}
+  #case-bar .case-title{color:#5f6a73;margin-right:4px}
+  .case-btn{display:flex;align-items:baseline;gap:8px;padding:8px 12px;cursor:pointer;
+    background:rgba(11,13,16,.82);border:1px solid var(--line);color:var(--dim);
+    font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    transition:color .2s,border-color .2s,background .2s}
+  .case-btn:hover{color:var(--paper);border-color:#3a434c}
+  .case-btn.on{color:var(--paper);border-color:#c8a86b;background:rgba(200,168,107,.08)}
+  .case-btn .case-score{font-size:13px;letter-spacing:.04em}
+  .case-btn[data-verdict="do_not_rely"] .case-score{color:#d4695e}
+  .case-btn[data-verdict="check_flagged"] .case-score{color:#c8a86b}
+  .case-btn[data-verdict="sign_off"] .case-score{color:#7f9c6d}
   /* ---------- cross-page nav (matches architecture.html / findings.html) ---------- */
   #nav{position:fixed;top:0;left:0;z-index:60;display:flex;
     font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;

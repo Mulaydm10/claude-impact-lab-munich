@@ -101,6 +101,11 @@ def main() -> int:
     full = res.json()
     data = full["report"]
 
+    # Persist the raw FullReport so the frontend can replay this run exactly.
+    out = EXAMPLES / f"{args.case}_report.json"
+    out.write_text(json.dumps(full, indent=2))
+    print(f"\n[saved] {out}  (session {session_id})")
+
     print("\n=== SOURCES ===")
     for s in data["sources"]:
         cred = s.get("credibility") or {}
