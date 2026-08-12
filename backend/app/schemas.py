@@ -7,7 +7,7 @@ rest of the team — this file is the integration boundary.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -179,3 +179,117 @@ class VerifyRequest(BaseModel):
 
 # pydantic needs this because Source references CredibilityAssessment before it exists
 Source.model_rebuild()
+
+
+# --------------------------------------------------------------------------
+# Glassbox additions — state machine, provenance, review
+# (from CONCEPT.md: every step visible, provenance before assertion,
+#  human-in-the-loop checkpoints, a second opinion built in)
+# --------------------------------------------------------------------------
+
+
+class JobState(str, Enum):
+    """Explicit state machine. A job is always in exactly one state."""
+
+    INTAKE = "INTAKE"
+    INTENT_CONFIRM = "INTENT_CONFIRM"
+    SOURCE_SCOUTING = "SOURCE_SCOUTING"
+    SOURCE_RATING = "SOURCE_RATING"
+    VERIFYING = "VERIFYING"
+    REPORT_READY = "REPORT_READY"
+    REVIEW = "REVIEW"
+    USER_EVALUATION = "USER_EVALUATION"
+
+
+class EventLogEntry(BaseModel):
+    """Feeds the live cascade UI and doubles as the audit trail."""
+
+    seq: int
+    state_from: JobState | None = None
+    state_to: JobState | None = None
+    actor: Literal["user", "interviewer", "scout", "scorer", "reviewer", "system"]
+    message: str
+    payload: dict[str, Any] = Field(default_factory=dict)
+    timestamp: str
+
+
+class Provenance(str, Enum):
+    SOURCE = "source"    # traceable to an approved source
+    MODEL = "model"      # the model introduced this on its own
+    USER = "user"        # came from the user's own answers
+
+
+class ClaimSupport(str, Enum):
+    SUPPORTED = "supported"          # the cited source says this
+    PARTIAL = "partial"              # source is related but weaker than the claim
+    UNSUPPORTED = "unsupported"      # no source backs this
+    CONTRADICTED = "contradicted"    # a source says the opposite
+
+
+class Claim(BaseModel):
+    """One checkable assertion lifted out of the research output."""
+
+    id: str
+    text: str
+    source_ids: list[str] = Field(default_factory=list)
+    provenance: Provenance = Provenance.MODEL
+    support: ClaimSupport = ClaimSupport.UNSUPPORTED
+    reasoning: str | None = None
+    confidence: Literal["low", "medium", "high"] = "medium"
+
+
+class Disagreement(BaseModel):
+    """Where the two reviewers do not agree. This is the interesting part."""
+
+    claim_id: str
+    reviewer_a: ClaimSupport
+    reviewer_b: ClaimSupport
+    note: str
+
+
+class ReviewVerdict(BaseModel):
+    reviewer: Literal["internal", "second_anchor"]
+    unsupported_claims: list[str] = Field(default_factory=list)
+    uncertainty_flags: list[str] = Field(default_factory=list)
+    cannot_verify: list[str] = Field(
+        default_factory=list, description="what the reviewer explicitly could not check"
+    )
+    note: str = ""
+
+
+class SourceRating(BaseModel):
+    """Human-in-the-loop checkpoint: the user vets sources before we lean on them."""
+
+    source_id: str
+    approved: bool = True
+    user_trust: Literal["low", "medium", "high"] | None = None
+    exclusion_reason: str | None = None
+
+
+class RateSourcesRequest(BaseModel):
+    session_id: str
+    ratings: list[SourceRating]
+
+
+class FullReport(BaseModel):
+    """What the frontend renders: the credibility view plus the provenance view."""
+
+    session_id: str
+    state: JobState
+    report: VerificationReport
+    claims: list[Claim] = Field(default_factory=list)
+    provenance_counts: dict[str, int] = Field(default_factory=dict)
+    verdicts: list[ReviewVerdict] = Field(default_factory=list)
+    disagreements: list[Disagreement] = Field(default_factory=list)
+
+
+class ScoutResponse(BaseModel):
+    """Sources found, handed to the user to rate before we lean on them."""
+
+    session_id: str
+    state: JobState
+    sources: list[Source]
+
+
+class ScoutRequest(BaseModel):
+    session_id: str
