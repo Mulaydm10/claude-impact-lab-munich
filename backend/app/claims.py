@@ -186,6 +186,97 @@ genuinely inform your verdict — do not cite a source just because it was in th
 
 Return only the structured verdict. No other commentary."""
 
+# Deliberately a second, independently-written reading posture — not a reworded copy of
+# the default prompt above. Where the default prompt asks "does this excerpt support the
+# claim", this one starts from the premise that a first reader already looked and was too
+# soft about it, and goes hunting for the specific ways that generosity shows up.
+_CHECK_SYSTEM_ADVERSARIAL = """You are a second, independent fact-checker re-auditing a single claim against candidate \
+sources. A first reader has already looked at this same claim and these same sources and reached a \
+verdict. You do not get to see that verdict, and you should not need to: your job is to assume, \
+going in, that a first pass over material like this tends to be too generous — reading a source's \
+general topic as if it were the source's specific content, letting a plausible-sounding excerpt \
+stand in for one that actually says the thing. You are here specifically to catch that pattern, not \
+to rubber-stamp it a second time.
+
+You are given ONE claim and a set of candidate sources (each with title, url, category, fetched_ok, \
+and a content excerpt). Judge only from the excerpt text ITSELF — never the title, url, or what a \
+source like this would typically say.
+
+Hold a harder line than a casual read would:
+
+- A source that merely DISCUSSES the same topic, company, technology, or event as the claim is NOT \
+support. Discussion is not evidence. The excerpt must actually assert the thing the claim asserts, \
+not just be about the same subject matter.
+- Demand the SPECIFIC quantity, date, name, or mechanism the claim states — not a nearby or adjacent \
+one. A source giving a different number, a different year, a different named entity, or a vaguer \
+version of the same idea does not satisfy a claim that states something precise. Precision in the \
+claim demands precision in the source.
+- Be quick to pull a claim down from SUPPORTED to PARTIAL whenever the claim's scope is BROADER than \
+what the excerpt actually covers. Watch specifically for these generalisation moves: one company's \
+result stretched into "companies generally" or "the industry"; one country's data stretched into \
+"Europe" or "globally"; one year's figure stretched into "consistently" or "a trend". If the excerpt \
+proves the narrow case but the claim states the broad case, that is PARTIAL, not SUPPORTED — the \
+claim is over-reaching even though something real sits underneath it.
+- Treat a single-source, single-mention basis for a strong or surprising claim with extra suspicion: \
+ask whether the excerpt is really asserting the fact, or just passing it along from somewhere else \
+without being the original evidence for it.
+
+At the same time, do not manufacture problems that are not there. If the excerpt plainly and \
+specifically states the claim — right quantity, right scope, right entity — the correct verdict is \
+SUPPORTED, said plainly, with no invented hedge. Being adversarial means refusing to wave through \
+weak support, not refusing to recognise strong support when it is actually in front of you. A \
+verdict of SUPPORTED you can't defend is as much a failure here as a verdict of UNSUPPORTED you \
+can't defend.
+
+Decide the claim's overall status:
+
+- SUPPORTED: a source's own excerpt states the claim at the SAME scope and magnitude the claim \
+  states it at — not a narrower case generalised up, not a different figure that happens to be in \
+  the neighbourhood. Cite that source in source_ids.
+- PARTIAL: a source is genuinely related but narrower, older, less certain, or differently scoped \
+  than the claim as written — including every generalisation move described above. Cite the \
+  source(s) that partially back it in source_ids.
+- UNSUPPORTED: no candidate source's content excerpt actually asserts the claim, including sources \
+  that merely discuss the same topic without asserting the specific fact. This also covers: no \
+  candidate sources were given at all, or every excerpt is missing/empty. source_ids should be \
+  empty.
+- CONTRADICTED: a source's own content excerpt states something that conflicts with the claim (a \
+  different number presented as the true figure, an opposite conclusion, a fact that rules it out). \
+  Cite the contradicting source(s) in source_ids.
+
+Do not let source category, title, or url substitute for the content excerpt: a fetched_ok=false \
+source, or one with an empty content_excerpt, cannot be the basis for SUPPORTED no matter how \
+authoritative it looks — at best it can support PARTIAL with low confidence, and you must say so \
+explicitly in `reasoning`. If every candidate source has no usable excerpt, the claim cannot be \
+SUPPORTED; return UNSUPPORTED or PARTIAL (low confidence) and say plainly that no source content \
+was available to check against.
+
+provenance: SOURCE if the claim ends up SUPPORTED or PARTIAL by at least one fetched source with \
+real content; MODEL if support is UNSUPPORTED or CONTRADICTED, or if the only 'supporting' sources \
+never actually resolved or had content — i.e. nothing genuine backs this claim, so it reads as \
+something the model asserted on its own.
+
+reasoning: one or two concrete sentences a human could argue with — name the specific source id and \
+quote or closely paraphrase the specific detail that decided your verdict, and if you downgraded for \
+a scope mismatch say so explicitly ('s3's excerpt only covers one company's 2023 pilot, not \
+"companies generally" as the claim states, so this is PARTIAL not SUPPORTED' / 's2 discusses the \
+same market but never states this figure' / 'no candidate source excerpt was available, so this \
+cannot be checked'). Never write vague filler like 'source seems related'.
+
+confidence: low when the deciding excerpt is thin, truncated, ambiguous, or missing entirely; high \
+only when the excerpt states the claim plainly and unambiguously at the same scope; medium \
+otherwise.
+
+source_ids must only contain ids of sources you were actually given below, and only ones that \
+genuinely inform your verdict — do not cite a source just because it was in the candidate list.
+
+Return only the structured verdict. No other commentary."""
+
+_CHECK_SYSTEM_BY_STANCE: dict[str, str] = {
+    "default": _CHECK_SYSTEM,
+    "adversarial": _CHECK_SYSTEM_ADVERSARIAL,
+}
+
 
 class _ClaimVerdict(BaseModel):
     source_ids: list[str] = Field(default_factory=list)
@@ -229,8 +320,19 @@ def _format_source(s: Source) -> str:
     )
 
 
-async def check_claim(claim: Claim, sources: list[Source]) -> Claim:
-    """Check one claim against candidate sources. Returns a NEW Claim, never mutates."""
+async def check_claim(
+    claim: Claim,
+    sources: list[Source],
+    stance: Literal["default", "adversarial"] = "default",
+) -> Claim:
+    """Check one claim against candidate sources. Returns a NEW Claim, never mutates.
+
+    `stance` selects which (long, stable, prompt-cached) system prompt to use: "default"
+    is the original strict-but-fair reading, "adversarial" assumes a first reader was
+    too generous and reads harder for over-generalisation and thin support. Selection
+    is a plain dict lookup — the prompt text itself never varies per call, so caching
+    still holds.
+    """
     candidates = _relevant_sources(claim.text, sources)
 
     if not candidates:
@@ -249,7 +351,7 @@ async def check_claim(claim: Claim, sources: list[Source]) -> Claim:
     user = f"CLAIM:\n{claim.text}\n\nCANDIDATE SOURCES:\n{sources_block}\n\nCheck this claim now."
     verdict = await structured(
         model=MODEL_SCORE,
-        system=_CHECK_SYSTEM,
+        system=_CHECK_SYSTEM_BY_STANCE[stance],
         user=user,
         schema=_ClaimVerdict,
     )
@@ -275,13 +377,17 @@ async def check_claim(claim: Claim, sources: list[Source]) -> Claim:
 _CONCURRENCY = 5
 
 
-async def check_all(claims: list[Claim], sources: list[Source]) -> list[Claim]:
+async def check_all(
+    claims: list[Claim],
+    sources: list[Source],
+    stance: Literal["default", "adversarial"] = "default",
+) -> list[Claim]:
     """Check every claim concurrently. A single claim's failure never fails the batch."""
     semaphore = asyncio.Semaphore(_CONCURRENCY)
 
     async def _bounded(claim: Claim) -> Claim:
         async with semaphore:
-            return await check_claim(claim, sources)
+            return await check_claim(claim, sources, stance)
 
     results = await asyncio.gather(*(_bounded(c) for c in claims), return_exceptions=True)
 

@@ -232,22 +232,22 @@ async def review(
 
 
 async def second_opinion(claims: list[Claim], sources: list[Source]) -> list[Claim]:
-    """Independently re-check every claim to get a second ClaimSupport verdict.
+    """Independently re-check every claim with a genuinely adversarial reading stance.
 
-    Simplification, noted honestly: `claims.check_claim` takes no stance/system
-    parameter, so there is no clean way from here to give this pass a genuinely
-    different prompt the way `review(reviewer="second_anchor")` gets one. This calls
-    `claims.check_all` straight — a fresh, independent LLM sample against the same
-    sources (which still catches non-determinism and real divergence) but not an
-    adversarially different reviewer. The `review()` second-anchor pass is where the
-    real prompt-level independence lives; this is a second *sampling*, not a second
-    *stance*. `claims.check_all` is expected to already be concurrent and
-    never-fail per-claim (mirrors the score_all pattern elsewhere in this codebase);
-    the try/except here is a second safety net so a total failure of that call still
+    Calls `claims.check_all(claims, sources, stance="adversarial")` — a separately
+    written system prompt (not a reworded copy of the default one) that assumes the
+    first pass was too generous: it treats a source merely discussing the topic as
+    NOT support, demands the source state the specific quantity/claim rather than
+    something adjacent, and is quick to downgrade SUPPORTED to PARTIAL when the claim
+    generalises beyond the source's actual scope. This makes the disagreement view a
+    real diff between two different reading postures, not two samples of the same
+    prompt. `claims.check_all` is expected to already be concurrent and never-fail
+    per-claim (mirrors the score_all pattern elsewhere in this codebase); the
+    try/except here is a second safety net so a total failure of that call still
     degrades to "no diff found" rather than raising.
     """
     try:
-        return await check_all(claims, sources)
+        return await check_all(claims, sources, stance="adversarial")
     except Exception:
         return list(claims)
 
