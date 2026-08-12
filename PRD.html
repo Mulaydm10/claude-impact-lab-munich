@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trustifier — PRD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDEBE2;
+    --paper-2:#E3E0D4;
+    --ink:#1B1B18;
+    --ink-60:rgba(27,27,24,.62);
+    --ink-35:rgba(27,27,24,.35);
+    --ink-15:rgba(27,27,24,.15);
+    --green:#2F6D4F;
+    --orange:#B5762A;
+    --red:#A63B32;
+    --highlight:#FC5217;
+  }
+  *{box-sizing:border-box;}
+  html{background:var(--paper);}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif; line-height:1.65; font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--blue);color:var(--ink);}
+  a{color:var(--blue);}
+  a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--blue);outline-offset:3px;}
+
+  .topbar{
+    position:sticky;top:0;z-index:20;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:1.1rem clamp(1.25rem,4vw,3rem);
+    border-bottom:1px solid var(--ink-15);
+    background:rgba(237,235,226,.88); backdrop-filter:blur(8px);
+  }
+  .wordmark{font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem;letter-spacing:.01em;}
+  .wordmark small{display:block;font-family:'IBM Plex Mono',monospace;font-weight:400;
+    font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-60);margin-top:.1rem;}
+  nav.toc{display:flex;flex-wrap:wrap;gap:0 1rem;}
+  nav.toc a{font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:.06em;
+    text-transform:uppercase;text-decoration:none;color:var(--ink-60);}
+  nav.toc a:hover{color:var(--blue);}
+
+  .page{max-width:900px;margin:0 auto;padding:0 clamp(1.25rem,4vw,3rem) 7rem;}
+
+  .hero{padding:clamp(3rem,7vw,5rem) 0 3rem;display:grid;grid-template-columns:1.35fr .65fr;gap:2.5rem;align-items:center;}
+  .hero .eyebrow{display:block;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;
+    letter-spacing:.14em;font-size:.72rem;color:var(--blue);margin-bottom:1.1rem;}
+  .hero h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(2.3rem,5.2vw,3.5rem);
+    line-height:1.04;margin:0 0 1.1rem;}
+  .hero p.tagline{color:var(--ink-60);max-width:48ch;margin:0;font-size:1.05rem;}
+  .hero-stamp-wrap{display:flex;justify-content:center;}
+  .hero-stamp{
+    font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.09em;
+    color:var(--green);border:3px solid var(--green);border-radius:50%;
+    width:150px;height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;transform:rotate(-7deg);filter:url(#rough);font-size:.7rem;gap:.15rem;
+  }
+  .hero-stamp b{font-size:1.5rem;font-family:'Fraunces',serif;font-weight:600;letter-spacing:0;}
+
+  section{padding:3rem 0;border-top:1px solid var(--ink-15);}
+  section .num{font-family:'IBM Plex Mono',monospace;color:var(--ink-35);font-size:.78rem;letter-spacing:.08em;}
+  section h2{font-family:'Fraunces',serif;font-weight:600;font-size:1.65rem;margin:.3rem 0 1.15rem;}
+  section h3{font-family:'IBM Plex Sans',sans-serif;font-weight:600;font-size:.9rem;
+    text-transform:uppercase;letter-spacing:.07em;color:var(--ink-60);margin:2rem 0 .8rem;}
+  section p{margin:0 0 1rem;max-width:70ch;}
+  section ul,section ol{margin:0 0 1rem;padding-left:1.3rem;}
+  section li{margin-bottom:.55rem;max-width:66ch;}
+  section li b{font-weight:600;}
+
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin:1rem 0 1.5rem;}
+  .card{background:var(--paper-2);border:1px solid var(--ink-15);border-radius:6px;padding:1.15rem 1.35rem;transition:transform .15s ease;}
+  .card:hover{transform:translateY(-2px);}
+  .card.is-real{border-left:4px solid var(--green);}
+  .card.is-stub{border-left:4px solid var(--ink-35);}
+  .card h4{margin:0 0 .6rem;font-family:'IBM Plex Mono',monospace;font-size:.72rem;
+    text-transform:uppercase;letter-spacing:.08em;color:var(--ink-60);}
+  .card ul{margin:0;padding-left:1.1rem;}
+  .card li{font-size:.92rem;margin-bottom:.5rem;}
+
+  .palette{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.85rem;margin:1.25rem 0 1.75rem;}
+  .swatch{border:1px solid var(--ink-15);border-radius:6px;overflow:hidden;background:#fff;}
+  .swatch .chip{height:52px;}
+  .swatch .meta{padding:.5rem .65rem .6rem;}
+  .swatch .meta .role{display:block;font-size:.76rem;font-weight:500;margin-bottom:.15rem;}
+  .swatch .meta code{font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--ink-60);}
+
+  .type-sample{display:flex;flex-direction:column;gap:1.15rem;margin:1.25rem 0 1.75rem;}
+  .type-sample .label{display:block;font-family:'IBM Plex Mono',monospace;font-size:.66rem;
+    text-transform:uppercase;letter-spacing:.1em;color:var(--ink-60);margin-bottom:.3rem;}
+  .f-display{font-family:'Fraunces',serif;font-weight:600;font-size:1.65rem;}
+  .f-body{font-family:'IBM Plex Sans',sans-serif;font-size:1.02rem;}
+  .f-mono{font-family:'IBM Plex Mono',monospace;font-size:.92rem;}
+
+  .stamp-legend{display:flex;flex-wrap:wrap;gap:1.5rem;margin:1.25rem 0 1.75rem;}
+  .stamp-legend .item{display:flex;align-items:center;gap:.55rem;font-size:.85rem;}
+  .stamp-legend .item span{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--ink-60);}
+
+  svg.stamp{width:24px;height:24px;filter:url(#rough);flex-shrink:0;}
+  .stamp.green{color:var(--green);}
+  .stamp.orange{color:var(--orange);}
+  .stamp.red{color:var(--red);}
+  .stamp.rot-a{transform:rotate(-6deg);}
+  .stamp.rot-b{transform:rotate(4deg);}
+  .stamp.rot-c{transform:rotate(-3deg);}
+
+  .mockup{
+    display:grid;grid-template-columns:.85fr 1.65fr .16fr;
+    border:1px solid var(--ink-15);border-radius:8px;overflow:hidden;
+    background:#fff;margin:1.5rem 0 1rem;
+  }
+  .mockup .col{padding:1.1rem;}
+  .mockup .chat-col{background:var(--paper-2);border-right:1px solid var(--ink-15);}
+  .mockup .chat-col .label,.mockup .report-col .label,.mockup .ledger .label{
+    display:block;font-family:'IBM Plex Mono',monospace;font-size:.62rem;text-transform:uppercase;
+    letter-spacing:.1em;color:var(--ink-35);margin-bottom:.7rem;
+  }
+  .chat-bubble{background:#fff;border:1px solid var(--ink-15);border-radius:12px;
+    padding:.5rem .75rem;font-size:.76rem;margin-bottom:.5rem;max-width:92%;}
+  .chat-bubble.user{margin-left:auto;background:var(--blue);color:var(--ink);border-color:var(--blue);}
+  .mockup .verdict{
+    display:inline-flex;align-items:center;gap:.4rem;font-family:'IBM Plex Mono',monospace;
+    font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--green);
+    border:1.5px solid var(--green);border-radius:20px;padding:.3rem .8rem;margin-bottom:1.1rem;
+    filter:url(#rough);
+  }
+  .claim{display:flex;align-items:flex-start;gap:.55rem;font-size:.8rem;margin-bottom:.9rem;}
+  .claim p{margin:0;max-width:none;}
+  .ledger{background:var(--paper-2);display:flex;flex-direction:column;align-items:center;
+    gap:.6rem;border-left:1px solid var(--ink-15);}
+  .ledger .mark{width:9px;height:9px;border-radius:50%;}
+  .mockup-caption{font-size:.85rem;color:var(--ink-60);margin-top:.5rem;}
+
+  pre{background:var(--ink);color:var(--ink);padding:1.1rem 1.3rem;border-radius:8px;
+    overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:.78rem;line-height:1.6;margin:0 0 1.25rem;}
+  code{font-family:'IBM Plex Mono',monospace;}
+  p code,li code{background:var(--paper-2);padding:.1rem .35rem;border-radius:3px;font-size:.85em;}
+
+  .endpoint{font-family:'IBM Plex Mono',monospace;font-size:.85rem;margin-bottom:.55rem;display:block;}
+
+  .ticket{
+    border:1.5px dashed var(--ink-35);border-radius:8px;padding:1.25rem 1.5rem;
+    font-family:'IBM Plex Mono',monospace;font-size:.82rem;
+    display:flex;flex-wrap:wrap;gap:.4rem 2rem;
+  }
+  .ticket div span{display:block;color:var(--ink-60);font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem;}
+
+  footer{padding:2.5rem 0 0;color:var(--ink-60);font-size:.8rem;}
+
+  @media (max-width:760px){
+    .hero{grid-template-columns:1fr;}
+    .hero-stamp-wrap{justify-content:flex-start;}
+    .split{grid-template-columns:1fr;}
+    .mockup{grid-template-columns:1fr;}
+    .mockup .chat-col,.mockup .ledger{border:none;border-top:1px solid var(--ink-15);}
+    .ledger{flex-direction:row;flex-wrap:wrap;padding:1rem;}
+    nav.toc{display:none;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <filter id="rough" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="5.5"/>
+    </filter>
+    <symbol id="stamp-check" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-width="2.6"/>
+      <path d="M12 20.5l5.5 5.5L29 14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="stamp-caution" viewBox="0 0 40 40">
+      <path d="M20 6 L35.5 32.5 L4.5 32.5 Z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+      <line x1="20" y1="16" x2="20" y2="24" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+      <circle cx="20" cy="27.7" r="1.5" fill="currentColor"/>
+    </symbol>
+    <symbol id="stamp-flag" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-width="2.6"/>
+      <line x1="14" y1="14" x2="26" y2="26" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+      <line x1="26" y1="14" x2="14" y2="26" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <div class="wordmark">Trustifier<small>PRD · Claude Impact Lab, Munich</small></div>
+  <nav class="toc">
+    <a href="#problem">Problem</a>
+    <a href="#flow">Flow</a>
+    <a href="#requirements">Requirements</a>
+    <a href="#design">Design</a>
+    <a href="#scope">Scope</a>
+    <a href="#contract">Contract</a>
+    <a href="#submission">Submission</a>
+  </nav>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div>
+      <span class="eyebrow">Track: Trust, but check (verify)</span>
+      <h1>Every claim, stamped with the trust of its source.</h1>
+      <p class="tagline">A chat research assistant that rates its sources in the open Ampel
+        system — green, orange, red — shows you exactly which claims lean on which quality of
+        source, and lets you re-rate a source on the spot.</p>
+    </div>
+    <div class="hero-stamp-wrap">
+      <div class="hero-stamp">VERDICT<b>72%</b>VERIFIED</div>
+    </div>
+  </div>
+
+  <section id="problem">
+    <span class="num">01</span>
+    <h2>Problem</h2>
+    <p>AI research tools hand back a finished-looking report. The reader can't tell, without
+      re-reading and re-checking every line, which claims rest on a solid source and which rest
+      on a vendor blog or a press release. Trustifier makes that visible at a glance, and makes
+      it correctable: if you — or a domain expert — know a source is better or worse than the
+      system thinks, you fix it right there, and the report reflects it immediately.</p>
+    <p><b>Target user (this demo):</b> a general knowledge worker researching a topic who needs
+      to defend the result to someone else — the "sign off without re-reading everything" test
+      from the brief.</p>
+  </section>
+
+  <section id="flow">
+    <span class="num">02</span>
+    <h2>User flow</h2>
+    <ol>
+      <li><b>Ask</b> — user states a research topic in chat.</li>
+      <li><b>Clarify</b> — Trustifier asks 1–2 scripted clarifying questions to narrow angle and
+        scope. Answers actually change which claims and sources get used.</li>
+      <li><b>Research</b> — a report renders as a sequence of claims, each carrying an inline
+        trust stamp.</li>
+      <li><b>See at a glance</b> — a trust ledger rail on the report's edge shows one mark per
+        source in reading order; a header verdict stamp shows the aggregate score.</li>
+      <li><b>Check a source</b> — click any stamp to open a source drawer: publisher, date, the
+        heuristic's score and its reasons, and the current rating.</li>
+      <li><b>Re-rate</b> — set a new band with an optional reason. The stamp, the rail mark, and
+        the header verdict update immediately.</li>
+      <li><b>Persistence proof</b> — refresh the page. The re-rating is still there.</li>
+    </ol>
+  </section>
+
+  <section id="requirements">
+    <span class="num">03</span>
+    <h2>Functional requirements</h2>
+    <ul>
+      <li>Exactly three trust bands — <b>green / orange / red</b> — each coded by
+        <b>color and shape</b>, not color alone, plus a text label in the drawer and on hover.</li>
+      <li>Every claim links to exactly one source; every source has exactly one <i>effective</i>
+        rating at a time (latest override, else the heuristic).</li>
+      <li>Heuristic scoring is rule-based and <b>explainable</b> — every score ships with a list
+        of reasons. Not a black box.</li>
+      <li>Re-rating is an <b>append-only history</b>, not an overwrite.</li>
+      <li>Re-ratings <b>persist server-side</b> and survive a page refresh.</li>
+      <li>Verdict formula, fixed: <b>% of claims whose source's effective rating is not red.</b></li>
+    </ul>
+  </section>
+
+  <section id="design">
+    <span class="num">04</span>
+    <h2>Design direction</h2>
+    <p>The brief already specifies the signal system — green / orange / red, Ampel-style. The
+      design work is in <i>how that mark is drawn</i> and <i>how the report is laid out</i>, not
+      in replacing the three-band idea.</p>
+
+    <h3>Signature element — the provenance stamp</h3>
+    <p>Each band renders as a hand-stamped ink mark, not a flat dot: a rough, slightly rotated
+      edge, and its own shape as well as its own ink color, so the signal survives without
+      color.</p>
+    <div class="stamp-legend">
+      <div class="item"><svg class="stamp green rot-a"><use href="#stamp-check"/></svg> Verified <span>green</span></div>
+      <div class="item"><svg class="stamp orange rot-b"><use href="#stamp-caution"/></svg> Caution <span>orange</span></div>
+      <div class="item"><svg class="stamp red rot-c"><use href="#stamp-flag"/></svg> Flagged <span>red</span></div>
+    </div>
+
+    <h3>Palette</h3>
+    <div class="palette">
+      <div class="swatch"><div class="chip" style="background:#EDEBE2"></div><div class="meta"><span class="role">Paper</span><code>#EDEBE2</code></div></div>
+      <div class="swatch"><div class="chip" style="background:#1B1B18"></div><div class="meta"><span class="role">Ink</span><code>#1B1B18</code></div></div>
+      <div class="swatch"><div class="chip" style="background:#2F6D4F"></div><div class="meta"><span class="role">Verified</span><code>#2F6D4F</code></div></div>
+      <div class="swatch"><div class="chip" style="background:#B5762A"></div><div class="meta"><span class="role">Caution</span><code>#B5762A</code></div></div>
+      <div class="swatch"><div class="chip" style="background:#A63B32"></div><div class="meta"><span class="role">Flag</span><code>#A63B32</code></div></div>
+      <div class="swatch"><div class="chip" style="background:#FC5217"></div><div class="meta"><span class="role">Highlight</span><code>#FC5217</code></div></div>
+    </div>
+    <p style="font-size:.9rem;color:var(--ink-60);max-width:60ch;">The highlight color is the
+      only interactive/UI accent — kept out of the trust bands so the stamp colors stay pure
+      signal, never decoration.</p>
+
+    <h3>Type</h3>
+    <div class="type-sample">
+      <div><span class="label">Display — Fraunces</span><span class="f-display">Would you sign off without re-reading every line?</span></div>
+      <div><span class="label">Body — IBM Plex Sans</span><span class="f-body">Every claim in the report is stamped with the trust level of its source.</span></div>
+      <div><span class="label">Utility — IBM Plex Mono</span><span class="f-mono">source: nature.com · tier-1 · 2025-11-02</span></div>
+    </div>
+
+    <h3>Layout — manuscript + ledger</h3>
+    <div class="mockup">
+      <div class="col chat-col">
+        <span class="label">Chat</span>
+        <div class="chat-bubble user">Is remote work bad for junior employee development?</div>
+        <div class="chat-bubble">Management angle, or individual contributor?</div>
+        <div class="chat-bubble user">Individual contributor.</div>
+      </div>
+      <div class="col report-col">
+        <span class="label">Report</span>
+        <span class="verdict">72% verified</span>
+        <div class="claim"><svg class="stamp green rot-a"><use href="#stamp-check"/></svg><p>Juniors report slower informal feedback loops remotely, per a 2025 longitudinal study.</p></div>
+        <div class="claim"><svg class="stamp orange rot-b"><use href="#stamp-caution"/></svg><p>"70% faster onboarding in-office" — cited from a vendor blog post.</p></div>
+        <div class="claim"><svg class="stamp red rot-c"><use href="#stamp-flag"/></svg><p>Remote juniors are "twice as likely to quit" — sourced from a co-working space's own press release.</p></div>
+      </div>
+      <div class="col ledger">
+        <span class="label">Rail</span>
+        <div class="mark" style="background:#2F6D4F"></div>
+        <div class="mark" style="background:#2F6D4F"></div>
+        <div class="mark" style="background:#B5762A"></div>
+        <div class="mark" style="background:#A63B32"></div>
+      </div>
+    </div>
+    <p class="mockup-caption">Clicking any stamp or rail mark opens the source drawer with the
+      heuristic's reasons and the re-rate control. Re-rating plays one motion: the old stamp
+      fades, the new one lands.</p>
+  </section>
+
+  <section id="scope">
+    <span class="num">05</span>
+    <h2>What's real vs. stubbed</h2>
+    <p style="color:var(--ink-60);">Say this out loud in the pitch — per the brief, honesty about
+      the tape is the useful part, not a confession.</p>
+    <div class="split">
+      <div class="card is-real">
+        <h4>Real</h4>
+        <ul>
+          <li>Rule-based heuristic scorer with explainable reasons, over a hand-authored demo
+            dataset (2–3 topics, sources spanning all three bands, one conflict-of-interest example).</li>
+          <li>Clarifying-question answers genuinely filter/order which claims appear.</li>
+          <li>Re-rating flow, live propagation to stamp/rail/verdict, and server-side persistence.</li>
+        </ul>
+      </div>
+      <div class="card is-stub">
+        <h4>Stubbed</h4>
+        <ul>
+          <li>No live web research or live LLM report generation — content is hand-authored per
+            topic and branch.</li>
+          <li>No real auth — a free-text "acting as" field stands in for multiple experts.</li>
+          <li>Storage is a JSON file, not a database.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contract">
+    <span class="num">06</span>
+    <h2>Contract — so two people can build in parallel</h2>
+    <h3>Data shapes</h3>
+    <pre>Source { id, title, domain, domainTier, publisher, type,
+        publishedDate, fundedBy?, url, heuristic:{score,band,reasons[]} }
+
+RatingOverride { id, sourceId, band, actor, reason?, timestamp }
+  — append-only; effective rating = latest override, else heuristic.band
+
+Claim  { id, reportId, order, text, kind, sourceId }
+Report { id, topicId, answers, claimIds[], createdAt }
+Topic  { id, title, clarifyingQuestions:[{id,prompt,options?}] }</pre>
+
+    <h3>Endpoints</h3>
+    <code class="endpoint">GET  /api/topics</code>
+    <code class="endpoint">POST /api/reports { topicId, answers }</code>
+    <code class="endpoint">GET  /api/sources/:id/ratings</code>
+    <code class="endpoint">POST /api/sources/:id/ratings { band, actor, reason }</code>
+
+    <h3>Ownership split</h3>
+    <div class="split">
+      <div class="card">
+        <h4>Person A — Frontend / UX</h4>
+        <ul>
+          <li>Vite + React shell, chat panel, scripted clarify flow</li>
+          <li>Report view, stamps, ledger rail</li>
+          <li>Source drawer, re-rate control, restamp animation</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Person B — Backend / Data</h4>
+        <ul>
+          <li>Express + JSON-file store, the four endpoints</li>
+          <li>Heuristic scorer (domain tier, recency, sourcing type, conflict of interest)</li>
+          <li>Hand-authored demo topics/sources/claims content</li>
+        </ul>
+      </div>
+    </div>
+    <p style="font-size:.9rem;color:var(--ink-60);">First 20 minutes, together: lock these shapes
+      and endpoint signatures, stub a <code>demo.json</code>, wire the Vite dev-server proxy —
+      then split and build in true isolation.</p>
+  </section>
+
+  <section id="submission">
+    <span class="num">07</span>
+    <h2>Submission</h2>
+    <div class="ticket">
+      <div><span>Via</span>claude-impact-lab MCP server, or claudebuildnight.com/register</div>
+      <div><span>Deadline</span>before 15:15</div>
+      <div><span>Requires</span>4-digit event code (on room screens)</div>
+    </div>
+  </section>
+
+  <footer>
+    <p><b>What's next:</b> wire a real LLM-driven clarifying loop and report generation behind a
+      <code>generateReport()</code> boundary; move storage to a proper DB; explore real domain-
+      reputation/citation-graph signals in the heuristic. Full detail in <code>PRD.md</code>.</p>
+  </footer>
+
+</div>
+</body>
+</html>
