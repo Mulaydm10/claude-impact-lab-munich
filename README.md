@@ -1,3 +1,7 @@
+<div align="center">
+
+<img src="frontend/gauntlet/assets/logo-mark.png" alt="Glassbox" width="88">
+
 # Glassbox
 
 **Would you sign off on this research without re-reading every line?**
@@ -5,145 +9,151 @@
 Glassbox takes a piece of AI-generated research and the sources behind it, and tells you how
 much of it you can actually trust — showing its working at every step.
 
-Built at the **Claude Impact Lab, Munich** on 12 August 2026 · track: *Trust, but check*.
+🏆 **Winner — [Claude Impact Lab, Munich](https://luma.com/claudecommunity), 12 August 2026**
+· track: *Trust, but check*
+
+[Architecture](ARCHITECTURE.md) · [Frontend brief](FRONTEND_BRIEF.md) · [Pitch](PITCH.md) ·
+[Recorded runs](examples/)
+
+</div>
 
 ---
 
-## Why
+## The problem
 
-The room at the Claude Conversations evening said it plainly: *the output looks right, and
+The room at the Claude Conversations evening put it plainly: *the output looks right, and
 checking it properly takes longer than making it did.*
 
-Most verification tools stop at rating the sources. That answers **"is this evidence any
-good?"** — but not **"did the research report it honestly?"** A perfect source proves nothing
-if the text generalised one company's result to "companies generally".
+Verification tools score sources. That answers **"is this evidence any good?"** — and stops
+there. It never asks whether the research *used* that evidence honestly: whether one company's
+result quietly became "companies generally", or a single year became "consistently".
 
-Glassbox asks both questions separately.
+A perfect source proves nothing if the text misrepresented it.
 
-| | Question | How |
+## The idea
+
+Glassbox asks both questions, and keeps them separate.
+
+|  | Question | How |
 |---|---|---|
 | **Credibility** | Are the sources any good? | Per-source score, weighted by relevance to what you actually asked |
-| **Provenance** | Did the research use them honestly? | Every claim checked against the source's real content |
+| **Provenance** | Did the research use them honestly? | Every claim checked against the source's real fetched content |
 
-## What it does
+Then it does the thing a verdict alone can't: **it hands you a prompt to redo the research
+properly.**
 
-1. **Grills you** about what you were actually trying to find out. A rigorous source
-   answering the wrong question is credible but useless, and the report has to be able to
-   say that.
-2. **Finds the sources** three ways — supplied with the input, extracted from the research
-   text itself, and fetched live from the web.
-3. **Hands them back to you** to approve or exclude. Human checkpoint; excluded sources are
-   not used downstream.
-4. **Scores each source** — credibility and relevance separately, with concrete reasons and
-   red flags attached.
-5. **Checks every claim** against what its sources actually say: supported, partial,
-   unsupported, or contradicted. Claims the model invented are marked as such.
-6. **Gets a second opinion** from a reviewer told to distrust the first one's leniency, and
-   surfaces exactly where they disagree.
-7. **Streams the whole thing live** over SSE, so nothing happens in a black box.
-8. **Hands you a way out.** A verdict of *do not rely* is not much use on its own, so the run
-   ends with a paste-ready prompt to redo the research properly: the real question restated,
-   your success criteria as requirements, your deal-breakers as prohibitions, the sources not
-   to lean on again, and the claims that still need primary evidence.
-
-See [ARCHITECTURE.md](ARCHITECTURE.md) for diagrams, and [CONCEPT.md](CONCEPT.md) for the
-original design thinking.
-
-## It works
-
-Verbatim from a live run against [`examples/demo_case.json`](backend/examples/demo_case.json)
-— a rigged four-day-week research summary. Full output in
-[`examples/sample_run.txt`](examples/sample_run.txt).
-
-> This run predates the scoring fixes described further down. Re-run today the same
-> fixture scores higher — we have seen **10** and **28** on separate runs — but the
-> verdict stays `do_not_rely`, correctly. The recording is kept as it was.
->
-> Scores move between runs on identical input, because most of the pipeline is model
-> judgement. The verdict band is stable; the number is not. Treat it as a band, not a
-> measurement.
-
-The fixture supplied 6 sources. Glassbox **extracted 3 more phantom citations from the prose
-itself** — assertions like *"several sources report… 40%"* that reference nothing at all.
+## How it works
 
 ```
-[s1]  52  rel=62  primary       Autonomy — advocacy org that ran the trial it reports on
-[s2]   3  rel= 0  unreachable   .example.com — "almost certainly a fabricated URL"
-[s3]   8  rel=12  forum_ugc     Reddit — excerpt was literally just the word "Reddit"
-[s4]  52  rel=10  primary       Destatis — "navigation page, no substantive data"
-[s5]   3  rel= 5  unknown       Microsoft Japan 2019 — hits the stated deal-breaker
-[s6]   0  rel= 0  unreachable   fabricated domain
-[s7]  12  rel=55  primary       phantom — repeats "35%" with no URL
-[s8]   2  rel=20  unknown       phantom — the 40% developer claim
-[s9]   2  rel=15  unknown       phantom — the Bavaria claim
-
-claims: 0 supported · 3 partial · 5 unsupported · 5 model-introduced
-verdict: DO NOT RELY  (0/100)
+INTAKE ─► INTENT ─► SCOUT ─► [ you rate sources ] ─► VERIFY ─► REVIEW ×2 ─► HAND-OFF
 ```
 
-The second reviewer disagreed with the first on two claims, and said so:
+1. **It grills you first.** Three to nine questions about what you were actually trying to find
+   out, and what would make the answer wrong. A rigorous source answering the wrong question is
+   credible but useless — the report has to be able to say that.
+2. **It finds sources three ways** — supplied with the input, extracted from the research prose
+   itself, and fetched live over HTTP.
+3. **You approve or exclude them.** A human checkpoint; excluded sources are not used anywhere
+   downstream.
+4. **It scores each source** — credibility and relevance separately, with concrete reasons and
+   red flags attached, never a bare number.
+5. **It checks every claim** against what its sources actually say: `supported`, `partial`,
+   `unsupported`, `contradicted`. Claims the model invented are marked as invented.
+6. **It gets a second opinion** from a reviewer given a deliberately different prompt and told
+   to distrust the first one's leniency, then surfaces exactly where they disagree.
+7. **It streams the whole thing live** over SSE, so nothing happens in a black box.
+8. **It hands you a way out** — a paste-ready research prompt: your question restated, your
+   success criteria as requirements, your deal-breakers as prohibitions, the sources not to
+   lean on again, and the claims that still need primary evidence.
 
-> *"The internal review was **far too lenient**. Of nine sources, only one was actually
-> fetched with any content, and even that excerpt is truncated before the key findings."*
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the diagrams and the scoring formula.
 
-## What we learned by testing it against itself
+## It works — two recorded runs
 
-A verifier that condemns everything is useless, so we built a **control case**
-([`examples/control_case.json`](backend/examples/control_case.json)): carefully hedged
-research on remote work and developer productivity, citing real arXiv and NBER papers,
-stating its own limitations, inventing no statistics.
+Both are real, unedited output. The JSON payloads are committed, so the demo replays them
+without a backend.
 
-Both runs, same pipeline:
+### 🔴 Rigged research — **28/100 · `do_not_rely`**
 
-Both scored before the fixes below (rigged now lands in the 10-28 range):
+A four-day-week brief built to fail.
 
-| | Rigged case | Control case |
-|---|---|---|
-| Score | **0 / 100** | **15 / 100** |
-| Verdict | `do_not_rely` | `do_not_rely` |
-| Why | fabricated `.example` URLs, phantom citations, a 35% figure that is really ~1.4% | real peer-reviewed sources that measure *collaboration*, not *output* |
+```
+[s1]  62  industry_analyst  Autonomy — the advocacy org that ran the trial it reports on
+[s2]   3  unreachable       .example.com — "almost certainly a fabricated URL"
+[s3]   8  forum_ugc         Reddit — the fetched excerpt was literally the word "Reddit"
+[s4]  52  primary           Destatis — "a navigation page, no substantive data"
+[s5]   3  unknown           a 2019 Microsoft Japan press release, cited with no link
+[s6]   2  unreachable       a second fabricated domain
 
-**The reasoning discriminated. The verdict band did not.** And the critique of the control
-case is, on inspection, correct — the arXiv paper genuinely measures collaboration patterns
-rather than productivity, the NBER figure is projected from self-reported survey data, and
-the one RCT studied call-centre workers in 2010–2012. A careful human reviewer would say the
-same thing.
+claims: 0 supported · 2 partial · 4 unsupported · 4 model-invented
+```
 
-The root cause was two bugs upstream of the scoring, both found by reading our own runs:
+The text claims a *"35% revenue rise"*. The real figure in the source it cites is ~1.4%. Four
+of its six assertions trace to nothing at all, and Glassbox labels them `model-invented` rather
+than letting them pass as fact.
+→ [`examples/rigged_run.txt`](examples/rigged_run.txt) ·
+[hand-off prompt](examples/handoff_prompt_rigged.txt)
 
-- **The survey compounded stated standards into absolutes.** Told "peer-reviewed preferred,
-  limitations stated plainly", it produced an `Intent` demanding evidence through 2023 with
-  effect sizes for developers specifically — a bar almost no real research clears. Everything
-  downstream then failed that bar.
-- **Phantom duplicate sources.** A study cited in the prose *and* supplied as a URL was counted
-  twice — once as the fetched source, once as an unverifiable ghost scoring 8–22 with high
-  relevance, dragging the weighted average down hard.
+### 🟡 Genuine research — **63/100 · `check_flagged`**
 
-Both are fixed. Extraction now drops a reference that shares a PMC/PubMed/DOI/arXiv identifier
-with a supplied source, scoring weights each source by the scorer's own confidence, and a prose
-citation with no URL is no longer penalised as a broken link.
+Real agent output on intermittent fasting: nine PubMed/PMC sources, correctly tiered
+isocaloric vs. ad-libitum trials, honestly hedged.
 
-**Measured on the fasting fixture: 20 → 63, verdict `do_not_rely` → `check_flagged`** — the
-first time the headline band moved rather than only the reasoning underneath it. Nine real
-sources, zero phantom duplicates, zero unsupported claims.
+```
+claims: 4 supported · 6 partial · 0 unsupported · 0 model-invented
+ledger: 3 verified · 5 caution · 1 flagged
+scores: 78 72 72 68 68 62 62 62 · 18 (the one that 403'd)
+```
 
-Glassbox still reads **stricter than an expert human**. That is the safer direction to be wrong
-in, and it is no longer wrong by so much that everything lands in the same band.
+Nothing invented, nothing unsupported. The single flagged source is Oxford Academic, which
+returned `403` to our fetcher — as did Science.
+→ [`examples/fasting_run.txt`](examples/fasting_run.txt) ·
+[hand-off prompt](examples/handoff_prompt_fasting.txt)
 
-Full outputs, unedited: [`examples/sample_run.txt`](examples/sample_run.txt) and
-[`examples/control_run.txt`](examples/control_run.txt).
+**Same pipeline, different verdict bands.** That separation is the whole point.
+
+## What the hand-off produces
+
+Verbatim from the fasting run — it caught a study-design error, not just a broken link:
+
+> *"Do not cite a study comparing early versus late eating windows (such as the ChronoFast 2025
+> crossover trial) as evidence for or against TRE versus unrestricted eating, **since those are
+> within-TRE comparisons**."*
+
+> *"Its literature search **ended April 2022**, missing all the 2023–2025 trials the intent
+> requires. Find a more recent systematic review."*
 
 ## Run it
 
 ```bash
-cd backend
+git clone https://github.com/Mulaydm10/claude-impact-lab-munich.git glassbox
+cd glassbox/backend
 cp .env.example .env          # add your ANTHROPIC_API_KEY
-./run.sh                      # http://localhost:8000 — docs at /docs
-
-# in another terminal
-uv run python scripts/smoke.py              # end-to-end, auto-answers the survey
-uv run python scripts/smoke.py --interactive  # answer the grilling yourself
+./run.sh                      # http://localhost:8000 — API docs at /docs
 ```
+
+End-to-end against a fixture (takes 4–9 minutes — it fetches every source and checks every
+claim twice):
+
+```bash
+uv run python scripts/smoke.py --case intermittent_fasting_case
+uv run python scripts/smoke.py --interactive   # answer the grilling yourself
+```
+
+The frontend is static, and **must be served from the repo root** so it can reach the recorded
+runs:
+
+```bash
+cd glassbox && python3 -m http.server 8090
+# → http://localhost:8090/frontend/gauntlet/glassbox-gauntlet.html
+```
+
+| Key | |
+|---|---|
+| `D` | Demo — replays the full cascade in ~22s, no backend needed |
+| `V` | Source ledger — the traffic-light view |
+| `H` | Hand-off — the generated prompt, with a copy button |
+| `Esc` | Skip the intake form |
 
 ## API
 
@@ -151,45 +161,89 @@ uv run python scripts/smoke.py --interactive  # answer the grilling yourself
 |---|---|---|
 | `POST` | `/api/start` | Submit research + sources, get the first questions |
 | `POST` | `/api/answer` | Answer; loops until the intent is settled |
-| `POST` | `/api/scout` | Find and categorise sources |
-| `POST` | `/api/rate-sources` | Approve or exclude — human checkpoint |
-| `POST` | `/api/verify` | Score sources, check claims, review |
-| `GET` | `/api/events/{id}` | SSE live cascade — replays, then streams |
+| `POST` | `/api/scout` | Find, fetch and categorise sources |
+| `POST` | `/api/rate-sources` | Approve or exclude — the human checkpoint |
+| `POST` | `/api/verify` | Score sources, check claims, review, hand off |
+| `GET` | `/api/events/{id}` | SSE cascade — replays history, then streams live |
 | `GET` | `/api/report/{id}` | The finished report |
 
-Python 3.14 · FastAPI · Anthropic SDK · httpx · pydantic v2 · `uv`.
-Per-stage model env vars (`MODEL_SURVEY`, `MODEL_EXTRACT`, `MODEL_SCORE`, `MODEL_AGGREGATE`)
-— the scorer runs once per source, so it is the one that adds up.
+Full request/response shapes and every enum value: [FRONTEND_BRIEF.md](FRONTEND_BRIEF.md).
 
-## What's real, what's taped together
+## Stack
 
-*One day is one day.*
+**Backend** — Python 3.14 · FastAPI · Anthropic SDK (Claude Opus 4.6) · httpx · pydantic v2 · `uv`
+**Frontend** — Three.js, vanilla ES modules, no build step, Three vendored locally so the demo
+needs no network
 
-**Real, and exercised live:** the full cascade end to end; interactive survey with follow-up
-rounds; all three source-acquisition routes; per-source credibility with relevance weighting;
-claim-by-claim provenance; two reviewers with genuinely different prompts; disagreement
-detection; state machine with SSE replay and multiple subscribers.
+Per-stage model env vars (`MODEL_SURVEY`, `MODEL_EXTRACT`, `MODEL_SCORE`, `MODEL_AGGREGATE`) —
+the scorer runs once per source, so it is the one that adds up on a large bibliography.
 
-**Known limitation, found by our own run:** source excerpts are capped, and on one real
-source the cap fell *before* the key findings — so three claims were scored `partial` for the
-wrong reason. Under-crediting a good source is the error type that matters most here. The fix
-is to select the relevant slice of a page rather than the first N characters.
+---
 
-**Stubbed:** no retry or backoff — a failed call is recorded and the pipeline continues; crude
-HTML-to-text, so nav and footer boilerplate stays in excerpts; datedness is read out of the
-excerpt rather than parsed metadata; sessions are in memory and do not survive a restart.
+## What we got wrong
 
-**Not built** (design is in `CONCEPT.md` §10): the delayed outcome loop — rating the
-recommendation against reality months later — plus the trust ledger and cross-job learning.
-That is the part that would answer *"should I have been allowed to sign off?"* against ground
-truth rather than plausibility.
+We built a control case *designed to pass*, ran it, and it failed. Every individual criticism
+the tool made was correct on inspection — and the overall verdict was still wrong. Two bugs,
+both found by reading our own output, both fixed during the lab:
+
+**The intent stage invented requirements.** Told *"peer-reviewed preferred, limitations stated
+plainly"*, it produced an `Intent` demanding evidence through 2023 with effect sizes for one
+specific population — a bar almost no real research clears. It was also converting its own
+unanswered follow-up questions into hard deal-breakers.
+
+**Phantom duplicate sources.** A study supplied as a URL *and* described in the prose was
+counted twice — once as the fetched source, once as an unverifiable ghost scoring 8–22 with
+high relevance, dragging the weighted average down. Identifier and token matching now collapses
+them.
+
+**Measured: 20 → 63, `do_not_rely` → `check_flagged`** on identical input. The first time the
+headline band moved rather than only the reasoning underneath it.
+
+## What is still wrong
+
+*Being honest about this is the project, not a disclaimer on it.*
+
+**Scores move between runs.** The same rigged fixture has scored **0, 10 and 28** on identical
+input, because most of the pipeline is model judgement. The verdict *band* has been stable
+across every run; the number has not. **Treat it as a band, not a measurement.**
+
+**Hedges are scored as claims.** When research honestly writes *"this should not be transferred
+without caveat"*, that is an epistemic caution, not an assertion needing a citation. Glassbox
+still marks it `unsupported` — punishing research for being careful.
+
+**The best sources block robots.** Vendor blogs and Reddit fetch fine. PubMed returns
+bot-checks; Science and Oxford Academic return `403`. The highest-quality evidence is the
+hardest for us to verify, which is close to the opposite of what you want. Fixing it needs
+publisher APIs or Unpaywall/Crossref metadata rather than an HTTP client.
+
+**No persistence.** Sessions live in memory and do not survive a restart.
+
+**The dedup fix may have overcorrected.** Collapsing phantom duplicates fixed the scoring, but
+an unsourced assertion no longer surfaces as its own row in the source ledger — it is caught at
+the claim level instead, as `unsupported` + `model-invented`. Arguably correct (an assertion is
+not a source), but the ledger view lost something legible in the process.
+
+**Not built** — the delayed outcome loop: rating a recommendation against reality months later
+and feeding that back. Designed in [CONCEPT.md](CONCEPT.md) §10, never implemented. It is the
+only thing that would answer *"should I have been allowed to sign off?"* against ground truth
+rather than plausibility.
+
+---
 
 ## Team
 
-Built in one day at the Claude Impact Lab, Munich.
-
 | | |
 |---|---|
-| **Druuf** | Backend and the verification pipeline — survey, source acquisition, scoring, claim checking, review |
-| **Jenny** | Frontend — the gauntlet, the Ampel source ledger, the architecture and findings pages |
-| **Marco** and **Roman** | The logic and the intent model — what the system asks you, and what it does with the answer |
+| **Dhruv Mulay** ([@Mulaydm10](https://github.com/Mulaydm10)) | Backend and the verification pipeline |
+| **Jenny** ([@jenniferlaurienkraus-pixel](https://github.com/jenniferlaurienkraus-pixel)) | Frontend, design direction, the Trustifier concept |
+| **Marco** ([@Jambuwal](https://github.com/Jambuwal)) | The Glassbox concept, the state machine, the logic model |
+| **Roman** ([@dallenator](https://github.com/dallenator)) | Scoring calibration, source dedup, the research fixtures |
+
+Built in one day at the Claude Impact Lab, hosted by [Make](https://www.make.com/) in Munich,
+with thanks to Michael Whelehan, Dr. Florian Steiner, Alexander Eiswirth and Steffi Kieffer for
+running it — and to everyone at the Claude Conversations evening whose questions became the
+brief.
+
+## Licence
+
+MIT.
