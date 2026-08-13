@@ -293,7 +293,11 @@ function intake(rep, doc) {
     .filter((s) => s && s.origin === 'supplied' && !s.url)
     .forEach((s) => out.push(f(1, `Prose citation, no link: "${clip(s.raw_reference, 52)}"`, s.category_reasoning)));
   const n = arr(rep.sources).length;
-  if (!out.length) out.push(f(0, `${n} source${n === 1 ? '' : 's'} accepted as submitted`, doc));
+  const c = arr(doc.claims).length;
+  if (!out.length) {
+    out.push(f(0, `${n} source${n === 1 ? '' : 's'} accepted as submitted`,
+      c ? `${c} claim${c === 1 ? '' : 's'} extracted for checking` : ''));
+  }
   return out;
 }
 

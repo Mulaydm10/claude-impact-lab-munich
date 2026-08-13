@@ -1,19 +1,51 @@
 <div align="center">
 
-<img src="frontend/gauntlet/assets/logo-mark.png" alt="Glassbox" width="88">
+<img src="frontend/gauntlet/assets/logo-mark.png" alt="Glassbox" width="96">
 
 # Glassbox
+
+### 🏆 &nbsp;Winner — Claude Impact Lab, Munich &nbsp;·&nbsp; 12 August 2026
+
+[![Winner](https://img.shields.io/badge/1st_Place-Claude_Impact_Lab_Munich-D4A24C?style=for-the-badge&labelColor=0d0d0f)](https://luma.com/claudecommunity)
+[![Track](https://img.shields.io/badge/Track-Trust,_but_check-8B93A8?style=for-the-badge&labelColor=0d0d0f)](#)
+[![Built in](https://img.shields.io/badge/Built_in-one_day-6E7480?style=for-the-badge&labelColor=0d0d0f)](#)
 
 **Would you sign off on this research without re-reading every line?**
 
 Glassbox takes a piece of AI-generated research and the sources behind it, and tells you how
 much of it you can actually trust — showing its working at every step.
 
-🏆 **Winner — [Claude Impact Lab, Munich](https://luma.com/claudecommunity), 12 August 2026**
-· track: *Trust, but check*
+![Python](https://img.shields.io/badge/Python_3.14-1c1c20?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-1c1c20?logo=fastapi&logoColor=009688)
+![Claude](https://img.shields.io/badge/Claude_Opus_4.6-1c1c20?logo=anthropic&logoColor=D97757)
+![Three.js](https://img.shields.io/badge/Three.js-1c1c20?logo=three.js&logoColor=white)
+![No build step](https://img.shields.io/badge/no_build_step-1c1c20)
+![Licence](https://img.shields.io/badge/MIT-1c1c20)
 
-[Architecture](ARCHITECTURE.md) · [Frontend brief](FRONTEND_BRIEF.md) · [Pitch](PITCH.md) ·
-[Recorded runs](examples/)
+[**Architecture**](ARCHITECTURE.md) · [**Frontend brief**](FRONTEND_BRIEF.md) ·
+[**Pitch**](PITCH.md) · [**Recorded runs**](examples/) · [**What's still broken**](#what-is-still-wrong)
+
+<br>
+
+<img src="docs/screenshots/gauntlet-cascade.png" alt="The Glassbox gauntlet — research walks a corridor of gates, each one a verification stage, with findings surfacing as it goes" width="880">
+
+<sub>Research walks a gauntlet. Every gate is a verification stage; every card is a real finding.</sub>
+
+</div>
+
+---
+
+<div align="center">
+
+|  | Rigged research | Genuine research |
+|---|---|---|
+| **Verdict** | 🔴 `do_not_rely` | 🟡 `check_flagged` |
+| **Score** | **28**/100 | **63**/100 |
+| **Invented claims** | 4 | 0 |
+| **Unsupported claims** | 4 | 0 |
+| **Sources fetched** | 6 | 9 |
+
+**Same pipeline. Different bands.** That separation is the entire point.
 
 </div>
 
@@ -66,7 +98,14 @@ INTAKE ─► INTENT ─► SCOUT ─► [ you rate sources ] ─► VERIFY ─�
    success criteria as requirements, your deal-breakers as prohibitions, the sources not to
    lean on again, and the claims that still need primary evidence.
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for the diagrams and the scoring formula.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the diagrams and the scoring formula — or open
+`architecture.html` in the app, which explains the same thing in the project's own language:
+
+<div align="center">
+
+<img src="docs/screenshots/architecture-page.png" alt="The in-app architecture page, opening on the thesis: a credible source proves nothing if the research misused it" width="880">
+
+</div>
 
 ## It works — two recorded runs
 
@@ -110,7 +149,17 @@ returned `403` to our fetcher — as did Science.
 → [`examples/fasting_run.txt`](examples/fasting_run.txt) ·
 [hand-off prompt](examples/handoff_prompt_fasting.txt)
 
-**Same pipeline, different verdict bands.** That separation is the whole point.
+### The verdict, and the receipts behind it
+
+<div align="center">
+
+<img src="docs/screenshots/gauntlet-ledger.png" alt="The verdict screen reads DISCREDITED, with the source ledger open alongside it listing every source, its score, its category and the reason for its band" width="880">
+
+<sub>The headline verdict never appears without the ledger that produced it — every source, its
+score, its category, and why it landed in that band. Symbols as well as colour, so the bands
+survive colour-blindness and greyscale.</sub>
+
+</div>
 
 ## What the hand-off produces
 
