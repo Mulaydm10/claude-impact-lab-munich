@@ -281,17 +281,22 @@ rather than plausibility.
 
 ## Team
 
-| | |
-|---|---|
-| **Dhruv Mulay** ([@Mulaydm10](https://github.com/Mulaydm10)) | Backend and the verification pipeline |
-| **Jenny** ([@jenniferlaurienkraus-pixel](https://github.com/jenniferlaurienkraus-pixel)) | Frontend, design direction, the Trustifier concept |
-| **Marco** ([@Jambuwal](https://github.com/Jambuwal)) | The Glassbox concept, the state machine, the logic model |
-| **Roman** ([@dallenator](https://github.com/dallenator)) | Scoring calibration, source dedup, the research fixtures |
+<div align="center">
 
-Built in one day at the Claude Impact Lab, hosted by [Make](https://www.make.com/) in Munich,
-with thanks to Michael Whelehan, Dr. Florian Steiner, Alexander Eiswirth and Steffi Kieffer for
-running it — and to everyone at the Claude Conversations evening whose questions became the
-brief.
+**Dhruv Mulay** ([@Mulaydm10](https://github.com/Mulaydm10)) ·
+**Jenny** ([@jenniferlaurienkraus-pixel](https://github.com/jenniferlaurienkraus-pixel)) ·
+**Marco** ([@Jambuwal](https://github.com/Jambuwal)) ·
+**Roman** ([@dallenator](https://github.com/dallenator))
+
+</div>
+
+Four people, one room, one day. We are not splitting this into credits — the thesis, the state
+machine, the scoring, the interface and the fixtures all came out of the same arguments, and
+the parts that work best are the ones nobody can claim alone.
+
+Built at the Claude Impact Lab, hosted by [Make](https://www.make.com/) in Munich, with thanks
+to Michael Whelehan, Dr. Florian Steiner, Alexander Eiswirth and Steffi Kieffer for running it —
+and to everyone at the Claude Conversations evening whose questions became the brief.
 
 ## Licence
 
